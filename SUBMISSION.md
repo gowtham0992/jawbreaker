@@ -6,8 +6,8 @@
 - [ ] Space made public before June 15, 2026
 - [ ] Demo video linked in Space README
 - [ ] Social post linked in Space README
-- [ ] Public GitHub repo linked in Space README
-- [ ] Repo includes Codex-attributed commits
+- [x] Public GitHub repo linked in Space README
+- [ ] Repo includes Codex-attributed feature commits
 
 ## Backyard AI Evidence
 
@@ -33,3 +33,10 @@
 - [ ] Sharing is Caring
 - [ ] Field Notes
 
+## Codex Track Evidence
+
+- [x] Public GitHub repo exists
+- [x] GitHub repo is linked from README
+- [x] Codex build log exists
+- [x] Agent trace exists
+- [ ] Meaningful feature commits include Codex co-author trailer

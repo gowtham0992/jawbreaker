@@ -29,6 +29,17 @@ Jawbreaker helps a real person pause before clicking, replying, or sending money
 - Social post: To be added before submission
 - Public GitHub repo: https://github.com/gowtham0992/jawbreaker
 
+## Built With Codex
+
+This project is being built with OpenAI Codex in the Codex desktop app. Codex is being used for planning, implementation, eval design, Gradio UI iteration, testing, deployment, and submission documentation.
+
+Codex evidence:
+
+- Public GitHub repo linked from this Space README.
+- Codex-attributed commits will be included for build work.
+- `AGENT_TRACE.md` records the development process.
+- `FIELD_NOTES.md` records product and technical decisions.
+
 ## Why This Is Small
 
 Jawbreaker is deliberately narrow. It does not try to be a general assistant or chatbot. It performs one safety task:
