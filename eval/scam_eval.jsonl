@@ -1,0 +1,7 @@
+{"id":"package_phish_001","input":"USPS: Your package is held due to an unpaid fee. Verify now: http://usps-track-secure.example","expected_risk_level":"dangerous","expected_scam_type":"credential_theft","expected_tactics":["urgency","suspicious link","fake authority"]}
+{"id":"family_impersonation_001","input":"Hi Grandma, I lost my phone. This is my new number. Can you send $800 for rent today? Please don't tell Mom.","expected_risk_level":"dangerous","expected_scam_type":"family_impersonation","expected_tactics":["impersonation","urgency","secrecy","payment pressure"]}
+{"id":"bank_safe_001","input":"Chase fraud alert: Did you attempt a $249.00 purchase at TARGET? Reply YES or NO.","expected_risk_level":"needs_check","expected_scam_type":"possible_legitimate_alert","expected_tactics":["verification needed"]}
+{"id":"gift_card_001","input":"This is your manager. I need you to buy three gift cards immediately and send me the codes. I am in a meeting.","expected_risk_level":"dangerous","expected_scam_type":"payment_request","expected_tactics":["fake authority","urgency","payment pressure"]}
+{"id":"safe_friend_001","input":"Running ten minutes late. See you at the restaurant soon.","expected_risk_level":"safe","expected_scam_type":"none","expected_tactics":[]}
+{"id":"password_reset_001","input":"Your email password expires today. Login now to keep access: https://mail-security-reset.example","expected_risk_level":"dangerous","expected_scam_type":"credential_theft","expected_tactics":["urgency","suspicious link","credential request"]}
+
