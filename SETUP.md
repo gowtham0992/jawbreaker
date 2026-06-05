@@ -5,7 +5,7 @@
 Project path:
 
 ```bash
-cd /Users/g/Desktop/hackathon/jawbreaker
+cd jawbreaker
 ```
 
 Current local repo:
@@ -70,4 +70,3 @@ Before final submission:
 - add social post link to `README.md`
 - add public GitHub repo link to `README.md`
 - document bonus badges and model choice
-

@@ -27,7 +27,7 @@ Jawbreaker helps a real person pause before clicking, replying, or sending money
 - Status: In development
 - Demo video: To be added before submission
 - Social post: To be added before submission
-- Public GitHub repo: To be added after repo creation
+- Public GitHub repo: https://github.com/gowtham0992/jawbreaker
 
 ## Why This Is Small
 
@@ -66,7 +66,7 @@ Decision criteria:
 
 ## Sponsor Eligibility Notes
 
-- OpenAI Codex Track: public GitHub repo with Codex-attributed commits linked here.
+- OpenAI Codex Track: public GitHub repo with Codex-attributed commits linked in this README.
 - OpenBMB Awards: possible if MiniCPM becomes the central model after bakeoff.
 - Modal Awards: possible if Modal is used for fine-tuning, evals, or deployment support and documented here.
 - NVIDIA Nemotron Quest: only if a NeMoTron model is used; currently not planned.
@@ -74,4 +74,3 @@ Decision criteria:
 ## Safety Boundary
 
 Jawbreaker is not legal, financial, or cybersecurity advice. It is a local-first safety aid that helps non-experts slow down and verify suspicious messages. The safest action should never ask the user to click the suspicious link or call a number from the suspicious message.
-
