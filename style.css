@@ -46,6 +46,18 @@
   transition: none !important;
 }
 
+.gradio-container .loading,
+.gradio-container .loading_status,
+.gradio-container .loading-status,
+.gradio-container .progress,
+.gradio-container .progress-text,
+.gradio-container .eta,
+.gradio-container [class*="loading_status"],
+.gradio-container [class*="loading-status"],
+.gradio-container [class*="progress-text"] {
+  display: none !important;
+}
+
 html,
 body,
 body.dark {
@@ -162,12 +174,16 @@ footer {
   justify-content: space-between;
   gap: 12px;
   background: var(--jb-black);
-  color: var(--jb-white);
+  color: var(--jb-white) !important;
   padding: 10px 16px;
   font-family: "Geist Mono", "SFMono-Regular", Consolas, monospace;
   font-size: 11px;
   font-weight: 800;
   line-height: 1;
+}
+
+.window-titlebar * {
+  color: var(--jb-white) !important;
 }
 
 .traffic-dots {
@@ -256,10 +272,11 @@ button.primary:hover {
 .check-btn:disabled,
 button.primary:disabled {
   background: #efefef !important;
-  color: #555555 !important;
+  color: #000000 !important;
   cursor: wait !important;
   transform: none !important;
   box-shadow: 3px 3px 0 var(--jb-black) !important;
+  opacity: 1 !important;
 }
 
 .scan-panel .examples {
@@ -676,16 +693,29 @@ button.primary:disabled {
 }
 
 .terminal-window {
-  background: #111111;
+  background: #111111 !important;
+  color: #32d74b !important;
 }
 
 .terminal-window .window-body {
   padding: 32px;
+  background: #111111 !important;
+  color: #32d74b !important;
+}
+
+.terminal-window,
+.terminal-window * {
+  text-shadow: none !important;
+}
+
+.terminal-window .window-titlebar,
+.terminal-window .window-titlebar * {
+  color: #ffffff !important;
 }
 
 .terminal-progress {
   margin: 0 0 24px;
-  color: #ff9800;
+  color: #ff9800 !important;
   font-family: "Geist Mono", "SFMono-Regular", Consolas, monospace;
   font-size: 15px;
   font-weight: 900;
@@ -700,14 +730,14 @@ button.primary:disabled {
 
 .terminal-log p {
   margin: 0;
-  color: #32d74b;
+  color: #32d74b !important;
   font-size: 12px;
   font-weight: 800;
   line-height: 1.35;
 }
 
 .terminal-log .terminal-muted {
-  color: #666666;
+  color: #9ca3af !important;
 }
 
 .save-status {
