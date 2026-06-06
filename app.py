@@ -13,7 +13,7 @@ from jawbreaker.analyzers import (
     prediction_to_analysis,
     validate_prediction,
 )
-from jawbreaker.render import render_analysis_html, render_memory_html
+from jawbreaker.render import render_analysis_html, render_memory_html, render_scanning_html
 from jawbreaker.schema import ScamAnalysis
 
 try:
@@ -27,6 +27,32 @@ EXAMPLES = [
     "Hi Grandma, I lost my phone. This is my new number. Can you send $800 for rent today? Please don't tell Mom.",
     "Chase fraud alert: Did you attempt a $249.00 purchase at TARGET? Reply YES or NO.",
 ]
+
+FORCE_LIGHT_JS = """() => {
+    const forceLight = () => document.body.classList.remove('dark');
+    forceLight();
+    new MutationObserver(forceLight).observe(document.body, {
+        attributes: true,
+        attributeFilter: ['class'],
+    });
+}"""
+
+FORCE_LIGHT_HEAD = """
+<script>
+(() => {
+  const forceLight = () => {
+    if (document.body) document.body.classList.remove("dark");
+  };
+  window.addEventListener("DOMContentLoaded", () => {
+    forceLight();
+    new MutationObserver(forceLight).observe(document.body, {
+      attributes: true,
+      attributeFilter: ["class"],
+    });
+  });
+})();
+</script>
+"""
 
 
 def app_theme() -> gr.Theme:
@@ -200,6 +226,9 @@ def analyze_message(
         "message": message,
         "entry": memory_entry_from_analysis(message, analysis),
     }
+    entry = last_scan["entry"]
+    if not memory or memory[-1].get("text") != entry.get("text"):
+        memory.append(entry)
     return render_analysis_html(message, analysis), analysis.trusted_person_message, render_memory_html(analysis, memory), memory, last_scan
 
 
@@ -245,6 +274,13 @@ def remember_current(message: str, memory: list[dict] | None, last_scan: dict | 
     return render_save_status("Saved this scam pattern for this session."), render_current_memory(memory), memory
 
 
+def start_scan(message: str) -> tuple[str, str]:
+    if not message.strip():
+        analysis = ScamAnalysis.from_heuristics(message, [])
+        return render_analysis_html(message, analysis), ""
+    return render_scanning_html(), ""
+
+
 def build_app() -> gr.Blocks:
     with gr.Blocks(title="Jawbreaker") as demo:
         memory_state = gr.State([])
@@ -253,12 +289,9 @@ def build_app() -> gr.Blocks:
         gr.HTML(
             """
             <section class="hero">
-              <div>
-                <p class="eyebrow">Backyard AI</p>
-                <h1>Jawbreaker</h1>
-                <p class="subtitle">Scam defense for someone you love.</p>
-              </div>
-              <div class="hero-badge">Small-model shield</div>
+              <p class="eyebrow">Backyard AI</p>
+              <h1>Jawbreaker</h1>
+              <p class="subtitle">Scam defense for someone you love.</p>
             </section>
             """
         )
@@ -279,9 +312,7 @@ def build_app() -> gr.Blocks:
                     lines=10,
                     max_lines=16,
                 )
-                with gr.Row():
-                    analyze = gr.Button("Check message", variant="primary")
-                    remember = gr.Button("Remember pattern")
+                analyze = gr.Button("Check this message", variant="primary", elem_classes=["check-btn"])
                 gr.Examples(examples=EXAMPLES, inputs=message, label="Try a sample")
 
             with gr.Column(scale=7):
@@ -303,19 +334,24 @@ def build_app() -> gr.Blocks:
                 memory = gr.HTML("<div class='memory-card muted'>No scam memory saved yet.</div>")
                 save_status = gr.HTML("<div class='save-status'></div>")
 
-        analyze.click(
+        scan_event = analyze.click(
+            fn=start_scan,
+            inputs=message,
+            outputs=[result, trusted_message],
+        )
+        scan_event.then(
             fn=analyze_message,
             inputs=[message, memory_state],
             outputs=[result, trusted_message, memory, memory_state, last_scan_state],
-        )
-        remember.click(
-            fn=remember_current,
-            inputs=[message, memory_state, last_scan_state],
-            outputs=[save_status, memory, memory_state],
         )
 
     return demo
 
 
 if __name__ == "__main__":
-    build_app().launch(theme=app_theme(), css=app_css())
+    build_app().launch(
+        theme=app_theme(),
+        css=app_css(),
+        js=FORCE_LIGHT_JS,
+        head=FORCE_LIGHT_HEAD,
+    )
