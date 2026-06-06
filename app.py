@@ -5,9 +5,20 @@ from time import perf_counter
 
 import gradio as gr
 
-from jawbreaker.analyzers import build_llama_cpp_analyzer, heuristic_analyzer, prediction_to_analysis, validate_prediction
+from jawbreaker.analyzers import (
+    build_llama_cpp_analyzer,
+    build_transformers_analyzer,
+    heuristic_analyzer,
+    prediction_to_analysis,
+    validate_prediction,
+)
 from jawbreaker.render import render_analysis_html, render_memory_html
 from jawbreaker.schema import ScamAnalysis
+
+try:
+    import spaces
+except ImportError:
+    spaces = None
 
 
 EXAMPLES = [
@@ -28,6 +39,12 @@ def app_theme() -> gr.Theme:
 
 def app_css() -> str:
     return Path("style.css").read_text(encoding="utf-8")
+
+
+def gpu_callback(fn):
+    if spaces is None:
+        return fn
+    return spaces.GPU(fn)
 
 
 def _env_int(name: str, default: int | None = None) -> int | None:
@@ -64,6 +81,15 @@ def get_analyzer():
             op_offload=_env_bool("JAWBREAKER_OP_OFFLOAD"),
             max_tokens=_env_int("JAWBREAKER_MAX_TOKENS", 256) or 256,
             temperature=float(os.getenv("JAWBREAKER_TEMPERATURE", "0")),
+        )
+
+    if backend in {"transformers", "zerogpu"}:
+        return build_transformers_analyzer(
+            os.getenv("JAWBREAKER_TRANSFORMERS_MODEL_ID", "Qwen/Qwen3-0.6B"),
+            max_new_tokens=_env_int("JAWBREAKER_MAX_TOKENS", 192) or 192,
+            temperature=float(os.getenv("JAWBREAKER_TEMPERATURE", "0")),
+            device_map=os.getenv("JAWBREAKER_DEVICE_MAP", "auto"),
+            dtype=os.getenv("JAWBREAKER_TORCH_DTYPE", "auto"),
         )
 
     raise ValueError(f"Unsupported JAWBREAKER_BACKEND: {backend}")
@@ -124,6 +150,7 @@ def should_use_heuristic_guard(
     return not has_dna and not has_tactics
 
 
+@gpu_callback
 def analyze_message(message: str, memory: list[dict] | None) -> tuple[str, str, list[dict]]:
     memory = memory or []
     try:
@@ -150,6 +177,7 @@ def analysis_error(exc: Exception) -> ScamAnalysis:
     )
 
 
+@gpu_callback
 def remember_current(message: str, memory: list[dict] | None) -> tuple[str, list[dict]]:
     memory = memory or []
     if not message.strip():

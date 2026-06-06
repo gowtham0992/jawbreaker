@@ -94,6 +94,20 @@ def prediction_file_analyzer(predictions: dict[str, Prediction], case_id: str) -
     return predictions[case_id]
 
 
+def load_json_prediction(content: str) -> Prediction:
+    try:
+        prediction = json.loads(content)
+    except json.JSONDecodeError:
+        start = content.find("{")
+        end = content.rfind("}")
+        if start == -1 or end == -1 or end <= start:
+            raise
+        prediction = json.loads(content[start : end + 1])
+    if not isinstance(prediction, dict):
+        raise ValueError("model response must be a JSON object")
+    return prediction
+
+
 def build_llama_cpp_analyzer(
     model_path: Path,
     *,
@@ -144,7 +158,50 @@ def build_llama_cpp_analyzer(
             temperature=temperature,
         )
         content = response["choices"][0]["message"]["content"]
-        return json.loads(content)
+        return load_json_prediction(content)
+
+    return analyze
+
+
+def build_transformers_analyzer(
+    model_id: str,
+    *,
+    max_new_tokens: int = 192,
+    temperature: float = 0.0,
+    device_map: str = "auto",
+    dtype: str = "auto",
+) -> Analyzer:
+    try:
+        import torch
+        from transformers import AutoModelForCausalLM, AutoTokenizer
+    except ImportError as exc:
+        raise SystemExit(
+            "torch and transformers are required for --backend transformers / ZeroGPU."
+        ) from exc
+
+    tokenizer = AutoTokenizer.from_pretrained(model_id)
+    model = AutoModelForCausalLM.from_pretrained(model_id, dtype=dtype, device_map=device_map)
+    model.eval()
+
+    def analyze(message: str) -> Prediction:
+        messages = [
+            {"role": "system", "content": SYSTEM_PROMPT},
+            {"role": "user", "content": USER_PROMPT_TEMPLATE.format(message=message)},
+        ]
+        prompt = tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
+        inputs = tokenizer(prompt, return_tensors="pt").to(model.device)
+        generation_kwargs: dict[str, Any] = {
+            "max_new_tokens": max_new_tokens,
+            "do_sample": temperature > 0,
+            "pad_token_id": tokenizer.eos_token_id,
+        }
+        if temperature > 0:
+            generation_kwargs["temperature"] = temperature
+        with torch.inference_mode():
+            output_ids = model.generate(**inputs, **generation_kwargs)
+        new_tokens = output_ids[0][inputs["input_ids"].shape[-1] :]
+        content = tokenizer.decode(new_tokens, skip_special_tokens=True)
+        return load_json_prediction(content)
 
     return analyze
 

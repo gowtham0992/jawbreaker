@@ -63,6 +63,16 @@ git remote add space https://huggingface.co/spaces/build-small-hackathon/jawbrea
 git push space main
 ```
 
+### ZeroGPU Mode
+
+For responsive model inference without paid hardware:
+
+- set Space hardware to `ZeroGPU`
+- set Space variable `JAWBREAKER_BACKEND=zerogpu`
+- keep `JAWBREAKER_TRANSFORMERS_MODEL_ID=Qwen/Qwen3-0.6B` unless the eval bakeoff picks a better small model
+
+CPU fallback remains available with `JAWBREAKER_BACKEND=llama-cpp`.
+
 Before final submission:
 
 - make the Space public

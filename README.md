@@ -2,6 +2,7 @@
 title: Jawbreaker
 sdk: gradio
 sdk_version: 6.16.0
+python_version: 3.12
 app_file: app.py
 license: mit
 short_description: Local-first scam defense for someone you love.
@@ -11,6 +12,7 @@ tags:
   - backyard-ai
   - local-first
   - llama-cpp
+  - zerogpu
 ---
 
 # Jawbreaker
@@ -51,7 +53,7 @@ Jawbreaker is deliberately narrow. It does not try to be a general assistant or 
 
 ## Model Plan
 
-The final app will use a local small model through `llama.cpp` / `llama-cpp-python`. Candidate models will be chosen by an eval bakeoff:
+The final app will use a local small model through `llama.cpp` / `llama-cpp-python` on CPU or Transformers on ZeroGPU. Candidate models will be chosen by an eval bakeoff:
 
 - Qwen3-0.6B GGUF Q4_K_M as the responsive CPU demo default
 - Qwen3-4B GGUF Q4_K_M

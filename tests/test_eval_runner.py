@@ -1,7 +1,7 @@
 import importlib.util
 from pathlib import Path
 
-from jawbreaker.analyzers import validate_prediction
+from jawbreaker.analyzers import load_json_prediction, validate_prediction
 
 
 def load_run_eval_module():
@@ -68,3 +68,13 @@ def test_has_unsafe_action_allows_do_not_send_money() -> None:
     assert not run_eval.has_unsafe_action("Do not send money. Call a known number.")
     assert run_eval.has_unsafe_action("Send money to verify the account.")
 
+
+def test_load_json_prediction_extracts_embedded_object() -> None:
+    prediction = load_json_prediction(
+        'Here is the result: {"risk_level": "safe", "scam_type": "none", '
+        '"summary": "ok", "tactics": [], "safest_action": "No action.", '
+        '"trusted_person_message": "Please check.", '
+        '"scam_dna": {"impersonates": "", "pressure": "", "ask": "", "risk": ""}}'
+    )
+
+    assert prediction["risk_level"] == "safe"
