@@ -251,11 +251,19 @@ def should_use_heuristic_guard(
 def analyze_message(
     message: str,
     memory: list[dict] | None,
-) -> tuple[str, str, str, list[dict], dict]:
+) -> tuple[str, str, str, list[dict], dict, dict, dict]:
     memory = memory or []
     if not message.strip():
         analysis = ScamAnalysis.from_heuristics(message, memory)
-        return render_analysis_html(message, analysis), "", render_memory_html(analysis, memory), memory, {}
+        return (
+            render_analysis_html(message, analysis),
+            "",
+            render_memory_html(analysis, memory),
+            memory,
+            {},
+            gr.update(interactive=True),
+            gr.update(interactive=True),
+        )
 
     try:
         analysis = run_analysis(message, memory)
@@ -267,6 +275,8 @@ def analyze_message(
             render_memory_html(analysis, memory),
             memory,
             {},
+            gr.update(interactive=True),
+            gr.update(interactive=True),
         )
 
     last_scan = {
@@ -282,6 +292,8 @@ def analyze_message(
         render_memory_html(analysis, memory),
         memory,
         last_scan,
+        gr.update(interactive=True),
+        gr.update(interactive=True),
     )
 
 
@@ -327,11 +339,11 @@ def remember_current(message: str, memory: list[dict] | None, last_scan: dict | 
     return render_save_status("Saved this scam pattern for this session."), render_current_memory(memory), memory
 
 
-def start_scan(message: str) -> tuple[str, str]:
+def start_scan(message: str) -> tuple[str, str, dict, dict]:
     if not message.strip():
         analysis = ScamAnalysis.from_heuristics(message, [])
-        return render_analysis_html(message, analysis), ""
-    return render_scanning_html(), ""
+        return render_analysis_html(message, analysis), "", gr.update(interactive=True), gr.update(interactive=True)
+    return render_scanning_html(), "", gr.update(interactive=False), gr.update(interactive=False)
 
 
 COPY_HANDOFF_JS = """(text) => {
@@ -385,16 +397,24 @@ def build_app() -> gr.Blocks:
             with gr.Column(scale=7):
                 result = gr.HTML(
                     """
-                    <section class="retro-window empty-state">
-                      <div class="window-titlebar"><span>waiting_for_input.sys</span></div>
-                      <div class="window-body">
-                        <div class="empty-terminal">
-                          <p class="terminal-label">STATUS:</p>
-                          <h2>Paste a message to begin scan.</h2>
-                          <p>Jawbreaker will classify the threat, explain the scam DNA, and generate a safe copy plan.</p>
+                    <div class="home-stack">
+                      <section class="retro-window status-window">
+                        <div class="window-titlebar"><span>system_status.log</span></div>
+                        <div class="window-body status-body">
+                          <p class="standing-by">SYSTEM STANDING BY</p>
+                          <h2>Jawbreaker is ready to shield your loved ones from digital fraud.</h2>
+                          <p>Paste any text message, email, or DM on the left. The local model will evaluate risk factors, unpack the scam strategy, and deliver a plain-English protection plan.</p>
                         </div>
-                      </div>
-                    </section>
+                      </section>
+                      <section class="retro-window guide-window">
+                        <div class="window-titlebar"><span>quick_start_manual.txt</span></div>
+                        <div class="window-body guide-body">
+                          <p>1. Copy a text message from your phone or an email that feels off.</p>
+                          <p>2. Paste it into the input area on the left of this screen.</p>
+                          <p>3. Click RUN SCAM DETECTOR to analyze it with private local AI.</p>
+                        </div>
+                      </section>
+                    </div>
                     """
                 )
                 with gr.Row(elem_classes=["handoff-bar"]):
@@ -413,13 +433,13 @@ def build_app() -> gr.Blocks:
         scan_event = analyze.click(
             fn=start_scan,
             inputs=message,
-            outputs=[result, trusted_message],
+            outputs=[result, trusted_message, message, analyze],
             show_progress="hidden",
         )
         scan_event.then(
             fn=analyze_message,
             inputs=[message, memory_state],
-            outputs=[result, trusted_message, memory, memory_state, last_scan_state],
+            outputs=[result, trusted_message, memory, memory_state, last_scan_state, message, analyze],
             show_progress="hidden",
         )
         demo.load(

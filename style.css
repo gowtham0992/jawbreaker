@@ -220,6 +220,12 @@ footer {
   box-shadow: 3px 3px 0 var(--jb-yellow) !important;
 }
 
+.scan-panel textarea:disabled {
+  background: #f0f0ee !important;
+  border-color: #666666 !important;
+  color: #444444 !important;
+}
+
 .scan-panel .block,
 .scan-panel .form,
 .scan-panel > div:not(.input-titlebar) {
@@ -245,6 +251,15 @@ button.primary {
 button.primary:hover {
   transform: translate(1px, 1px);
   box-shadow: 2px 2px 0 var(--jb-black) !important;
+}
+
+.check-btn:disabled,
+button.primary:disabled {
+  background: #efefef !important;
+  color: #555555 !important;
+  cursor: wait !important;
+  transform: none !important;
+  box-shadow: 3px 3px 0 var(--jb-black) !important;
 }
 
 .scan-panel .examples {
@@ -295,6 +310,66 @@ button.primary:hover {
   display: flex;
   flex-direction: column;
   gap: 32px;
+}
+
+.home-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.status-body {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  gap: 16px;
+  padding: 32px;
+  text-align: center;
+}
+
+.standing-by {
+  margin: 0;
+  color: #ff9800;
+  font-family: "Geist Mono", "SFMono-Regular", Consolas, monospace;
+  font-size: 16px;
+  font-weight: 900;
+}
+
+.status-body h2 {
+  max-width: 560px;
+  margin: 0;
+  color: var(--jb-black);
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 25px;
+  font-weight: 900;
+  line-height: 1.12;
+}
+
+.status-body p:last-child {
+  max-width: 620px;
+  margin: 0;
+  color: #444444;
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.guide-window {
+  background: #f9f9f6;
+}
+
+.guide-body {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 24px;
+}
+
+.guide-body p {
+  margin: 0;
+  color: var(--jb-black);
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.35;
 }
 
 .verdict-window.risk-dangerous {
@@ -598,6 +673,41 @@ button.primary:hover {
 
 .scan-step.active {
   background: var(--jb-yellow);
+}
+
+.terminal-window {
+  background: #111111;
+}
+
+.terminal-window .window-body {
+  padding: 32px;
+}
+
+.terminal-progress {
+  margin: 0 0 24px;
+  color: #ff9800;
+  font-family: "Geist Mono", "SFMono-Regular", Consolas, monospace;
+  font-size: 15px;
+  font-weight: 900;
+}
+
+.terminal-log {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  font-family: "Geist Mono", "SFMono-Regular", Consolas, monospace;
+}
+
+.terminal-log p {
+  margin: 0;
+  color: #32d74b;
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 1.35;
+}
+
+.terminal-log .terminal-muted {
+  color: #666666;
 }
 
 .save-status {

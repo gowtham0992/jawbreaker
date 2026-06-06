@@ -51,16 +51,24 @@ def render_window(title: str, body: str, class_name: str = "") -> str:
 def render_analysis_html(message: str, analysis: ScamAnalysis) -> str:
     if not message.strip():
         return """
-        <section class="retro-window empty-state">
-          <div class="window-titlebar"><span>waiting_for_input.sys</span></div>
-          <div class="window-body">
-            <div class="empty-terminal">
-              <p class="terminal-label">STATUS:</p>
-              <h2>Paste a message to begin scan.</h2>
-              <p>Jawbreaker will classify the threat, explain the scam DNA, and generate a safe copy plan.</p>
+        <div class="home-stack">
+          <section class="retro-window status-window">
+            <div class="window-titlebar"><span>system_status.log</span></div>
+            <div class="window-body status-body">
+              <p class="standing-by">SYSTEM STANDING BY</p>
+              <h2>Jawbreaker is ready to shield your loved ones from digital fraud.</h2>
+              <p>Paste any text message, email, or DM on the left. The local model will evaluate risk factors, unpack the scam strategy, and deliver a plain-English protection plan.</p>
             </div>
-          </div>
-        </section>
+          </section>
+          <section class="retro-window guide-window">
+            <div class="window-titlebar"><span>quick_start_manual.txt</span></div>
+            <div class="window-body guide-body">
+              <p>1. Copy a text message from your phone or an email that feels off.</p>
+              <p>2. Paste it into the input area on the left of this screen.</p>
+              <p>3. Click RUN SCAM DETECTOR to analyze it with private local AI.</p>
+            </div>
+          </section>
+        </div>
         """
 
     tactic_html = "".join(f"<span class='tactic'>{escape(tactic)}</span>" for tactic in analysis.tactics)
@@ -113,14 +121,16 @@ def render_analysis_html(message: str, analysis: ScamAnalysis) -> str:
 
 def render_scanning_html() -> str:
     return """
-    <section class="retro-window scanning-state">
-      <div class="window-titlebar"><span>running_detector.job</span></div>
+    <section class="retro-window scanning-state terminal-window">
+      <div class="window-titlebar"><span>scanning_in_progress.sh</span></div>
       <div class="window-body">
-        <h2>RUNNING SCAM DETECTOR...</h2>
-        <div class="scan-steps">
-          <div class="scan-step done">READ_MESSAGE: OK</div>
-          <div class="scan-step active">MATCH_SCAM_SIGNATURES: RUNNING</div>
-          <div class="scan-step pending">BUILD_SAFE_REMEDY: QUEUED</div>
+        <p class="terminal-progress">[██████████░░] 84% COMPLETE</p>
+        <div class="terminal-log">
+          <p>> importing offline AI model runtime...</p>
+          <p>> checking message semantics and urgency markers...</p>
+          <p>> comparing against known scam signatures...</p>
+          <p>> building safe response plan...</p>
+          <p class="terminal-muted">> finalizing report...</p>
         </div>
       </div>
     </section>
