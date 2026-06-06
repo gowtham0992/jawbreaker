@@ -30,6 +30,7 @@ Jawbreaker should compete hard without gaming the hackathon.
 - `training/data/test.jsonl` and `eval/generated_eval.jsonl` are holdout data and should not be used for LoRA training.
 - A LoRA adapter should only be deployed if it improves valid JSON and safety metrics without increasing dangerous false negatives.
 - If synthetic training mostly teaches format-following, say that. Do not describe it as learning from real scam victims.
+- If Modal is used, include the Modal command, training output, and whether an adapter was actually published.
 
 ## Demo Rules
 

@@ -66,6 +66,39 @@ python3 training/train_lora.py \
   --output-dir training/output/jawbreaker-minicpm-lora
 ```
 
+## Fine-Tune on Modal
+
+Modal is the preferred training path because the hackathon gives Modal credits and MiniCPM4.1-8B should be trained on real GPU hardware, not inside the Hugging Face Space runtime.
+
+One-time local setup:
+
+```bash
+pip install modal
+modal setup
+```
+
+Create a Modal secret named `huggingface-secret` with an `HF_TOKEN` value that can read the base model and push to your Hugging Face account:
+
+```bash
+modal secret create huggingface-secret HF_TOKEN=hf_...
+```
+
+Run training on Modal:
+
+```bash
+modal run training/modal_train.py
+```
+
+Publish the adapter for the Well-Tuned badge only after eval says it is better:
+
+```bash
+modal run training/modal_train.py \
+  --push-to-hub \
+  --hub-model-id gowtham0992/jawbreaker-minicpm-lora
+```
+
+The Modal job writes checkpoints to the `jawbreaker-training` Modal volume under `/outputs`.
+
 To publish the adapter for the Well-Tuned badge:
 
 ```bash
