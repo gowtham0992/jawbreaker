@@ -26,7 +26,7 @@ Jawbreaker helps a real person pause before clicking, replying, or sending money
 - Event: Hugging Face Build Small Hackathon
 - Track: Backyard AI
 - App: Gradio Space under `build-small-hackathon`
-- Status: In development
+- Status: MVP deployed; demo/story polish in progress
 - Demo video: To be added before submission
 - Social post: To be added before submission
 - Public GitHub repo: https://github.com/gowtham0992/jawbreaker
@@ -51,39 +51,41 @@ Jawbreaker is deliberately narrow. It does not try to be a general assistant or 
 3. Give one clear safe action.
 4. Help the user ask someone they trust.
 
-## Model Plan
+## Model Runtime
 
-The final app will use a local small model through `llama.cpp` / `llama-cpp-python` on CPU or Transformers on ZeroGPU. Candidate models will be chosen by an eval bakeoff:
+The deployed Space uses `Qwen/Qwen3-0.6B` through Hugging Face Transformers on ZeroGPU.
 
-- Qwen3-0.6B GGUF Q4_K_M as the responsive CPU demo default
-- Qwen3-4B GGUF Q4_K_M
-- Qwen3-8B GGUF Q4_K_M
-- MiniCPM4-8B GGUF Q4_K_M
+Why this model:
 
-Decision criteria:
+- It is small enough for a responsive safety demo.
+- It keeps the app under the hackathon model-size limit.
+- It avoids external commercial model APIs.
+- It can produce the structured JSON that Jawbreaker validates before rendering.
 
-- valid JSON output
-- low false positives on legitimate messages
-- no dangerous scams labeled safe
-- safe recommended actions
-- short, clear explanations
-- acceptable latency for judges
+The local/eval path still supports GGUF models through `llama-cpp-python`, including `unsloth/Qwen3-0.6B-GGUF`. The larger CPU GGUF path was kept as evidence and tooling, not as the deployed demo path, because judge-facing cold-start latency matters more than theoretical runtime purity.
+
+Safety architecture:
+
+- Model output must parse as JSON and match the required schema.
+- A deterministic heuristic guard catches weak model outputs that under-call obvious danger.
+- The UI always recommends verification through official channels or a known phone number, never the suspicious link or number.
+- Session memory is local to the current Gradio session and helps show repeated scam patterns.
 
 ## Bonus Badges Targeted
 
 - Off the Grid: local model inference, no cloud APIs for scam analysis.
-- Llama Champion: model runs through the llama.cpp runtime.
+- Llama Champion: local/eval tooling supports the llama.cpp runtime.
 - Off-Brand: custom Gradio UI beyond the default look.
-- Well-Tuned: conditional; only if the MVP is stable early enough.
+- Well-Tuned: cut; the project prioritized safe inference, evals, and product quality over a rushed fine-tune.
 - Sharing is Caring: Codex/agent trace published in this repo.
 - Field Notes: build report published before submission.
 
 ## Sponsor Eligibility Notes
 
 - OpenAI Codex Track: public GitHub repo with Codex-attributed commits linked in this README.
-- OpenBMB Awards: possible if MiniCPM becomes the central model after bakeoff.
-- Modal Awards: possible if Modal is used for fine-tuning, evals, or deployment support and documented here.
-- NVIDIA Nemotron Quest: only if a NeMoTron model is used; currently not planned.
+- OpenBMB Awards: not currently targeted; MiniCPM is not the deployed model.
+- Modal Awards: not currently targeted; Modal is not part of the deployment path.
+- NVIDIA Nemotron Quest: not targeted; no NeMoTron model is used.
 
 ## Safety Boundary
 

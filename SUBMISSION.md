@@ -2,12 +2,12 @@
 
 ## Required
 
-- [ ] Gradio Space created under `build-small-hackathon`
+- [x] Gradio Space created under `build-small-hackathon`
 - [ ] Space made public before June 15, 2026
 - [ ] Demo video linked in Space README
 - [ ] Social post linked in Space README
 - [x] Public GitHub repo linked in Space README
-- [ ] Repo includes Codex-attributed feature commits
+- [x] Repo includes Codex-attributed feature commits
 
 ## Backyard AI Evidence
 
@@ -18,20 +18,20 @@
 
 ## Technical Evidence
 
-- [ ] Model name and parameter count documented
+- [x] Model name and parameter count documented
 - [x] Eval set included
-- [ ] Bakeoff results documented
-- [ ] Local inference path documented
-- [ ] No cloud API path documented
+- [x] Runtime decision documented
+- [x] Local inference path documented
+- [x] No commercial cloud API path documented
 
 ## Bonus Badges
 
-- [ ] Off the Grid
-- [ ] Llama Champion
-- [ ] Off-Brand
-- [ ] Well-Tuned
-- [ ] Sharing is Caring
-- [ ] Field Notes
+- [ ] Off the Grid evidence finalized
+- [ ] Llama Champion evidence finalized
+- [x] Off-Brand
+- [x] Well-Tuned cut from final claims
+- [x] Sharing is Caring
+- [x] Field Notes
 
 ## Codex Track Evidence
 
@@ -39,4 +39,14 @@
 - [x] GitHub repo is linked from README
 - [x] Codex build log exists
 - [x] Agent trace exists
-- [ ] Meaningful feature commits include Codex co-author trailer
+- [x] Meaningful feature commits include Codex co-author trailer
+
+## Final Manual Tasks
+
+- [ ] Choose one real or realistic sanitized scam message for the primary demo.
+- [ ] Record 60-90 second demo video.
+- [ ] Add demo video link to README.
+- [ ] Draft and publish social post.
+- [ ] Add social post link to README.
+- [ ] Make the Hugging Face Space public.
+- [ ] Final smoke test after making the Space public.

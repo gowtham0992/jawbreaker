@@ -21,6 +21,12 @@ Primary metrics:
 
 The eval intentionally includes legitimate alerts and ordinary messages. A scam detector that calls everything dangerous is not useful for the person Jawbreaker is built to protect.
 
+## Current Runtime Decision
+
+The deployed Space uses `Qwen/Qwen3-0.6B` through Transformers on ZeroGPU.
+
+The GGUF / `llama-cpp-python` path remains available for local eval and badge evidence, but it is not the primary live demo path. The live app also uses a deterministic heuristic guard so an obvious high-risk scam is not rendered as safe if the small model under-calls the risk.
+
 ## Running Backends
 
 Heuristic baseline:
