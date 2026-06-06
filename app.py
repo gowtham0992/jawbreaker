@@ -45,7 +45,7 @@ def _env_bool(name: str, default: bool | None = None) -> bool | None:
 
 @lru_cache(maxsize=1)
 def get_analyzer():
-    backend = os.getenv("JAWBREAKER_BACKEND", "heuristic").strip().lower()
+    backend = os.getenv("JAWBREAKER_BACKEND", "llama-cpp").strip().lower()
     if backend == "heuristic":
         return heuristic_analyzer
 
