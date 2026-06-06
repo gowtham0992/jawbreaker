@@ -1,4 +1,5 @@
 from jawbreaker.schema import ScamAnalysis
+from jawbreaker.analyzers import prediction_to_analysis
 
 
 def test_family_impersonation_is_dangerous() -> None:
@@ -19,3 +20,26 @@ def test_legitimate_fraud_alert_needs_check_not_dangerous() -> None:
     assert analysis.risk_level == "needs_check"
     assert analysis.scam_type == "possible_legitimate_alert"
 
+
+def test_prediction_to_analysis_normalizes_model_json() -> None:
+    analysis = prediction_to_analysis(
+        {
+            "risk_level": "not_valid",
+            "scam_type": "package_phishing",
+            "summary": "Fake delivery notice.",
+            "tactics": ["fake authority"],
+            "safest_action": "Open the official carrier website yourself.",
+            "trusted_person_message": "Can you check this?",
+            "scam_dna": {
+                "impersonates": "USPS",
+                "pressure": "Held package",
+                "ask": "Open link",
+                "risk": "credential theft",
+            },
+        },
+        similar_memory="This resembles a saved pattern.",
+    )
+
+    assert analysis.risk_level == "needs_check"
+    assert analysis.scam_dna["Impersonates"] == "USPS"
+    assert analysis.similar_memory == "This resembles a saved pattern."

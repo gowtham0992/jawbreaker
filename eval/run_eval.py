@@ -51,6 +51,10 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--n-ctx", type=int, default=4096)
     parser.add_argument("--n-threads", type=int)
     parser.add_argument("--n-gpu-layers", type=int, default=0)
+    parser.add_argument("--n-batch", type=int, default=512)
+    parser.add_argument("--n-ubatch", type=int, default=512)
+    parser.add_argument("--offload-kqv", action=argparse.BooleanOptionalAction, default=True)
+    parser.add_argument("--op-offload", action=argparse.BooleanOptionalAction)
     parser.add_argument("--max-tokens", type=int, default=512)
     parser.add_argument("--temperature", type=float, default=0.0)
     return parser.parse_args()
@@ -131,6 +135,10 @@ def build_analyzer(args: argparse.Namespace):
             n_ctx=args.n_ctx,
             n_threads=args.n_threads,
             n_gpu_layers=args.n_gpu_layers,
+            n_batch=args.n_batch,
+            n_ubatch=args.n_ubatch,
+            offload_kqv=args.offload_kqv,
+            op_offload=args.op_offload,
             max_tokens=args.max_tokens,
             temperature=args.temperature,
         )

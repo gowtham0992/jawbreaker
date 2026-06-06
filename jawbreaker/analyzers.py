@@ -30,6 +30,46 @@ def analysis_to_prediction(analysis: ScamAnalysis) -> Prediction:
     }
 
 
+def prediction_to_analysis(prediction: Prediction, *, similar_memory: str = "") -> ScamAnalysis:
+    risk_level = prediction.get("risk_level")
+    if risk_level not in {"dangerous", "suspicious", "needs_check", "safe"}:
+        risk_level = "needs_check"
+
+    tactics = prediction.get("tactics", [])
+    if not isinstance(tactics, list):
+        tactics = []
+
+    scam_dna = prediction.get("scam_dna", {})
+    if not isinstance(scam_dna, dict):
+        scam_dna = {}
+
+    return ScamAnalysis(
+        risk_level=str(risk_level),
+        scam_type=str(prediction.get("scam_type", "unknown")),
+        summary=str(prediction.get("summary", "This message should be checked before anyone acts.")),
+        tactics=[str(tactic) for tactic in tactics],
+        safest_action=str(
+            prediction.get(
+                "safest_action",
+                "Do not click links or reply. Verify through an official app, website, or known phone number.",
+            )
+        ),
+        trusted_person_message=str(
+            prediction.get(
+                "trusted_person_message",
+                "Can you check this for me before I respond or click anything?",
+            )
+        ),
+        scam_dna={
+            "Impersonates": str(scam_dna.get("impersonates", "")),
+            "Pressure": str(scam_dna.get("pressure", "")),
+            "Ask": str(scam_dna.get("ask", "")),
+            "Risk": str(scam_dna.get("risk", "")),
+        },
+        similar_memory=similar_memory,
+    )
+
+
 def heuristic_analyzer(message: str) -> Prediction:
     return analysis_to_prediction(ScamAnalysis.from_heuristics(message))
 
@@ -61,6 +101,10 @@ def build_llama_cpp_analyzer(
     n_ctx: int = 4096,
     n_threads: int | None = None,
     n_gpu_layers: int = 0,
+    n_batch: int = 512,
+    n_ubatch: int = 512,
+    offload_kqv: bool = True,
+    op_offload: bool | None = None,
     max_tokens: int = 512,
     temperature: float = 0.0,
 ) -> Analyzer:
@@ -75,8 +119,13 @@ def build_llama_cpp_analyzer(
         "model_path": str(model_path),
         "n_ctx": n_ctx,
         "n_gpu_layers": n_gpu_layers,
+        "n_batch": n_batch,
+        "n_ubatch": n_ubatch,
+        "offload_kqv": offload_kqv,
         "verbose": False,
     }
+    if op_offload is not None:
+        kwargs["op_offload"] = op_offload
     if chat_format:
         kwargs["chat_format"] = chat_format
     if n_threads is not None:
@@ -132,4 +181,3 @@ def write_predictions(path: Path, rows: Iterable[dict], predictions: dict[str, P
         case_id = row["id"]
         lines.append(json.dumps({"id": case_id, "prediction": predictions[case_id]}, ensure_ascii=True))
     path.write_text("\n".join(lines) + "\n", encoding="utf-8")
-
