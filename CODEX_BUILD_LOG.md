@@ -27,7 +27,7 @@ Codex helped expand the initial seed eval into a 100-case labeled dataset and up
 
 Codex then made the eval runner backend-aware so the same 100 cases can score the heuristic stub, saved JSONL predictions, or local GGUF models through `llama-cpp-python`.
 
-## Runtime Pivot
+## Runtime Pivots
 
 Codex helped compare the practical runtime paths and move the deployed app to Transformers on ZeroGPU with `Qwen/Qwen3-0.6B`.
 
@@ -40,3 +40,5 @@ Follow-up hardening included:
 - deterministic heuristic guardrails for obvious scam danger
 - hidden model warmup on Space load
 - Gradio loading and dark-mode fixes for a stable demo surface
+
+Codex then helped pivot the deployed default to `openbmb/MiniCPM4.1-8B` for OpenBMB sponsor eligibility. The app now exposes `JAWBREAKER_TRUST_REMOTE_CODE` so MiniCPM can load through Transformers while keeping the Qwen default available as an environment-variable fallback if Space latency becomes unacceptable.

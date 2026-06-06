@@ -10,6 +10,8 @@ tags:
   - gradio
   - build-small-hackathon
   - backyard-ai
+  - openbmb
+  - minicpm
   - local-first
   - llama-cpp
   - zerogpu
@@ -53,16 +55,17 @@ Jawbreaker is deliberately narrow. It does not try to be a general assistant or 
 
 ## Model Runtime
 
-The deployed Space uses `Qwen/Qwen3-0.6B` through Hugging Face Transformers on ZeroGPU.
+The deployed Space uses `openbmb/MiniCPM4.1-8B` through Hugging Face Transformers on ZeroGPU.
 
 Why this model:
 
-- It is small enough for a responsive safety demo.
-- It keeps the app under the hackathon model-size limit.
+- It makes OpenBMB MiniCPM central to the app, matching the hackathon sponsor track.
+- It is still well below the 32B parameter limit and fits the "small model" constraint honestly.
+- MiniCPM4.1 is built for efficient end-side inference, which fits Jawbreaker's local-first safety premise.
 - It avoids external commercial model APIs.
 - It can produce the structured JSON that Jawbreaker validates before rendering.
 
-The local/eval path still supports GGUF models through `llama-cpp-python`, including `unsloth/Qwen3-0.6B-GGUF`. The larger CPU GGUF path was kept as evidence and tooling, not as the deployed demo path, because judge-facing cold-start latency matters more than theoretical runtime purity.
+The local/eval path still supports GGUF models through `llama-cpp-python`, including Qwen and MiniCPM GGUF candidates. The CPU GGUF path is kept as evidence and tooling, while the judge-facing Space uses ZeroGPU because first-click cold-start latency matters for the product experience.
 
 Safety architecture:
 
@@ -83,7 +86,7 @@ Safety architecture:
 ## Sponsor Eligibility Notes
 
 - OpenAI Codex Track: public GitHub repo with Codex-attributed commits linked in this README.
-- OpenBMB Awards: not currently targeted; MiniCPM is not the deployed model.
+- OpenBMB Awards: targeted; MiniCPM is the deployed model and performs the central scam analysis.
 - Modal Awards: not currently targeted; Modal is not part of the deployment path.
 - NVIDIA Nemotron Quest: not targeted; no NeMoTron model is used.
 

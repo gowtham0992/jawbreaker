@@ -69,7 +69,9 @@ For responsive model inference without paid hardware:
 
 - set Space hardware to `ZeroGPU`
 - set Space variable `JAWBREAKER_BACKEND=zerogpu`
-- keep `JAWBREAKER_TRANSFORMERS_MODEL_ID=Qwen/Qwen3-0.6B` unless the eval bakeoff picks a better small model
+- keep `JAWBREAKER_TRANSFORMERS_MODEL_ID=openbmb/MiniCPM4.1-8B` for the OpenBMB-targeted build
+- keep `JAWBREAKER_TRUST_REMOTE_CODE=true`; MiniCPM requires custom model code through Transformers
+- fallback model if latency is unacceptable: `Qwen/Qwen3-0.6B`
 
 CPU fallback remains available with `JAWBREAKER_BACKEND=llama-cpp`.
 

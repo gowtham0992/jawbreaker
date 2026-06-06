@@ -23,9 +23,11 @@ The eval intentionally includes legitimate alerts and ordinary messages. A scam 
 
 ## Current Runtime Decision
 
-The deployed Space uses `Qwen/Qwen3-0.6B` through Transformers on ZeroGPU.
+The deployed Space uses `openbmb/MiniCPM4.1-8B` through Transformers on ZeroGPU to make OpenBMB MiniCPM central to the app.
 
 The GGUF / `llama-cpp-python` path remains available for local eval and badge evidence, but it is not the primary live demo path. The live app also uses a deterministic heuristic guard so an obvious high-risk scam is not rendered as safe if the small model under-calls the risk.
+
+If MiniCPM Space latency is unacceptable during final demo testing, `Qwen/Qwen3-0.6B` remains the fallback via `JAWBREAKER_TRANSFORMERS_MODEL_ID`.
 
 ## Running Backends
 

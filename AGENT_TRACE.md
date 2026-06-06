@@ -34,12 +34,15 @@ Codex helped:
 - redesign the Gradio UI around a calm safety-card experience
 - add copyable trusted-person handoff text
 - patch Gradio dark-mode/loading-opacity leakage
+- pivot the deployed model default to `openbmb/MiniCPM4.1-8B` for OpenBMB eligibility
+- add `trust_remote_code` support for MiniCPM's Transformers loader path
 
 Current decisions:
 
-- Deployed model: `Qwen/Qwen3-0.6B`.
+- Deployed model: `openbmb/MiniCPM4.1-8B`.
 - Deployed backend: Transformers on ZeroGPU.
 - Local/eval model path: llama-cpp-python remains available for GGUF models.
 - Fine-tuning: cut for this submission.
 - Primary badges: Off-Brand, Sharing is Caring, Field Notes.
 - Defensible badges: Off the Grid and Llama Champion, documented carefully.
+- Sponsor target: OpenBMB, because MiniCPM is now central to the app.

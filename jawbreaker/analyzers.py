@@ -178,6 +178,7 @@ def build_transformers_analyzer(
     temperature: float = 0.0,
     device_map: str = "auto",
     dtype: str = "auto",
+    trust_remote_code: bool = False,
 ) -> Analyzer:
     try:
         import torch
@@ -189,11 +190,17 @@ def build_transformers_analyzer(
 
     started = perf_counter()
     print(
-        f"jawbreaker transformers load_start model_id={model_id} device_map={device_map} dtype={dtype}",
+        "jawbreaker transformers load_start "
+        f"model_id={model_id} device_map={device_map} dtype={dtype} trust_remote_code={trust_remote_code}",
         flush=True,
     )
-    tokenizer = AutoTokenizer.from_pretrained(model_id)
-    model = AutoModelForCausalLM.from_pretrained(model_id, dtype=dtype, device_map=device_map)
+    tokenizer = AutoTokenizer.from_pretrained(model_id, trust_remote_code=trust_remote_code)
+    model = AutoModelForCausalLM.from_pretrained(
+        model_id,
+        dtype=dtype,
+        device_map=device_map,
+        trust_remote_code=trust_remote_code,
+    )
     model.eval()
     device = getattr(model, "device", "unknown")
     hf_device_map = getattr(model, "hf_device_map", None)

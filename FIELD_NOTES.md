@@ -46,6 +46,19 @@ What was cut:
 
 - Fine-tuning. The project does not have enough separate training data to fine-tune responsibly without overfitting.
 - Multi-model switching UI. It adds confusion without helping the person the tool is built for.
-- Additional sponsor-specific runtime pivots. A stable Backyard AI submission matters more than chasing every possible badge.
+- Additional sponsor-specific runtime pivots beyond OpenBMB. A stable Backyard AI submission matters more than chasing every possible badge.
 
 Current remaining field-work need: collect or choose one realistic, sanitized scam story for the demo video. The story should show a person pasting a suspicious message, receiving one safe action, and copying the trusted-person handoff.
+
+## 2026-06-06 OpenBMB Pivot
+
+Kickoff made clear that MiniCPM needs to be central for OpenBMB award eligibility. Jawbreaker moved the deployed ZeroGPU default from `Qwen/Qwen3-0.6B` to `openbmb/MiniCPM4.1-8B`.
+
+Why:
+
+- MiniCPM is now the primary scam-analysis model, not a side mention.
+- The model remains under the 32B limit and fits the small-model theme.
+- The OpenBMB model family is explicitly positioned for efficient local and edge deployment.
+- The heuristic guard remains in place so obvious scam danger is not under-called if the model output is weak or malformed.
+
+Fallback plan: if Space latency or memory behavior is unacceptable, switch `JAWBREAKER_TRANSFORMERS_MODEL_ID` back to `Qwen/Qwen3-0.6B` and document the OpenBMB bakeoff result honestly.

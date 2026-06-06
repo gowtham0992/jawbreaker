@@ -136,11 +136,12 @@ def get_analyzer():
 
     if backend in {"transformers", "zerogpu"}:
         return build_transformers_analyzer(
-            os.getenv("JAWBREAKER_TRANSFORMERS_MODEL_ID", "Qwen/Qwen3-0.6B"),
+            os.getenv("JAWBREAKER_TRANSFORMERS_MODEL_ID", "openbmb/MiniCPM4.1-8B"),
             max_new_tokens=_env_int("JAWBREAKER_MAX_TOKENS", 192) or 192,
             temperature=float(os.getenv("JAWBREAKER_TEMPERATURE", "0")),
             device_map=os.getenv("JAWBREAKER_DEVICE_MAP", "auto"),
             dtype=os.getenv("JAWBREAKER_TORCH_DTYPE", "auto"),
+            trust_remote_code=_env_bool("JAWBREAKER_TRUST_REMOTE_CODE", True) or False,
         )
 
     raise ValueError(f"Unsupported JAWBREAKER_BACKEND: {backend}")
