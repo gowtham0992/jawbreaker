@@ -179,6 +179,7 @@ def build_transformers_analyzer(
     device_map: str = "auto",
     dtype: str = "auto",
     trust_remote_code: bool = False,
+    attn_implementation: str | None = None,
 ) -> Analyzer:
     try:
         import torch
@@ -191,15 +192,21 @@ def build_transformers_analyzer(
     started = perf_counter()
     print(
         "jawbreaker transformers load_start "
-        f"model_id={model_id} device_map={device_map} dtype={dtype} trust_remote_code={trust_remote_code}",
+        f"model_id={model_id} device_map={device_map} dtype={dtype} "
+        f"trust_remote_code={trust_remote_code} attn_implementation={attn_implementation}",
         flush=True,
     )
     tokenizer = AutoTokenizer.from_pretrained(model_id, trust_remote_code=trust_remote_code)
+    model_kwargs: dict[str, Any] = {
+        "dtype": dtype,
+        "device_map": device_map,
+        "trust_remote_code": trust_remote_code,
+    }
+    if attn_implementation:
+        model_kwargs["attn_implementation"] = attn_implementation
     model = AutoModelForCausalLM.from_pretrained(
         model_id,
-        dtype=dtype,
-        device_map=device_map,
-        trust_remote_code=trust_remote_code,
+        **model_kwargs,
     )
     model.eval()
     device = getattr(model, "device", "unknown")

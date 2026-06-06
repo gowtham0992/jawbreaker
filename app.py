@@ -142,6 +142,7 @@ def get_analyzer():
             device_map=os.getenv("JAWBREAKER_DEVICE_MAP", "auto"),
             dtype=os.getenv("JAWBREAKER_TORCH_DTYPE", "auto"),
             trust_remote_code=_env_bool("JAWBREAKER_TRUST_REMOTE_CODE", True) or False,
+            attn_implementation=os.getenv("JAWBREAKER_ATTENTION_IMPLEMENTATION", "eager") or None,
         )
 
     raise ValueError(f"Unsupported JAWBREAKER_BACKEND: {backend}")

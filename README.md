@@ -43,6 +43,7 @@ Codex evidence:
 - Codex-attributed commits will be included for build work.
 - `AGENT_TRACE.md` records the development process.
 - `FIELD_NOTES.md` records product and technical decisions.
+- `HONEST_SUBMISSION.md` records what the project can and cannot honestly claim.
 
 ## Why This Is Small
 
@@ -82,13 +83,14 @@ Training/eval artifacts:
 - `training/data/train.jsonl`, `dev.jsonl`, `test.jsonl`: generated SFT records for Jawbreaker JSON behavior.
 - `eval/generated_eval.jsonl`: generated holdout eval set.
 - `training/train_lora.py`: PEFT/LoRA scaffold for publishing a Jawbreaker MiniCPM adapter if it beats the base model.
+- `HONEST_SUBMISSION.md`: guardrails to avoid overclaiming synthetic data, fine-tuning, or runtime behavior.
 
 ## Bonus Badges Targeted
 
 - Off the Grid: local model inference, no cloud APIs for scam analysis.
 - Llama Champion: local/eval tooling supports the llama.cpp runtime.
 - Off-Brand: custom Gradio UI beyond the default look.
-- Well-Tuned: cut; the project prioritized safe inference, evals, and product quality over a rushed fine-tune.
+- Well-Tuned: not claimed unless a fine-tuned adapter is actually trained, published, and evaluated.
 - Sharing is Caring: Codex/agent trace published in this repo.
 - Field Notes: build report published before submission.
 

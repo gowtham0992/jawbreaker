@@ -66,6 +66,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--device-map", default="auto", help="Transformers device_map.")
     parser.add_argument("--dtype", default="auto", help="Transformers dtype.")
     parser.add_argument("--trust-remote-code", action=argparse.BooleanOptionalAction, default=True)
+    parser.add_argument("--attn-implementation", default="eager", help="Transformers attention implementation.")
     return parser.parse_args()
 
 
@@ -161,6 +162,7 @@ def build_analyzer(args: argparse.Namespace):
             device_map=args.device_map,
             dtype=args.dtype,
             trust_remote_code=args.trust_remote_code,
+            attn_implementation=args.attn_implementation,
         )
         return lambda row: analyzer(row["input"])
 

@@ -76,3 +76,9 @@ Added:
 - runtime fallback so malformed model JSON falls back to deterministic safety analysis
 
 Deployment rule: publish or deploy a LoRA adapter only if it improves valid JSON and keeps dangerous-as-safe misses at zero. A worse-but-fine-tuned model should not ship.
+
+## 2026-06-06 Submission Honesty
+
+Latest Discord discussion surfaced MiniCPM4.1 Transformers issues around SDPA attention masks and gibberish output. Jawbreaker now defaults `JAWBREAKER_ATTENTION_IMPLEMENTATION=eager` for the MiniCPM path, and keeps fallback analysis visible in the documentation.
+
+Guardrail: winning matters, but not by overclaiming. The project should not claim Well-Tuned, real user validation, Modal usage, or llama.cpp deployment unless those things are actually completed and documented.
