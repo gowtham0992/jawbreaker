@@ -21,3 +21,6 @@ Repository evidence:
 
 Going forward, meaningful build commits should include a Codex co-author trailer in the Git commit message.
 
+## Eval Spine
+
+Codex helped expand the initial seed eval into a 100-case labeled dataset and upgraded the runner to report risk accuracy, scam-type accuracy, tactic recall, dangerous misses, safe-message false alarms, unsafe action violations, and category-level performance.

@@ -1,0 +1,23 @@
+# Jawbreaker Eval Set
+
+`scam_eval.jsonl` is the project compass for model selection.
+
+The first version contains 100 synthetic/sanitized examples across:
+
+- dangerous scams
+- suspicious messages
+- legitimate messages that still need verification
+- safe benign messages
+
+Primary metrics:
+
+- valid structured output
+- exact risk-level match
+- dangerous scams mislabeled as safe
+- safe messages mislabeled as dangerous or suspicious
+- action safety
+- tactic recall
+- latency
+
+The eval intentionally includes legitimate alerts and ordinary messages. A scam detector that calls everything dangerous is not useful for the person Jawbreaker is built to protect.
+

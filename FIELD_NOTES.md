@@ -15,3 +15,4 @@ Current risk: a generic scam detector will not stand out. The product must show 
 
 Current differentiator: Scam DNA, a visual breakdown of scam structure rather than a plain label.
 
+Built the first serious evaluation spine: 100 synthetic/sanitized scam, suspicious, needs-check, and safe messages. The eval explicitly tests false positives on legitimate-looking messages because user trust is central to the product.

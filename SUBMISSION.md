@@ -19,7 +19,7 @@
 ## Technical Evidence
 
 - [ ] Model name and parameter count documented
-- [ ] Eval set included
+- [x] Eval set included
 - [ ] Bakeoff results documented
 - [ ] Local inference path documented
 - [ ] No cloud API path documented
