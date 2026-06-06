@@ -9,6 +9,7 @@ def render_analysis_html(message: str, analysis: ScamAnalysis) -> str:
     if not message.strip():
         return """
         <div class="empty-state">
+          <div class="shield-mark" aria-hidden="true"></div>
           <h2>Paste a message to scan it.</h2>
           <p>Jawbreaker will show the risk, the Scam DNA, and the safest next step.</p>
         </div>
@@ -28,7 +29,10 @@ def render_analysis_html(message: str, analysis: ScamAnalysis) -> str:
 
     return f"""
     <section class="verdict-card risk-{escape(analysis.risk_level)}">
-      <span class="risk-pill">{escape(analysis.risk_level.replace("_", " "))}</span>
+      <div class="verdict-top">
+        <span class="risk-pill">{escape(analysis.risk_level.replace("_", " "))}</span>
+        <span class="scan-stamp">checked</span>
+      </div>
       <p class="summary">{escape(analysis.summary)}</p>
       <div class="action-card">
         <strong>Safest next step</strong>
@@ -40,14 +44,14 @@ def render_analysis_html(message: str, analysis: ScamAnalysis) -> str:
       <div class="tactics">{tactic_html or "<span class='tactic'>none found</span>"}</div>
       {memory_html}
       <h3>Ask someone you trust</h3>
-      <p>{escape(analysis.trusted_person_message)}</p>
+      <p class="trusted-inline">{escape(analysis.trusted_person_message)}</p>
     </section>
     """
 
 
 def render_memory_html(analysis: ScamAnalysis, memory: list[dict]) -> str:
     if not memory:
-        return "<div class='memory-card muted'>No scam memory saved yet.</div>"
+        return "<div class='memory-card muted'><strong>Session memory</strong><p>No scam memory saved yet.</p></div>"
 
     items = "".join(
         f"<li><strong>{escape(item.get('risk_level', ''))}</strong>: {escape(item.get('summary', ''))}</li>"
@@ -59,4 +63,3 @@ def render_memory_html(analysis: ScamAnalysis, memory: list[dict]) -> str:
       <ul>{items}</ul>
     </div>
     """
-

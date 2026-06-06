@@ -58,6 +58,6 @@ def test_remember_current_saves_last_scan_without_reanalysis(monkeypatch) -> Non
         },
     )
 
-    assert status == "Saved this scam pattern for this session."
+    assert "Saved this scam pattern for this session." in status
     assert len(memory) == 1
     assert "Session scam memory" in memory_html

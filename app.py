@@ -144,6 +144,12 @@ def render_current_memory(memory: list[dict]) -> str:
     return render_memory_html(ScamAnalysis.from_heuristics("", memory), memory)
 
 
+def render_save_status(message: str = "") -> str:
+    if not message:
+        return "<div class='save-status'></div>"
+    return f"<div class='save-status'>{message}</div>"
+
+
 def should_use_heuristic_guard(
     model_analysis: ScamAnalysis,
     heuristic: ScamAnalysis,
@@ -166,23 +172,35 @@ def should_use_heuristic_guard(
 
 
 @gpu_callback
-def analyze_message(message: str, memory: list[dict] | None) -> tuple[str, str, list[dict], dict]:
+def analyze_message(
+    message: str,
+    memory: list[dict] | None,
+    progress: gr.Progress = gr.Progress(),
+) -> tuple[str, str, str, list[dict], dict]:
     memory = memory or []
     if not message.strip():
         analysis = ScamAnalysis.from_heuristics(message, memory)
-        return render_analysis_html(message, analysis), render_memory_html(analysis, memory), memory, {}
+        return render_analysis_html(message, analysis), "", render_memory_html(analysis, memory), memory, {}
 
     try:
+        progress(0.12, desc="Reading the message")
         analysis = run_analysis(message, memory)
+        progress(0.82, desc="Preparing the safest next step")
     except Exception as exc:
         analysis = analysis_error(exc)
-        return render_analysis_html(message, analysis), render_memory_html(analysis, memory), memory, {}
+        return (
+            render_analysis_html(message, analysis),
+            analysis.trusted_person_message,
+            render_memory_html(analysis, memory),
+            memory,
+            {},
+        )
 
     last_scan = {
         "message": message,
         "entry": memory_entry_from_analysis(message, analysis),
     }
-    return render_analysis_html(message, analysis), render_memory_html(analysis, memory), memory, last_scan
+    return render_analysis_html(message, analysis), analysis.trusted_person_message, render_memory_html(analysis, memory), memory, last_scan
 
 
 def analysis_error(exc: Exception) -> ScamAnalysis:
@@ -205,26 +223,26 @@ def analysis_error(exc: Exception) -> ScamAnalysis:
 def remember_current(message: str, memory: list[dict] | None, last_scan: dict | None) -> tuple[str, str, list[dict]]:
     memory = memory or []
     if not message.strip():
-        return "Paste a message first.", render_current_memory(memory), memory
+        return render_save_status("Paste a message first."), render_current_memory(memory), memory
 
     last_scan = last_scan or {}
     entry = last_scan.get("entry")
     if last_scan.get("message") != message or not isinstance(entry, dict):
         return (
-            "Analyze this message first, then save the pattern.",
+            render_save_status("Analyze this message first, then save the pattern."),
             render_current_memory(memory),
             memory,
         )
 
     if memory and memory[-1].get("text") == entry.get("text"):
         return (
-            "This pattern is already saved for this session.",
+            render_save_status("This pattern is already saved for this session."),
             render_current_memory(memory),
             memory,
         )
 
     memory.append(entry)
-    return "Saved this scam pattern for this session.", render_current_memory(memory), memory
+    return render_save_status("Saved this scam pattern for this session."), render_current_memory(memory), memory
 
 
 def build_app() -> gr.Blocks:
@@ -240,13 +258,21 @@ def build_app() -> gr.Blocks:
                 <h1>Jawbreaker</h1>
                 <p class="subtitle">Scam defense for someone you love.</p>
               </div>
-              <div class="hero-badge">Local-first small-model app</div>
+              <div class="hero-badge">Small-model shield</div>
             </section>
             """
         )
 
         with gr.Row(elem_classes=["main-grid"]):
             with gr.Column(scale=5, elem_classes=["scan-panel"]):
+                gr.HTML(
+                    """
+                    <div class="panel-kicker">
+                      <span class="kicker-pin"></span>
+                      <span>Paste the message</span>
+                    </div>
+                    """
+                )
                 message = gr.Textbox(
                     label="Suspicious message",
                     placeholder="Paste a suspicious text, email, or DM here.",
@@ -254,8 +280,8 @@ def build_app() -> gr.Blocks:
                     max_lines=16,
                 )
                 with gr.Row():
-                    analyze = gr.Button("Analyze", variant="primary")
-                    remember = gr.Button("Remember this pattern")
+                    analyze = gr.Button("Check message", variant="primary")
+                    remember = gr.Button("Remember pattern")
                 gr.Examples(examples=EXAMPLES, inputs=message, label="Try a sample")
 
             with gr.Column(scale=7):
@@ -267,13 +293,20 @@ def build_app() -> gr.Blocks:
                     </div>
                     """
                 )
+                trusted_message = gr.Textbox(
+                    label="Send to someone you trust",
+                    lines=3,
+                    interactive=False,
+                    buttons=["copy"],
+                    elem_classes=["trusted-output"],
+                )
                 memory = gr.HTML("<div class='memory-card muted'>No scam memory saved yet.</div>")
-                save_status = gr.Textbox(label="Session memory", interactive=False)
+                save_status = gr.HTML("<div class='save-status'></div>")
 
         analyze.click(
             fn=analyze_message,
             inputs=[message, memory_state],
-            outputs=[result, memory, memory_state, last_scan_state],
+            outputs=[result, trusted_message, memory, memory_state, last_scan_state],
         )
         remember.click(
             fn=remember_current,
