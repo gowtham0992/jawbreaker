@@ -64,3 +64,19 @@ def test_generated_eval_has_test_count_and_safe_urls() -> None:
     for row in rows:
         assert row["expected_risk_level"] in RISK_LEVELS
         assert ".example" in row["input"] or "http" not in row["input"].lower()
+
+
+def test_field_examples_are_sanitized_and_valid() -> None:
+    rows = [
+        json.loads(line)
+        for line in Path("eval/field_examples.jsonl").read_text(encoding="utf-8").splitlines()
+        if line.strip()
+    ]
+
+    assert len(rows) >= 2
+    for row in rows:
+        assert {"id", "category", "input", "expected_risk_level", "expected_scam_type", "expected_tactics"} <= set(row)
+        assert row["expected_risk_level"] in RISK_LEVELS
+        assert "[phone number]" in row["input"] or "[callback number]" in row["input"]
+        assert "Vineel" not in row["input"]
+        assert "+1" not in row["input"]

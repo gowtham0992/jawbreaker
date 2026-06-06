@@ -88,3 +88,12 @@ Guardrail: winning matters, but not by overclaiming. The project should not clai
 Modal credits are the right place to run the MiniCPM LoRA job. Added `training/modal_train.py` so the same generated train/dev split can run on an A100 with outputs stored in a Modal volume.
 
 Claim rule: Modal usage becomes a submission claim only after a real Modal run completes. Well-Tuned becomes a claim only after the resulting adapter is published and beats the base model or fallback on eval.
+
+## 2026-06-06 Field Examples
+
+Added two sanitized real-world scam examples from a friend:
+
+- Coinbase account phone-number update callback lure
+- TikTok Shop part-time assistant / WhatsApp job lure
+
+Names, timestamps, and phone numbers were removed before committing. These examples are useful demo candidates because they are realistic, recent, and easier to explain than fully synthetic samples.

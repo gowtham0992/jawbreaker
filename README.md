@@ -79,6 +79,7 @@ Safety architecture:
 Training/eval artifacts:
 
 - `eval/scam_eval.jsonl`: 100 hand-curated synthetic/sanitized eval cases.
+- `eval/field_examples.jsonl`: sanitized real-world examples from a friend, with names and phone numbers removed.
 - `training/generate_jawbreaker_data.py`: deterministic generator for larger train/dev/test splits.
 - `training/data/train.jsonl`, `dev.jsonl`, `test.jsonl`: generated SFT records for Jawbreaker JSON behavior.
 - `eval/generated_eval.jsonl`: generated holdout eval set.

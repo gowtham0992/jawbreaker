@@ -45,6 +45,7 @@ class ScamAnalysis:
             "bank login",
             "seed phrase",
             "username",
+            "phone number on your account",
         ]
         if any(token in text for token in credential_tokens):
             risk_level = "dangerous"
@@ -105,22 +106,46 @@ class ScamAnalysis:
                 "refund tool",
                 "call this number",
                 "call the support number",
+                "call support",
                 "number shown",
+                "callback number",
             ]
         ):
             risk_level = "dangerous"
             scam_type = "tech_support"
             tactics.extend(["fake authority", "remote access request"])
 
+        if any(token in text for token in ["coinbase", "crypto account", "account update"]) and any(
+            token in text for token in ["call support", "callback number", "contact support immediately"]
+        ):
+            risk_level = "dangerous"
+            scam_type = "callback_phishing"
+            tactics.extend(["fake authority", "callback request", "account takeover"])
+
         if any(token in text for token in ["prize", "lottery", "sweepstakes", "winner selected", "government grant"]):
             risk_level = "dangerous"
             scam_type = "prize_scam"
             tactics.extend(["too good to be true", "fake authority"])
 
-        if any(token in text for token in ["you are hired", "job offer", "training starts", "equipment shipment", "payroll setup"]):
+        if any(
+            token in text
+            for token in [
+                "you are hired",
+                "job offer",
+                "training starts",
+                "equipment shipment",
+                "payroll setup",
+                "recruiter",
+                "part-time assistant",
+                "tiktok shop",
+                "whatsapp",
+            ]
+        ):
             risk_level = "dangerous"
             scam_type = "job_scam"
             tactics.extend(["fake job", "fake authority"])
+            if any(token in text for token in ["per day", "$330", "$750", "payment is made immediately"]):
+                tactics.append("too good to be true")
 
         if any(token in text for token in ["feel so close", "about us", "we can meet", "wallet was stolen"]):
             risk_level = "dangerous"
@@ -189,11 +214,13 @@ def _guess_impersonation(text: str) -> str:
         return "USPS or package carrier"
     if "chase" in text or "bank" in text:
         return "Bank or financial institution"
+    if "coinbase" in text:
+        return "Coinbase or crypto platform"
     if any(token in text for token in ["grandma", "grandpa", "niece", "new number", "changed numbers"]):
         return "Family member"
     if "support" in text or "technician" in text:
         return "Tech support"
-    if "recruiter" in text or "hiring" in text or "you are hired" in text:
+    if "recruiter" in text or "hiring" in text or "you are hired" in text or "tiktok shop" in text:
         return "Employer or recruiter"
     if "prize" in text or "lottery" in text or "grant" in text:
         return "Prize or grant office"
@@ -223,6 +250,8 @@ def _guess_ask(text: str, scam_type: str) -> str:
         return "Pay or share details to claim prize"
     if scam_type == "job_scam":
         return "Pay or move money for job"
+    if scam_type == "callback_phishing":
+        return "Call a number from the message"
     if "http://" in text or "https://" in text:
         return "Open a link"
     return "No direct ask found"
