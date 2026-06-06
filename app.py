@@ -5,7 +5,7 @@ from time import perf_counter
 
 import gradio as gr
 
-from jawbreaker.analyzers import build_llama_cpp_analyzer, heuristic_analyzer, prediction_to_analysis
+from jawbreaker.analyzers import build_llama_cpp_analyzer, heuristic_analyzer, prediction_to_analysis, validate_prediction
 from jawbreaker.render import render_analysis_html, render_memory_html
 from jawbreaker.schema import ScamAnalysis
 
@@ -87,11 +87,41 @@ def resolve_model_path() -> Path:
 
 def run_analysis(message: str, memory: list[dict] | None) -> ScamAnalysis:
     memory = memory or []
+    heuristic = ScamAnalysis.from_heuristics(message, memory)
     started = perf_counter()
     prediction = get_analyzer()(message)
-    similar_memory = ScamAnalysis.from_heuristics(message, memory).similar_memory
+    validation_errors = validate_prediction(prediction)
+    model_analysis = prediction_to_analysis(prediction, similar_memory=heuristic.similar_memory)
     print(f"jawbreaker analyze elapsed={perf_counter() - started:.2f}s", flush=True)
-    return prediction_to_analysis(prediction, similar_memory=similar_memory)
+    if should_use_heuristic_guard(model_analysis, heuristic, validation_errors):
+        print(
+            "jawbreaker guard=heuristic "
+            f"model_risk={model_analysis.risk_level} heuristic_risk={heuristic.risk_level}",
+            flush=True,
+        )
+        return heuristic
+    return model_analysis
+
+
+def should_use_heuristic_guard(
+    model_analysis: ScamAnalysis,
+    heuristic: ScamAnalysis,
+    validation_errors: list[str],
+) -> bool:
+    if validation_errors:
+        return True
+
+    risk_rank = {"safe": 0, "needs_check": 1, "suspicious": 2, "dangerous": 3}
+    if risk_rank[model_analysis.risk_level] < risk_rank[heuristic.risk_level]:
+        return heuristic.risk_level != "safe"
+
+    if heuristic.risk_level == "safe":
+        return False
+
+    dna_values = [value.strip() for value in model_analysis.scam_dna.values()]
+    has_dna = any(dna_values)
+    has_tactics = bool(model_analysis.tactics)
+    return not has_dna and not has_tactics
 
 
 def analyze_message(message: str, memory: list[dict] | None) -> tuple[str, str, list[dict]]:
