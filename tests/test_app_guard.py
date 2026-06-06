@@ -1,4 +1,4 @@
-from app import should_use_heuristic_guard
+from app import remember_current, should_use_heuristic_guard
 from jawbreaker.schema import ScamAnalysis
 
 
@@ -35,3 +35,29 @@ def test_guard_keeps_informative_model_result() -> None:
     )
 
     assert not should_use_heuristic_guard(model, heuristic, validation_errors=[])
+
+
+def test_remember_current_saves_last_scan_without_reanalysis(monkeypatch) -> None:
+    def fail_if_called(*args, **kwargs):
+        raise AssertionError("remember_current should not run analysis")
+
+    monkeypatch.setattr("app.run_analysis", fail_if_called)
+
+    status, memory_html, memory = remember_current(
+        "Hi Grandma, I lost my phone.",
+        [],
+        {
+            "message": "Hi Grandma, I lost my phone.",
+            "entry": {
+                "summary": "This looks like family impersonation.",
+                "scam_type": "family_impersonation",
+                "risk_level": "dangerous",
+                "fingerprint": {"Impersonates": "Family member"},
+                "text": "Hi Grandma, I lost my phone.",
+            },
+        },
+    )
+
+    assert status == "Saved this scam pattern for this session."
+    assert len(memory) == 1
+    assert "Session scam memory" in memory_html

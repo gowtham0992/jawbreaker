@@ -78,3 +78,15 @@ def test_load_json_prediction_extracts_embedded_object() -> None:
     )
 
     assert prediction["risk_level"] == "safe"
+
+
+def test_load_json_prediction_ignores_qwen_thinking_tokens() -> None:
+    prediction = load_json_prediction(
+        '<think>I should reason internally.</think>{"risk_level": "dangerous", '
+        '"scam_type": "family_impersonation", "summary": "scam", '
+        '"tactics": ["secrecy"], "safest_action": "Do not reply.", '
+        '"trusted_person_message": "Can you check this?", '
+        '"scam_dna": {"impersonates": "family", "pressure": "secret", "ask": "money", "risk": "payment"}}'
+    )
+
+    assert prediction["risk_level"] == "dangerous"

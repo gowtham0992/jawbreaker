@@ -95,6 +95,7 @@ def prediction_file_analyzer(predictions: dict[str, Prediction], case_id: str) -
 
 
 def load_json_prediction(content: str) -> Prediction:
+    content = strip_thinking_tokens(content)
     try:
         prediction = json.loads(content)
     except json.JSONDecodeError:
@@ -106,6 +107,12 @@ def load_json_prediction(content: str) -> Prediction:
     if not isinstance(prediction, dict):
         raise ValueError("model response must be a JSON object")
     return prediction
+
+
+def strip_thinking_tokens(content: str) -> str:
+    if "</think>" in content:
+        return content.split("</think>", 1)[1].strip()
+    return content.replace("<think>", "").strip()
 
 
 def build_llama_cpp_analyzer(
@@ -188,7 +195,15 @@ def build_transformers_analyzer(
             {"role": "system", "content": SYSTEM_PROMPT},
             {"role": "user", "content": USER_PROMPT_TEMPLATE.format(message=message)},
         ]
-        prompt = tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
+        try:
+            prompt = tokenizer.apply_chat_template(
+                messages,
+                tokenize=False,
+                add_generation_prompt=True,
+                enable_thinking=False,
+            )
+        except TypeError:
+            prompt = tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
         inputs = tokenizer(prompt, return_tensors="pt").to(model.device)
         generation_kwargs: dict[str, Any] = {
             "max_new_tokens": max_new_tokens,

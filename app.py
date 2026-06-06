@@ -2,6 +2,7 @@ import os
 from functools import lru_cache
 from pathlib import Path
 from time import perf_counter
+from typing import Any
 
 import gradio as gr
 
@@ -129,6 +130,20 @@ def run_analysis(message: str, memory: list[dict] | None) -> ScamAnalysis:
     return model_analysis
 
 
+def memory_entry_from_analysis(message: str, analysis: ScamAnalysis) -> dict[str, Any]:
+    return {
+        "summary": analysis.summary,
+        "scam_type": analysis.scam_type,
+        "risk_level": analysis.risk_level,
+        "fingerprint": analysis.scam_dna,
+        "text": message[:240],
+    }
+
+
+def render_current_memory(memory: list[dict]) -> str:
+    return render_memory_html(ScamAnalysis.from_heuristics("", memory), memory)
+
+
 def should_use_heuristic_guard(
     model_analysis: ScamAnalysis,
     heuristic: ScamAnalysis,
@@ -151,13 +166,23 @@ def should_use_heuristic_guard(
 
 
 @gpu_callback
-def analyze_message(message: str, memory: list[dict] | None) -> tuple[str, str, list[dict]]:
+def analyze_message(message: str, memory: list[dict] | None) -> tuple[str, str, list[dict], dict]:
     memory = memory or []
+    if not message.strip():
+        analysis = ScamAnalysis.from_heuristics(message, memory)
+        return render_analysis_html(message, analysis), render_memory_html(analysis, memory), memory, {}
+
     try:
         analysis = run_analysis(message, memory)
     except Exception as exc:
         analysis = analysis_error(exc)
-    return render_analysis_html(message, analysis), render_memory_html(analysis, memory), memory
+        return render_analysis_html(message, analysis), render_memory_html(analysis, memory), memory, {}
+
+    last_scan = {
+        "message": message,
+        "entry": memory_entry_from_analysis(message, analysis),
+    }
+    return render_analysis_html(message, analysis), render_memory_html(analysis, memory), memory, last_scan
 
 
 def analysis_error(exc: Exception) -> ScamAnalysis:
@@ -177,31 +202,35 @@ def analysis_error(exc: Exception) -> ScamAnalysis:
     )
 
 
-@gpu_callback
-def remember_current(message: str, memory: list[dict] | None) -> tuple[str, list[dict]]:
+def remember_current(message: str, memory: list[dict] | None, last_scan: dict | None) -> tuple[str, str, list[dict]]:
     memory = memory or []
     if not message.strip():
-        return "Paste a message first.", memory
-    try:
-        analysis = run_analysis(message, memory)
-    except Exception as exc:
-        analysis = analysis_error(exc)
+        return "Paste a message first.", render_current_memory(memory), memory
 
-    memory.append(
-        {
-            "summary": analysis.summary,
-            "scam_type": analysis.scam_type,
-            "risk_level": analysis.risk_level,
-            "fingerprint": analysis.scam_dna,
-            "text": message[:240],
-        }
-    )
-    return "Saved this scam pattern for this session.", memory
+    last_scan = last_scan or {}
+    entry = last_scan.get("entry")
+    if last_scan.get("message") != message or not isinstance(entry, dict):
+        return (
+            "Analyze this message first, then save the pattern.",
+            render_current_memory(memory),
+            memory,
+        )
+
+    if memory and memory[-1].get("text") == entry.get("text"):
+        return (
+            "This pattern is already saved for this session.",
+            render_current_memory(memory),
+            memory,
+        )
+
+    memory.append(entry)
+    return "Saved this scam pattern for this session.", render_current_memory(memory), memory
 
 
 def build_app() -> gr.Blocks:
     with gr.Blocks(title="Jawbreaker") as demo:
         memory_state = gr.State([])
+        last_scan_state = gr.State({})
 
         gr.HTML(
             """
@@ -244,12 +273,12 @@ def build_app() -> gr.Blocks:
         analyze.click(
             fn=analyze_message,
             inputs=[message, memory_state],
-            outputs=[result, memory, memory_state],
+            outputs=[result, memory, memory_state, last_scan_state],
         )
         remember.click(
             fn=remember_current,
-            inputs=[message, memory_state],
-            outputs=[save_status, memory_state],
+            inputs=[message, memory_state, last_scan_state],
+            outputs=[save_status, memory, memory_state],
         )
 
     return demo
