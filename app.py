@@ -1,6 +1,7 @@
 import os
 from functools import lru_cache
 from pathlib import Path
+from time import perf_counter
 
 import gradio as gr
 
@@ -54,14 +55,14 @@ def get_analyzer():
         return build_llama_cpp_analyzer(
             model_path,
             chat_format=os.getenv("JAWBREAKER_CHAT_FORMAT") or None,
-            n_ctx=_env_int("JAWBREAKER_N_CTX", 2048) or 2048,
-            n_threads=_env_int("JAWBREAKER_N_THREADS"),
+            n_ctx=_env_int("JAWBREAKER_N_CTX", 1024) or 1024,
+            n_threads=_env_int("JAWBREAKER_N_THREADS", 2),
             n_gpu_layers=_env_int("JAWBREAKER_N_GPU_LAYERS", 0) or 0,
-            n_batch=_env_int("JAWBREAKER_N_BATCH", 512) or 512,
-            n_ubatch=_env_int("JAWBREAKER_N_UBATCH", 512) or 512,
+            n_batch=_env_int("JAWBREAKER_N_BATCH", 128) or 128,
+            n_ubatch=_env_int("JAWBREAKER_N_UBATCH", 128) or 128,
             offload_kqv=_env_bool("JAWBREAKER_OFFLOAD_KQV", True),
             op_offload=_env_bool("JAWBREAKER_OP_OFFLOAD"),
-            max_tokens=_env_int("JAWBREAKER_MAX_TOKENS", 512) or 512,
+            max_tokens=_env_int("JAWBREAKER_MAX_TOKENS", 256) or 256,
             temperature=float(os.getenv("JAWBREAKER_TEMPERATURE", "0")),
         )
 
@@ -86,8 +87,10 @@ def resolve_model_path() -> Path:
 
 def run_analysis(message: str, memory: list[dict] | None) -> ScamAnalysis:
     memory = memory or []
+    started = perf_counter()
     prediction = get_analyzer()(message)
     similar_memory = ScamAnalysis.from_heuristics(message, memory).similar_memory
+    print(f"jawbreaker analyze elapsed={perf_counter() - started:.2f}s", flush=True)
     return prediction_to_analysis(prediction, similar_memory=similar_memory)
 
 

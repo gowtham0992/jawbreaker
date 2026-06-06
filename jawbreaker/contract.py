@@ -55,12 +55,14 @@ Safety rules:
 - If uncertain, choose "needs_check" and recommend verification through the official app, official website, or a known phone number.
 - Use short, plain English for someone who is not technical.
 - Give exactly one safest next step.
+- Do not write chain-of-thought. Return the JSON object only.
 """.strip()
 
 
 USER_PROMPT_TEMPLATE = """
+/no_think
+
 Analyze this message for scam risk:
 
 {message}
 """.strip()
-
