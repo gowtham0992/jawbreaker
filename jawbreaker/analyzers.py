@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 from collections.abc import Callable, Iterable
 from pathlib import Path
+from time import perf_counter
 from typing import Any
 
 from jawbreaker.contract import SYSTEM_PROMPT, USER_PROMPT_TEMPLATE
@@ -186,9 +187,21 @@ def build_transformers_analyzer(
             "torch and transformers are required for --backend transformers / ZeroGPU."
         ) from exc
 
+    started = perf_counter()
+    print(
+        f"jawbreaker transformers load_start model_id={model_id} device_map={device_map} dtype={dtype}",
+        flush=True,
+    )
     tokenizer = AutoTokenizer.from_pretrained(model_id)
     model = AutoModelForCausalLM.from_pretrained(model_id, dtype=dtype, device_map=device_map)
     model.eval()
+    device = getattr(model, "device", "unknown")
+    hf_device_map = getattr(model, "hf_device_map", None)
+    print(
+        "jawbreaker transformers load_ready "
+        f"elapsed={perf_counter() - started:.2f}s device={device} hf_device_map={hf_device_map}",
+        flush=True,
+    )
 
     def analyze(message: str) -> Prediction:
         messages = [

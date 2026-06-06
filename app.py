@@ -90,7 +90,7 @@ def _env_bool(name: str, default: bool | None = None) -> bool | None:
 
 @lru_cache(maxsize=1)
 def get_analyzer():
-    backend = os.getenv("JAWBREAKER_BACKEND", "llama-cpp").strip().lower()
+    backend = current_backend()
     if backend == "heuristic":
         return heuristic_analyzer
 
@@ -120,6 +120,14 @@ def get_analyzer():
         )
 
     raise ValueError(f"Unsupported JAWBREAKER_BACKEND: {backend}")
+
+
+def current_backend() -> str:
+    return os.getenv("JAWBREAKER_BACKEND", "llama-cpp").strip().lower()
+
+
+def should_warm_model() -> bool:
+    return _env_bool("JAWBREAKER_WARM_MODEL", True) and current_backend() in {"transformers", "zerogpu"}
 
 
 def resolve_model_path() -> Path:
@@ -154,6 +162,20 @@ def run_analysis(message: str, memory: list[dict] | None) -> ScamAnalysis:
         )
         return heuristic
     return model_analysis
+
+
+@gpu_callback
+def warm_model() -> None:
+    backend = current_backend()
+    if not should_warm_model():
+        print(f"jawbreaker warm_model skip backend={backend}", flush=True)
+        return None
+
+    started = perf_counter()
+    print(f"jawbreaker warm_model start backend={backend}", flush=True)
+    get_analyzer()
+    print(f"jawbreaker warm_model ready elapsed={perf_counter() - started:.2f}s", flush=True)
+    return None
 
 
 def memory_entry_from_analysis(message: str, analysis: ScamAnalysis) -> dict[str, Any]:
@@ -342,6 +364,13 @@ def build_app() -> gr.Blocks:
             inputs=[message, memory_state],
             outputs=[result, trusted_message, memory, memory_state, last_scan_state],
             show_progress="hidden",
+        )
+        demo.load(
+            fn=warm_model,
+            inputs=None,
+            outputs=None,
+            show_progress="hidden",
+            api_visibility="private",
         )
 
     return demo
