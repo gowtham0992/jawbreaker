@@ -21,3 +21,26 @@ Primary metrics:
 
 The eval intentionally includes legitimate alerts and ordinary messages. A scam detector that calls everything dangerous is not useful for the person Jawbreaker is built to protect.
 
+## Running Backends
+
+Heuristic baseline:
+
+```bash
+python3 eval/run_eval.py --backend heuristic
+```
+
+Saved prediction replay:
+
+```bash
+python3 eval/run_eval.py --backend predictions --predictions eval/predictions/model.jsonl
+```
+
+Local GGUF model through `llama-cpp-python`:
+
+```bash
+python3 eval/run_eval.py \
+  --backend llama-cpp \
+  --model-path models/model.gguf \
+  --predictions-out eval/predictions/model.jsonl \
+  --json-out eval/reports/model.json
+```

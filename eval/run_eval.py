@@ -1,12 +1,24 @@
+from __future__ import annotations
+
+import argparse
 import json
 import sys
 from collections import Counter, defaultdict
 from pathlib import Path
 from time import perf_counter
+from typing import Any
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from jawbreaker.schema import RISK_LEVELS, ScamAnalysis
+from jawbreaker.analyzers import (  # noqa: E402
+    build_llama_cpp_analyzer,
+    heuristic_analyzer,
+    load_prediction_jsonl,
+    prediction_file_analyzer,
+    validate_prediction,
+    write_predictions,
+)
+from jawbreaker.schema import RISK_LEVELS  # noqa: E402
 
 
 UNSAFE_ACTION_PHRASES = [
@@ -24,7 +36,27 @@ UNSAFE_ACTION_PHRASES = [
 ]
 
 
-def load_rows(path: Path) -> list[dict]:
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description="Run Jawbreaker scam-risk evals.")
+    parser.add_argument("--dataset", type=Path, default=Path(__file__).with_name("scam_eval.jsonl"))
+    parser.add_argument("--backend", choices=["heuristic", "predictions", "llama-cpp"], default="heuristic")
+    parser.add_argument("--predictions", type=Path, help="JSONL predictions for --backend predictions.")
+    parser.add_argument("--predictions-out", type=Path, help="Write predictions as JSONL.")
+    parser.add_argument("--json-out", type=Path, help="Write metrics as JSON.")
+    parser.add_argument("--limit", type=int, help="Limit number of eval cases for smoke tests.")
+    parser.add_argument("--show-failures", type=int, default=5, help="Failures to print per category.")
+
+    parser.add_argument("--model-path", type=Path, help="GGUF path for --backend llama-cpp.")
+    parser.add_argument("--chat-format", help="Optional llama-cpp-python chat_format.")
+    parser.add_argument("--n-ctx", type=int, default=4096)
+    parser.add_argument("--n-threads", type=int)
+    parser.add_argument("--n-gpu-layers", type=int, default=0)
+    parser.add_argument("--max-tokens", type=int, default=512)
+    parser.add_argument("--temperature", type=float, default=0.0)
+    return parser.parse_args()
+
+
+def load_rows(path: Path, limit: int | None = None) -> list[dict[str, Any]]:
     rows = []
     ids = set()
     errors = []
@@ -53,6 +85,8 @@ def load_rows(path: Path) -> list[dict]:
             errors.append(f"line {line_number}: expected_tactics must be a list")
 
         rows.append(row)
+        if limit is not None and len(rows) >= limit:
+            break
 
     if errors:
         raise SystemExit("Eval dataset validation failed:\n" + "\n".join(errors))
@@ -78,16 +112,40 @@ def tactic_recall(expected: list[str], actual: list[str]) -> float:
     return len(expected_set & actual_set) / len(expected_set)
 
 
-def main() -> None:
-    path = Path(__file__).with_name("scam_eval.jsonl")
-    rows = load_rows(path)
-    started = perf_counter()
+def build_analyzer(args: argparse.Namespace):
+    if args.backend == "heuristic":
+        return lambda row: heuristic_analyzer(row["input"])
 
+    if args.backend == "predictions":
+        if not args.predictions:
+            raise SystemExit("--predictions is required with --backend predictions")
+        predictions = load_prediction_jsonl(args.predictions)
+        return lambda row: prediction_file_analyzer(predictions, row["id"])
+
+    if args.backend == "llama-cpp":
+        if not args.model_path:
+            raise SystemExit("--model-path is required with --backend llama-cpp")
+        analyzer = build_llama_cpp_analyzer(
+            args.model_path,
+            chat_format=args.chat_format,
+            n_ctx=args.n_ctx,
+            n_threads=args.n_threads,
+            n_gpu_layers=args.n_gpu_layers,
+            max_tokens=args.max_tokens,
+            temperature=args.temperature,
+        )
+        return lambda row: analyzer(row["input"])
+
+    raise SystemExit(f"Unsupported backend: {args.backend}")
+
+
+def score_rows(rows: list[dict[str, Any]], predictions: dict[str, dict[str, Any]], elapsed: float) -> dict[str, Any]:
     risk_correct = 0
     scam_type_correct = 0
     dangerous_as_safe = []
     safe_as_dangerous = []
     unsafe_actions = []
+    invalid_predictions = []
     recalls = []
     risk_confusion: Counter[tuple[str, str]] = Counter()
     category_counts: Counter[str] = Counter()
@@ -95,56 +153,125 @@ def main() -> None:
     failures_by_category: dict[str, list[str]] = defaultdict(list)
 
     for row in rows:
-        analysis = ScamAnalysis.from_heuristics(row["input"])
+        case_id = row["id"]
+        prediction = predictions[case_id]
+        validation_errors = validate_prediction(prediction)
+        if validation_errors:
+            invalid_predictions.append({"id": case_id, "errors": validation_errors})
+
+        actual_risk = prediction.get("risk_level", "invalid")
+        actual_scam_type = prediction.get("scam_type", "invalid")
+        actual_tactics = prediction.get("tactics", [])
+        if not isinstance(actual_tactics, list):
+            actual_tactics = []
+
         expected_risk = row["expected_risk_level"]
         category = row["category"]
-        risk_ok = analysis.risk_level == expected_risk
-        type_ok = analysis.scam_type == row["expected_scam_type"]
-        recall = tactic_recall(row["expected_tactics"], analysis.tactics)
+        risk_ok = actual_risk == expected_risk
+        type_ok = actual_scam_type == row["expected_scam_type"]
+        recall = tactic_recall(row["expected_tactics"], [str(tactic) for tactic in actual_tactics])
 
         risk_correct += int(risk_ok)
         scam_type_correct += int(type_ok)
         recalls.append(recall)
-        risk_confusion[(expected_risk, analysis.risk_level)] += 1
+        risk_confusion[(expected_risk, str(actual_risk))] += 1
         category_counts[category] += 1
         category_correct[category] += int(risk_ok)
 
-        if expected_risk == "dangerous" and analysis.risk_level == "safe":
-            dangerous_as_safe.append(row["id"])
-        if expected_risk == "safe" and analysis.risk_level in {"dangerous", "suspicious"}:
-            safe_as_dangerous.append(row["id"])
-        if has_unsafe_action(analysis.safest_action):
-            unsafe_actions.append(row["id"])
+        if expected_risk == "dangerous" and actual_risk == "safe":
+            dangerous_as_safe.append(case_id)
+        if expected_risk == "safe" and actual_risk in {"dangerous", "suspicious"}:
+            safe_as_dangerous.append(case_id)
+        if has_unsafe_action(str(prediction.get("safest_action", ""))):
+            unsafe_actions.append(case_id)
         if not risk_ok:
-            failures_by_category[category].append(f"{row['id']} expected={expected_risk} actual={analysis.risk_level}")
+            failures_by_category[category].append(f"{case_id} expected={expected_risk} actual={actual_risk}")
 
-    elapsed = perf_counter() - started
     total = len(rows)
+    return {
+        "cases": total,
+        "risk_level_correct": risk_correct,
+        "risk_level_accuracy": risk_correct / total,
+        "scam_type_correct": scam_type_correct,
+        "scam_type_accuracy": scam_type_correct / total,
+        "mean_tactic_recall": sum(recalls) / len(recalls),
+        "dangerous_as_safe": dangerous_as_safe,
+        "safe_as_dangerous_or_suspicious": safe_as_dangerous,
+        "unsafe_action_violations": unsafe_actions,
+        "invalid_predictions": invalid_predictions,
+        "elapsed_seconds": elapsed,
+        "risk_confusion": {f"{expected}->{actual}": count for (expected, actual), count in sorted(risk_confusion.items())},
+        "category_risk_accuracy": {
+            category: {
+                "correct": category_correct[category],
+                "total": count,
+                "accuracy": category_correct[category] / count,
+            }
+            for category, count in sorted(category_counts.items())
+        },
+        "failures_by_category": {category: failures for category, failures in sorted(failures_by_category.items())},
+    }
 
+
+def print_report(metrics: dict[str, Any], show_failures: int) -> None:
+    total = metrics["cases"]
     print(f"cases={total}")
-    print(f"risk_level_accuracy={risk_correct}/{total} ({risk_correct / total:.1%})")
-    print(f"scam_type_accuracy={scam_type_correct}/{total} ({scam_type_correct / total:.1%})")
-    print(f"mean_tactic_recall={sum(recalls) / len(recalls):.1%}")
-    print(f"dangerous_as_safe={len(dangerous_as_safe)} {dangerous_as_safe}")
-    print(f"safe_as_dangerous_or_suspicious={len(safe_as_dangerous)} {safe_as_dangerous}")
-    print(f"unsafe_action_violations={len(unsafe_actions)} {unsafe_actions}")
-    print(f"elapsed_seconds={elapsed:.3f}")
+    print(
+        "risk_level_accuracy="
+        f"{metrics['risk_level_correct']}/{total} ({metrics['risk_level_accuracy']:.1%})"
+    )
+    print(
+        "scam_type_accuracy="
+        f"{metrics['scam_type_correct']}/{total} ({metrics['scam_type_accuracy']:.1%})"
+    )
+    print(f"mean_tactic_recall={metrics['mean_tactic_recall']:.1%}")
+    print(f"dangerous_as_safe={len(metrics['dangerous_as_safe'])} {metrics['dangerous_as_safe']}")
+    print(
+        "safe_as_dangerous_or_suspicious="
+        f"{len(metrics['safe_as_dangerous_or_suspicious'])} {metrics['safe_as_dangerous_or_suspicious']}"
+    )
+    print(f"unsafe_action_violations={len(metrics['unsafe_action_violations'])} {metrics['unsafe_action_violations']}")
+    print(f"invalid_predictions={len(metrics['invalid_predictions'])} {metrics['invalid_predictions'][:show_failures]}")
+    print(f"elapsed_seconds={metrics['elapsed_seconds']:.3f}")
 
     print("\nrisk_confusion expected->actual:")
-    for (expected, actual), count in sorted(risk_confusion.items()):
+    for pair, count in metrics["risk_confusion"].items():
+        expected, actual = pair.split("->", 1)
         print(f"  {expected:12s} -> {actual:12s} {count}")
 
     print("\ncategory_risk_accuracy:")
-    for category, count in sorted(category_counts.items()):
-        correct = category_correct[category]
-        print(f"  {category:24s} {correct:2d}/{count:2d} ({correct / count:.1%})")
+    for category, result in metrics["category_risk_accuracy"].items():
+        print(
+            f"  {category:24s} {result['correct']:2d}/{result['total']:2d} "
+            f"({result['accuracy']:.1%})"
+        )
 
-    if failures_by_category:
+    if metrics["failures_by_category"]:
         print("\nfirst_failures_by_category:")
-        for category, failures in sorted(failures_by_category.items()):
+        for category, failures in metrics["failures_by_category"].items():
             print(f"  {category}:")
-            for failure in failures[:5]:
+            for failure in failures[:show_failures]:
                 print(f"    {failure}")
+
+
+def main() -> None:
+    args = parse_args()
+    rows = load_rows(args.dataset, args.limit)
+    analyzer = build_analyzer(args)
+    predictions = {}
+
+    started = perf_counter()
+    for row in rows:
+        predictions[row["id"]] = analyzer(row)
+    elapsed = perf_counter() - started
+
+    metrics = score_rows(rows, predictions, elapsed)
+    print_report(metrics, args.show_failures)
+
+    if args.predictions_out:
+        write_predictions(args.predictions_out, rows, predictions)
+    if args.json_out:
+        args.json_out.write_text(json.dumps(metrics, indent=2, sort_keys=True) + "\n", encoding="utf-8")
 
 
 if __name__ == "__main__":
