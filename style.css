@@ -570,11 +570,6 @@ button.primary:hover {
   line-height: 1.42 !important;
 }
 
-.trusted-output label,
-.trusted-output .label-wrap {
-  display: none !important;
-}
-
 .trusted-output button[aria-label="Copy"],
 .trusted-output button[title="Copy"],
 .trusted-output .icon-button,
