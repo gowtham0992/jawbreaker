@@ -548,12 +548,46 @@ button.primary:hover {
   line-height: 1.45;
 }
 
-.handoff-header {
+.handoff-bar {
+  align-items: center;
+  gap: 10px !important;
   margin: 14px 0 8px;
+}
+
+.handoff-bar,
+.handoff-bar > .form,
+.handoff-bar > .block {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+.handoff-header {
+  margin: 0;
   color: var(--jb-text);
   font-size: 17px;
   font-weight: 850;
   line-height: 1.2;
+}
+
+.copy-handoff-btn {
+  width: auto !important;
+  min-width: 0 !important;
+  min-height: 34px !important;
+  margin-left: auto !important;
+  border: 1px solid rgba(37, 99, 235, 0.16) !important;
+  border-radius: 999px !important;
+  background: #ffffff !important;
+  box-shadow: 0 2px 8px rgba(29, 29, 31, 0.08) !important;
+  color: var(--jb-blue) !important;
+  padding: 7px 12px !important;
+  font-size: 13px !important;
+  font-weight: 800 !important;
+}
+
+.copy-handoff-btn:hover {
+  border-color: rgba(37, 99, 235, 0.28) !important;
+  background: #eff6ff !important;
 }
 
 .trusted-output {
@@ -568,39 +602,6 @@ button.primary:hover {
   color: var(--jb-text) !important;
   font-size: 15px !important;
   line-height: 1.42 !important;
-}
-
-.trusted-output button[aria-label="Copy"],
-.trusted-output button[title="Copy"],
-.trusted-output .icon-button,
-.trusted-output button:has(svg) {
-  width: 34px !important;
-  height: 34px !important;
-  min-width: 34px !important;
-  border: 1px solid rgba(37, 99, 235, 0.16) !important;
-  border-radius: 999px !important;
-  background: #ffffff !important;
-  box-shadow: 0 2px 8px rgba(29, 29, 31, 0.08) !important;
-  color: var(--jb-blue) !important;
-  cursor: pointer !important;
-}
-
-.trusted-output button[aria-label="Copy"] svg,
-.trusted-output button[title="Copy"] svg,
-.trusted-output .icon-button svg,
-.trusted-output button:has(svg) svg {
-  width: 17px !important;
-  height: 17px !important;
-  color: var(--jb-blue) !important;
-  stroke: var(--jb-blue) !important;
-}
-
-.trusted-output button[aria-label="Copy"]:hover,
-.trusted-output button[title="Copy"]:hover,
-.trusted-output .icon-button:hover,
-.trusted-output button:has(svg):hover {
-  border-color: rgba(37, 99, 235, 0.28) !important;
-  background: #eff6ff !important;
 }
 
 .save-status {

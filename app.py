@@ -334,6 +334,13 @@ def start_scan(message: str) -> tuple[str, str]:
     return render_scanning_html(), ""
 
 
+COPY_HANDOFF_JS = """(text) => {
+    if (!text) return [];
+    navigator.clipboard.writeText(text);
+    return [];
+}"""
+
+
 def build_app() -> gr.Blocks:
     with gr.Blocks(title="Jawbreaker") as demo:
         memory_state = gr.State([])
@@ -378,13 +385,14 @@ def build_app() -> gr.Blocks:
                     </div>
                     """
                 )
-                gr.HTML("<div class='handoff-header'>Send to someone you trust</div>")
+                with gr.Row(elem_classes=["handoff-bar"]):
+                    gr.HTML("<div class='handoff-header'>Send to someone you trust</div>")
+                    copy_handoff = gr.Button("Copy message", elem_classes=["copy-handoff-btn"])
                 trusted_message = gr.Textbox(
                     label=None,
                     show_label=False,
                     lines=6,
                     interactive=False,
-                    buttons=["copy"],
                     elem_classes=["trusted-output"],
                 )
                 memory = gr.HTML("<div class='memory-card muted'>No scam memory saved yet.</div>")
@@ -408,6 +416,13 @@ def build_app() -> gr.Blocks:
             outputs=None,
             show_progress="hidden",
             api_visibility="private",
+        )
+        copy_handoff.click(
+            fn=None,
+            inputs=trusted_message,
+            outputs=[],
+            js=COPY_HANDOFF_JS,
+            show_progress="hidden",
         )
 
     return demo
