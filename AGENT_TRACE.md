@@ -36,13 +36,17 @@ Codex helped:
 - patch Gradio dark-mode/loading-opacity leakage
 - pivot the deployed model default to `openbmb/MiniCPM4.1-8B` for OpenBMB eligibility
 - add `trust_remote_code` support for MiniCPM's Transformers loader path
+- add a generated Jawbreaker train/dev/test corpus for SFT experiments
+- add a PEFT/LoRA MiniCPM training script and training-only requirements
+- add Transformers eval support for scoring OpenBMB models directly
+- add runtime fallback when model output is malformed or inference fails
 
 Current decisions:
 
 - Deployed model: `openbmb/MiniCPM4.1-8B`.
 - Deployed backend: Transformers on ZeroGPU.
 - Local/eval model path: llama-cpp-python remains available for GGUF models.
-- Fine-tuning: cut for this submission.
+- Fine-tuning: scaffolded, but deployment is gated on eval improvement.
 - Primary badges: Off-Brand, Sharing is Caring, Field Notes.
 - Defensible badges: Off the Grid and Llama Champion, documented carefully.
 - Sponsor target: OpenBMB, because MiniCPM is now central to the app.

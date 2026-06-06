@@ -62,3 +62,17 @@ Why:
 - The heuristic guard remains in place so obvious scam danger is not under-called if the model output is weak or malformed.
 
 Fallback plan: if Space latency or memory behavior is unacceptable, switch `JAWBREAKER_TRANSFORMERS_MODEL_ID` back to `Qwen/Qwen3-0.6B` and document the OpenBMB bakeoff result honestly.
+
+## 2026-06-06 Training Spine
+
+Jawbreaker now has a training path, but deployment remains eval-gated.
+
+Added:
+
+- deterministic generation of 720 train, 120 dev, and 180 test examples
+- generated holdout eval in `eval/generated_eval.jsonl`
+- PEFT/LoRA training scaffold for MiniCPM
+- Transformers eval backend for direct MiniCPM scoring
+- runtime fallback so malformed model JSON falls back to deterministic safety analysis
+
+Deployment rule: publish or deploy a LoRA adapter only if it improves valid JSON and keeps dangerous-as-safe misses at zero. A worse-but-fine-tuned model should not ship.

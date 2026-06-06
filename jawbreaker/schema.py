@@ -30,7 +30,23 @@ class ScamAnalysis:
         scam_type = "none"
         tactics: list[str] = []
 
-        if any(token in text for token in ["verify", "password", "login", "account locked", "account is locked"]):
+        credential_tokens = [
+            "verify",
+            "password",
+            "login",
+            "account locked",
+            "account is locked",
+            "one-time code",
+            "verification code",
+            "6-digit code",
+            "code that just came",
+            "pin",
+            "card number",
+            "bank login",
+            "seed phrase",
+            "username",
+        ]
+        if any(token in text for token in credential_tokens):
             risk_level = "dangerous"
             scam_type = "credential_theft"
             tactics.extend(["credential request", "fake authority"])
@@ -40,15 +56,76 @@ class ScamAnalysis:
                 risk_level = "suspicious"
             tactics.append("urgency")
 
-        if any(token in text for token in ["gift card", "zelle", "crypto", "wire", "$800", "send money"]):
+        payment_tokens = [
+            "gift card",
+            "gift cards",
+            "apple cards",
+            "google play cards",
+            "zelle",
+            "crypto",
+            "wire",
+            "$800",
+            "send money",
+            "processing fee",
+            "onboarding fee",
+            "cleanup fee",
+            "pay the",
+            "pay an",
+            "buy equipment",
+            "deposit a check",
+            "$300",
+            "$500",
+            "hospital bill",
+        ]
+        if any(token in text for token in payment_tokens):
             risk_level = "dangerous"
             scam_type = "payment_request"
             tactics.append("payment pressure")
 
-        if any(token in text for token in ["grandma", "new number", "don't tell", "dont tell"]):
+        if any(
+            token in text
+            for token in ["grandma", "grandpa", "niece", "new number", "changed numbers", "number only", "don't tell", "dont tell"]
+        ):
             risk_level = "dangerous"
             scam_type = "family_impersonation"
             tactics.extend(["impersonation", "secrecy"])
+
+        if any(
+            token in text
+            for token in [
+                "remote support",
+                "remote access",
+                "screen code",
+                "install remote",
+                "technician",
+                "microsoft security",
+                "apple support",
+                "browser warning",
+                "geek help desk",
+                "refund tool",
+                "call this number",
+                "call the support number",
+                "number shown",
+            ]
+        ):
+            risk_level = "dangerous"
+            scam_type = "tech_support"
+            tactics.extend(["fake authority", "remote access request"])
+
+        if any(token in text for token in ["prize", "lottery", "sweepstakes", "winner selected", "government grant"]):
+            risk_level = "dangerous"
+            scam_type = "prize_scam"
+            tactics.extend(["too good to be true", "fake authority"])
+
+        if any(token in text for token in ["you are hired", "job offer", "training starts", "equipment shipment", "payroll setup"]):
+            risk_level = "dangerous"
+            scam_type = "job_scam"
+            tactics.extend(["fake job", "fake authority"])
+
+        if any(token in text for token in ["feel so close", "about us", "we can meet", "wallet was stolen"]):
+            risk_level = "dangerous"
+            scam_type = "romance_scam"
+            tactics.extend(["emotional manipulation", "payment pressure"])
 
         if "http://" in text or "https://" in text:
             if risk_level == "safe":
@@ -112,8 +189,14 @@ def _guess_impersonation(text: str) -> str:
         return "USPS or package carrier"
     if "chase" in text or "bank" in text:
         return "Bank or financial institution"
-    if "grandma" in text or "new number" in text:
+    if any(token in text for token in ["grandma", "grandpa", "niece", "new number", "changed numbers"]):
         return "Family member"
+    if "support" in text or "technician" in text:
+        return "Tech support"
+    if "recruiter" in text or "hiring" in text or "you are hired" in text:
+        return "Employer or recruiter"
+    if "prize" in text or "lottery" in text or "grant" in text:
+        return "Prize or grant office"
     return "Unknown sender"
 
 
@@ -134,6 +217,12 @@ def _guess_ask(text: str, scam_type: str) -> str:
         return "Send money"
     if scam_type == "family_impersonation":
         return "Trust a new number"
+    if scam_type == "tech_support":
+        return "Install software or share access"
+    if scam_type == "prize_scam":
+        return "Pay or share details to claim prize"
+    if scam_type == "job_scam":
+        return "Pay or move money for job"
     if "http://" in text or "https://" in text:
         return "Open a link"
     return "No direct ask found"
@@ -154,4 +243,3 @@ def _find_similar_memory(text: str, memory: list[dict]) -> str:
     if best_score >= 0.18:
         return f"This resembles a saved pattern: {best}"
     return ""
-

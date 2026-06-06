@@ -21,6 +21,15 @@ Primary metrics:
 
 The eval intentionally includes legitimate alerts and ordinary messages. A scam detector that calls everything dangerous is not useful for the person Jawbreaker is built to protect.
 
+There is also a generated holdout set:
+
+```bash
+python3 training/generate_jawbreaker_data.py
+python3 eval/run_eval.py --dataset eval/generated_eval.jsonl --backend heuristic
+```
+
+The generated set is for scale and regression pressure. The 100-case hand-curated set remains the product compass.
+
 ## Current Runtime Decision
 
 The deployed Space uses `openbmb/MiniCPM4.1-8B` through Transformers on ZeroGPU to make OpenBMB MiniCPM central to the app.
@@ -35,6 +44,16 @@ Heuristic baseline:
 
 ```bash
 python3 eval/run_eval.py --backend heuristic
+```
+
+OpenBMB MiniCPM through Transformers:
+
+```bash
+python3 eval/run_eval.py \
+  --backend transformers \
+  --model-id openbmb/MiniCPM4.1-8B \
+  --trust-remote-code \
+  --dataset eval/generated_eval.jsonl
 ```
 
 Saved prediction replay:

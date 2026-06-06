@@ -12,5 +12,7 @@ models/
 *.pth
 dist/
 build/
+training/output/
+eval/predictions/
+eval/reports/
 .DS_Store
-

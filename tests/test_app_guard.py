@@ -1,4 +1,4 @@
-from app import build_handoff_message, remember_current, should_use_heuristic_guard
+from app import build_handoff_message, remember_current, run_analysis, should_use_heuristic_guard
 from jawbreaker.schema import ScamAnalysis
 
 
@@ -75,3 +75,21 @@ def test_handoff_message_includes_original_text_and_safe_action() -> None:
     assert "Safest next step:" in handoff
     assert analysis.safest_action in handoff
     assert "I have not clicked any links, replied, or sent anything." in handoff
+
+
+def test_run_analysis_falls_back_to_heuristic_when_model_fails(monkeypatch) -> None:
+    def broken_analyzer():
+        def analyze(message: str):
+            raise ValueError("model returned invalid JSON")
+
+        return analyze
+
+    monkeypatch.setattr("app.get_analyzer", broken_analyzer)
+    analysis = run_analysis(
+        "Hi Grandma, I lost my phone. This is my new number. Can you send $800 today?",
+        [],
+    )
+
+    assert analysis.risk_level == "dangerous"
+    assert analysis.scam_type == "family_impersonation"
+    assert "safety fallback" in analysis.summary

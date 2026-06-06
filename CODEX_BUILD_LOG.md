@@ -42,3 +42,9 @@ Follow-up hardening included:
 - Gradio loading and dark-mode fixes for a stable demo surface
 
 Codex then helped pivot the deployed default to `openbmb/MiniCPM4.1-8B` for OpenBMB sponsor eligibility. The app now exposes `JAWBREAKER_TRUST_REMOTE_CODE` so MiniCPM can load through Transformers while keeping the Qwen default available as an environment-variable fallback if Space latency becomes unacceptable.
+
+## Training Spine
+
+Codex added a deterministic synthetic data generator, a generated holdout eval set, a Transformers eval backend, and a PEFT/LoRA training script for MiniCPM.
+
+The deployed app also now falls back to deterministic scam analysis when model inference fails or returns malformed JSON, preventing the user-facing "could not analyze" state from becoming the main demo experience.

@@ -71,8 +71,17 @@ Safety architecture:
 
 - Model output must parse as JSON and match the required schema.
 - A deterministic heuristic guard catches weak model outputs that under-call obvious danger.
+- If MiniCPM generation fails or returns malformed JSON, Jawbreaker falls back to deterministic safety analysis instead of showing an unusable error state.
 - The UI always recommends verification through official channels or a known phone number, never the suspicious link or number.
 - Session memory is local to the current Gradio session and helps show repeated scam patterns.
+
+Training/eval artifacts:
+
+- `eval/scam_eval.jsonl`: 100 hand-curated synthetic/sanitized eval cases.
+- `training/generate_jawbreaker_data.py`: deterministic generator for larger train/dev/test splits.
+- `training/data/train.jsonl`, `dev.jsonl`, `test.jsonl`: generated SFT records for Jawbreaker JSON behavior.
+- `eval/generated_eval.jsonl`: generated holdout eval set.
+- `training/train_lora.py`: PEFT/LoRA scaffold for publishing a Jawbreaker MiniCPM adapter if it beats the base model.
 
 ## Bonus Badges Targeted
 

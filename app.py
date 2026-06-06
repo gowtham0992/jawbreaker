@@ -175,7 +175,16 @@ def run_analysis(message: str, memory: list[dict] | None) -> ScamAnalysis:
     memory = memory or []
     heuristic = ScamAnalysis.from_heuristics(message, memory)
     started = perf_counter()
-    prediction = get_analyzer()(message)
+    try:
+        prediction = get_analyzer()(message)
+    except Exception as exc:
+        print(
+            "jawbreaker analyzer_error fallback=heuristic "
+            f"elapsed={perf_counter() - started:.2f}s error={exc!r}",
+            flush=True,
+        )
+        heuristic.summary = f"{heuristic.summary} Jawbreaker used its safety fallback because the model response was not usable."
+        return heuristic
     validation_errors = validate_prediction(prediction)
     model_analysis = prediction_to_analysis(prediction, similar_memory=heuristic.similar_memory)
     print(f"jawbreaker analyze elapsed={perf_counter() - started:.2f}s", flush=True)

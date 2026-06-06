@@ -12,6 +12,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from jawbreaker.analyzers import (  # noqa: E402
     build_llama_cpp_analyzer,
+    build_transformers_analyzer,
     heuristic_analyzer,
     load_prediction_jsonl,
     prediction_file_analyzer,
@@ -39,7 +40,11 @@ UNSAFE_ACTION_PHRASES = [
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Run Jawbreaker scam-risk evals.")
     parser.add_argument("--dataset", type=Path, default=Path(__file__).with_name("scam_eval.jsonl"))
-    parser.add_argument("--backend", choices=["heuristic", "predictions", "llama-cpp"], default="heuristic")
+    parser.add_argument(
+        "--backend",
+        choices=["heuristic", "predictions", "llama-cpp", "transformers"],
+        default="heuristic",
+    )
     parser.add_argument("--predictions", type=Path, help="JSONL predictions for --backend predictions.")
     parser.add_argument("--predictions-out", type=Path, help="Write predictions as JSONL.")
     parser.add_argument("--json-out", type=Path, help="Write metrics as JSON.")
@@ -57,6 +62,10 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--op-offload", action=argparse.BooleanOptionalAction)
     parser.add_argument("--max-tokens", type=int, default=512)
     parser.add_argument("--temperature", type=float, default=0.0)
+    parser.add_argument("--model-id", default="openbmb/MiniCPM4.1-8B", help="HF model id for --backend transformers.")
+    parser.add_argument("--device-map", default="auto", help="Transformers device_map.")
+    parser.add_argument("--dtype", default="auto", help="Transformers dtype.")
+    parser.add_argument("--trust-remote-code", action=argparse.BooleanOptionalAction, default=True)
     return parser.parse_args()
 
 
@@ -141,6 +150,17 @@ def build_analyzer(args: argparse.Namespace):
             op_offload=args.op_offload,
             max_tokens=args.max_tokens,
             temperature=args.temperature,
+        )
+        return lambda row: analyzer(row["input"])
+
+    if args.backend == "transformers":
+        analyzer = build_transformers_analyzer(
+            args.model_id,
+            max_new_tokens=args.max_tokens,
+            temperature=args.temperature,
+            device_map=args.device_map,
+            dtype=args.dtype,
+            trust_remote_code=args.trust_remote_code,
         )
         return lambda row: analyzer(row["input"])
 
