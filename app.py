@@ -201,7 +201,6 @@ def should_use_heuristic_guard(
 def analyze_message(
     message: str,
     memory: list[dict] | None,
-    progress: gr.Progress = gr.Progress(),
 ) -> tuple[str, str, str, list[dict], dict]:
     memory = memory or []
     if not message.strip():
@@ -209,9 +208,7 @@ def analyze_message(
         return render_analysis_html(message, analysis), "", render_memory_html(analysis, memory), memory, {}
 
     try:
-        progress(0.12, desc="Reading the message")
         analysis = run_analysis(message, memory)
-        progress(0.82, desc="Preparing the safest next step")
     except Exception as exc:
         analysis = analysis_error(exc)
         return (
@@ -338,11 +335,13 @@ def build_app() -> gr.Blocks:
             fn=start_scan,
             inputs=message,
             outputs=[result, trusted_message],
+            show_progress="hidden",
         )
         scan_event.then(
             fn=analyze_message,
             inputs=[message, memory_state],
             outputs=[result, trusted_message, memory, memory_state, last_scan_state],
+            show_progress="hidden",
         )
 
     return demo

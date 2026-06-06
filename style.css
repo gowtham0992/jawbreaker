@@ -35,6 +35,29 @@
   color-scheme: light !important;
 }
 
+/* Keep Gradio callback states from dimming the app or adding progress chrome. */
+.gradio-container .wrap.translucent,
+.gradio-container .wrap[style*="opacity"],
+.gradio-container .block.translucent,
+.gradio-container [class*="pending"],
+.gradio-container [class*="generating"],
+.gradio-container .block:has(> .wrap),
+.gradio-container .block,
+.gradio-container .block *,
+.gradio-container .html,
+.gradio-container .html * {
+  opacity: 1 !important;
+}
+
+.gradio-container .block:has(> .wrap) {
+  pointer-events: auto !important;
+}
+
+.gradio-container .progress-bar,
+.gradio-container [class*="progress"] {
+  display: none !important;
+}
+
 html,
 body,
 body.dark {
