@@ -251,7 +251,7 @@ def should_use_heuristic_guard(
 def analyze_message(
     message: str,
     memory: list[dict] | None,
-) -> tuple[str, str, str, list[dict], dict, dict, dict]:
+) -> tuple[str, str, str, list[dict], dict, dict, dict, dict]:
     memory = memory or []
     if not message.strip():
         analysis = ScamAnalysis.from_heuristics(message, memory)
@@ -261,6 +261,7 @@ def analyze_message(
             render_memory_html(analysis, memory),
             memory,
             {},
+            gr.update(visible=False),
             gr.update(interactive=True),
             gr.update(interactive=True),
         )
@@ -275,6 +276,7 @@ def analyze_message(
             render_memory_html(analysis, memory),
             memory,
             {},
+            gr.update(visible=True),
             gr.update(interactive=True),
             gr.update(interactive=True),
         )
@@ -292,6 +294,7 @@ def analyze_message(
         render_memory_html(analysis, memory),
         memory,
         last_scan,
+        gr.update(visible=True),
         gr.update(interactive=True),
         gr.update(interactive=True),
     )
@@ -339,11 +342,17 @@ def remember_current(message: str, memory: list[dict] | None, last_scan: dict | 
     return render_save_status("Saved this scam pattern for this session."), render_current_memory(memory), memory
 
 
-def start_scan(message: str) -> tuple[str, str, dict, dict]:
+def start_scan(message: str) -> tuple[str, str, dict, dict, dict]:
     if not message.strip():
         analysis = ScamAnalysis.from_heuristics(message, [])
-        return render_analysis_html(message, analysis), "", gr.update(interactive=True), gr.update(interactive=True)
-    return render_scanning_html(), "", gr.update(interactive=False), gr.update(interactive=False)
+        return (
+            render_analysis_html(message, analysis),
+            "",
+            gr.update(visible=False),
+            gr.update(interactive=True),
+            gr.update(interactive=True),
+        )
+    return render_scanning_html(), "", gr.update(visible=False), gr.update(interactive=False), gr.update(interactive=False)
 
 
 COPY_HANDOFF_JS = """(text) => {
@@ -393,6 +402,7 @@ def build_app() -> gr.Blocks:
                 )
                 analyze = gr.Button("RUN SCAM DETECTOR", variant="primary", elem_classes=["check-btn"])
                 gr.Examples(examples=EXAMPLES, inputs=message, label="threat_history_log.db")
+                memory = gr.HTML(render_current_memory([]))
 
             with gr.Column(scale=7):
                 result = gr.HTML(
@@ -417,29 +427,28 @@ def build_app() -> gr.Blocks:
                     </div>
                     """
                 )
-                with gr.Row(elem_classes=["handoff-bar"]):
-                    gr.HTML("<div class='handoff-header'>safe_remedy_steps.sh</div>")
-                    copy_handoff = gr.Button("COPY PLAN", elem_classes=["copy-handoff-btn"])
-                trusted_message = gr.Textbox(
-                    label=None,
-                    show_label=False,
-                    lines=6,
-                    interactive=False,
-                    elem_classes=["trusted-output"],
-                )
-                memory = gr.HTML("<div class='memory-card muted'>No scam memory saved yet.</div>")
-                save_status = gr.HTML("<div class='save-status'></div>")
+                with gr.Column(visible=False, elem_classes=["handoff-panel"]) as handoff_panel:
+                    with gr.Row(elem_classes=["handoff-bar"]):
+                        gr.HTML("<div class='handoff-header'>safe_remedy_steps.sh</div>")
+                        copy_handoff = gr.Button("COPY PLAN", elem_classes=["copy-handoff-btn"])
+                    trusted_message = gr.Textbox(
+                        label=None,
+                        show_label=False,
+                        lines=6,
+                        interactive=False,
+                        elem_classes=["trusted-output"],
+                    )
 
         scan_event = analyze.click(
             fn=start_scan,
             inputs=message,
-            outputs=[result, trusted_message, message, analyze],
+            outputs=[result, trusted_message, handoff_panel, message, analyze],
             show_progress="hidden",
         )
         scan_event.then(
             fn=analyze_message,
             inputs=[message, memory_state],
-            outputs=[result, trusted_message, memory, memory_state, last_scan_state, message, analyze],
+            outputs=[result, trusted_message, memory, memory_state, last_scan_state, handoff_panel, message, analyze],
             show_progress="hidden",
         )
         demo.load(
