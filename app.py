@@ -206,6 +206,26 @@ def render_save_status(message: str = "") -> str:
     return f"<div class='save-status'>{message}</div>"
 
 
+def build_handoff_message(message: str, analysis: ScamAnalysis) -> str:
+    cleaned = " ".join(message.strip().split())
+    if len(cleaned) > 500:
+        cleaned = cleaned[:497].rstrip() + "..."
+
+    risk = analysis.risk_level.replace("_", " ")
+    scam_type = analysis.scam_type.replace("_", " ")
+    risk_line = f"Jawbreaker marked it as {risk}"
+    if scam_type and scam_type != "none":
+        risk_line += f" ({scam_type})"
+
+    return (
+        "Can you check this message with me before I do anything?\n\n"
+        f"Message I received:\n\"{cleaned}\"\n\n"
+        f"{risk_line}.\n"
+        f"Safest next step: {analysis.safest_action}\n\n"
+        "I have not clicked any links, replied, or sent anything."
+    )
+
+
 def should_use_heuristic_guard(
     model_analysis: ScamAnalysis,
     heuristic: ScamAnalysis,
@@ -243,7 +263,7 @@ def analyze_message(
         analysis = analysis_error(exc)
         return (
             render_analysis_html(message, analysis),
-            analysis.trusted_person_message,
+            build_handoff_message(message, analysis),
             render_memory_html(analysis, memory),
             memory,
             {},
@@ -256,7 +276,13 @@ def analyze_message(
     entry = last_scan["entry"]
     if not memory or memory[-1].get("text") != entry.get("text"):
         memory.append(entry)
-    return render_analysis_html(message, analysis), analysis.trusted_person_message, render_memory_html(analysis, memory), memory, last_scan
+    return (
+        render_analysis_html(message, analysis),
+        build_handoff_message(message, analysis),
+        render_memory_html(analysis, memory),
+        memory,
+        last_scan,
+    )
 
 
 def analysis_error(exc: Exception) -> ScamAnalysis:
@@ -352,9 +378,11 @@ def build_app() -> gr.Blocks:
                     </div>
                     """
                 )
+                gr.HTML("<div class='handoff-header'>Send to someone you trust</div>")
                 trusted_message = gr.Textbox(
-                    label="Send to someone you trust",
-                    lines=3,
+                    label=None,
+                    show_label=False,
+                    lines=6,
                     interactive=False,
                     buttons=["copy"],
                     elem_classes=["trusted-output"],

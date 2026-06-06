@@ -1,4 +1,4 @@
-from app import remember_current, should_use_heuristic_guard
+from app import build_handoff_message, remember_current, should_use_heuristic_guard
 from jawbreaker.schema import ScamAnalysis
 
 
@@ -61,3 +61,17 @@ def test_remember_current_saves_last_scan_without_reanalysis(monkeypatch) -> Non
     assert "Saved this scam pattern for this session." in status
     assert len(memory) == 1
     assert "Session scam memory" in memory_html
+
+
+def test_handoff_message_includes_original_text_and_safe_action() -> None:
+    message = "Hi Grandma, I lost my phone. This is my new number. Can you send $800 today?"
+    analysis = ScamAnalysis.from_heuristics(message)
+
+    handoff = build_handoff_message(message, analysis)
+
+    assert "Message I received:" in handoff
+    assert message in handoff
+    assert "Jawbreaker marked it as dangerous (family impersonation)." in handoff
+    assert "Safest next step:" in handoff
+    assert analysis.safest_action in handoff
+    assert "I have not clicked any links, replied, or sent anything." in handoff
