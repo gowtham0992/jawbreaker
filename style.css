@@ -99,6 +99,22 @@ body.dark {
   color: var(--jb-text) !important;
 }
 
+/* Fix Gradio red label badges. */
+.gradio-container label > span:first-child {
+  background: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+  color: #6b5144 !important;
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  padding: 0 !important;
+  text-transform: uppercase !important;
+}
+
+footer {
+  display: none !important;
+}
+
 .hero {
   display: flex;
   align-items: center;
@@ -226,11 +242,12 @@ button.primary:hover {
 }
 
 .empty-state {
-  min-height: 260px;
+  min-height: 320px;
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: center;
   flex-direction: column;
+  text-align: center;
 }
 
 .empty-state h2,
@@ -376,7 +393,8 @@ button.primary:hover {
 }
 
 .verdict-icon-danger::before {
-  content: "x";
+  content: "✕";
+  font-size: 32px;
 }
 
 .verdict-icon-warning {
@@ -385,7 +403,8 @@ button.primary:hover {
 }
 
 .verdict-icon-warning::before {
-  content: "!";
+  content: "⚠";
+  font-size: 30px;
 }
 
 .verdict-icon-check {
@@ -395,6 +414,7 @@ button.primary:hover {
 
 .verdict-icon-check::before {
   content: "?";
+  font-size: 30px;
 }
 
 .verdict-icon-safe {
@@ -404,6 +424,7 @@ button.primary:hover {
 
 .verdict-icon-safe::before {
   content: "✓";
+  font-size: 30px;
 }
 
 .verdict-title {
@@ -543,6 +564,35 @@ button.primary:hover {
 .trusted-output label span.svelte-jdcl7l {
   max-width: calc(100% - 42px);
   white-space: normal;
+}
+
+.trusted-output button[aria-label="Copy"],
+.trusted-output button[title="Copy"],
+.trusted-output .icon-button,
+.trusted-output button:has(svg) {
+  width: 40px !important;
+  height: 40px !important;
+  border: none !important;
+  border-radius: 10px !important;
+  background: var(--jb-blue) !important;
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.2) !important;
+  color: #ffffff !important;
+  cursor: pointer !important;
+}
+
+.trusted-output button[aria-label="Copy"] svg,
+.trusted-output button[title="Copy"] svg,
+.trusted-output .icon-button svg,
+.trusted-output button:has(svg) svg {
+  color: #ffffff !important;
+  stroke: #ffffff !important;
+}
+
+.trusted-output button[aria-label="Copy"]:hover,
+.trusted-output button[title="Copy"]:hover,
+.trusted-output .icon-button:hover,
+.trusted-output button:has(svg):hover {
+  background: #1d4ed8 !important;
 }
 
 .save-status {

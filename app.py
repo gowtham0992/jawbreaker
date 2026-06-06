@@ -56,12 +56,20 @@ FORCE_LIGHT_HEAD = """
 
 
 def app_theme() -> gr.Theme:
-    return gr.themes.Soft(
+    theme = gr.themes.Soft(
         primary_hue="red",
         secondary_hue="slate",
         neutral_hue="zinc",
         radius_size="sm",
     )
+    theme.set(
+        block_label_background_fill="transparent",
+        block_label_border_color="transparent",
+        block_label_text_color="#6b5144",
+        block_label_text_size="13px",
+        block_label_text_weight="700",
+    )
+    return theme
 
 
 def app_css() -> str:
@@ -338,8 +346,9 @@ def build_app() -> gr.Blocks:
                 result = gr.HTML(
                     """
                     <div class="empty-state">
+                      <div class="shield-mark" aria-hidden="true"></div>
                       <h2>Paste a message to scan it.</h2>
-                      <p>Jawbreaker will show the risk, the Scam DNA, and the safest next step.</p>
+                      <p>Got a text, email, or DM that feels off? Paste it here.<br>Jawbreaker will tell you if it's safe and what to do next.</p>
                     </div>
                     """
                 )

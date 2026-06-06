@@ -26,7 +26,7 @@ def render_analysis_html(message: str, analysis: ScamAnalysis) -> str:
         <div class="empty-state">
           <div class="shield-mark" aria-hidden="true"></div>
           <h2>Paste a message to scan it.</h2>
-          <p>Jawbreaker will show the risk, the Scam DNA, and the safest next step.</p>
+          <p>Got a text, email, or DM that feels off? Paste it here.<br>Jawbreaker will tell you if it's safe and what to do next.</p>
         </div>
         """
 
@@ -46,6 +46,7 @@ def render_analysis_html(message: str, analysis: ScamAnalysis) -> str:
 
     return f"""
     <section class="verdict-card risk-{escape(analysis.risk_level)}">
+      <p class="section-kicker">Verdict</p>
       <div class="verdict-header">
         <span class="verdict-icon verdict-icon-{escape(icon_class)}" aria-hidden="true"></span>
         <div>
@@ -57,13 +58,13 @@ def render_analysis_html(message: str, analysis: ScamAnalysis) -> str:
         <strong>What to do</strong>
         <p>{escape(analysis.safest_action)}</p>
       </div>
-      <h3>How this scam works</h3>
+      <h3>How this scam works 🔍</h3>
       <p class="section-kicker">Scam DNA</p>
       <div class="dna-grid">{dna_html}</div>
-      <h3>Warning signs</h3>
+      <h3>Warning signs ⚡</h3>
       <div class="tactics">{tactic_html or "<span class='tactic'>none found</span>"}</div>
       {memory_html}
-      <h3>Send this to someone you trust</h3>
+      <h3>Send this to someone you trust 💬</h3>
       <p class="trusted-inline">{escape(analysis.trusted_person_message)}</p>
     </section>
     """
