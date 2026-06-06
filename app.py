@@ -348,11 +348,16 @@ def build_app() -> gr.Blocks:
 
         gr.HTML(
             """
-            <section class="hero">
-              <p class="eyebrow">Backyard AI</p>
-              <h1>Jawbreaker</h1>
-              <p class="subtitle">Scam defense for someone you love.</p>
-            </section>
+            <header class="topbar">
+              <div class="brand-lockup">
+                <span class="brand-mark" aria-hidden="true">J</span>
+                <span class="brand-name">JAWBREAKER</span>
+              </div>
+              <div class="status-tags">
+                <span>[ SECURE_ENV: ACTIVE ]</span>
+                <span>[ MODEL: LOCAL_SCAN ]</span>
+              </div>
+            </header>
             """
         )
 
@@ -360,34 +365,41 @@ def build_app() -> gr.Blocks:
             with gr.Column(scale=5, elem_classes=["scan-panel"]):
                 gr.HTML(
                     """
-                    <div class="panel-kicker">
-                      <span class="kicker-pin"></span>
-                      <span>Paste the message</span>
+                    <div class="window-titlebar input-titlebar">
+                      <span class="traffic-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+                      <span>analyze_message.sh</span>
                     </div>
+                    <p class="panel-kicker">PASTE SUSPICIOUS TEXT BELOW:</p>
                     """
                 )
                 message = gr.Textbox(
-                    label="Suspicious message",
+                    label=None,
+                    show_label=False,
                     placeholder="Paste a suspicious text, email, or DM here.",
                     lines=10,
                     max_lines=16,
                 )
-                analyze = gr.Button("Check this message", variant="primary", elem_classes=["check-btn"])
-                gr.Examples(examples=EXAMPLES, inputs=message, label="Try a sample")
+                analyze = gr.Button("RUN SCAM DETECTOR", variant="primary", elem_classes=["check-btn"])
+                gr.Examples(examples=EXAMPLES, inputs=message, label="threat_history_log.db")
 
             with gr.Column(scale=7):
                 result = gr.HTML(
                     """
-                    <div class="empty-state">
-                      <div class="shield-mark" aria-hidden="true"></div>
-                      <h2>Paste a message to scan it.</h2>
-                      <p>Got a text, email, or DM that feels off? Paste it here.<br>Jawbreaker will tell you if it's safe and what to do next.</p>
-                    </div>
+                    <section class="retro-window empty-state">
+                      <div class="window-titlebar"><span>waiting_for_input.sys</span></div>
+                      <div class="window-body">
+                        <div class="empty-terminal">
+                          <p class="terminal-label">STATUS:</p>
+                          <h2>Paste a message to begin scan.</h2>
+                          <p>Jawbreaker will classify the threat, explain the scam DNA, and generate a safe copy plan.</p>
+                        </div>
+                      </div>
+                    </section>
                     """
                 )
                 with gr.Row(elem_classes=["handoff-bar"]):
-                    gr.HTML("<div class='handoff-header'>Send to someone you trust</div>")
-                    copy_handoff = gr.Button("Copy message", elem_classes=["copy-handoff-btn"])
+                    gr.HTML("<div class='handoff-header'>safe_remedy_steps.sh</div>")
+                    copy_handoff = gr.Button("COPY PLAN", elem_classes=["copy-handoff-btn"])
                 trusted_message = gr.Textbox(
                     label=None,
                     show_label=False,
