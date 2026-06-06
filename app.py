@@ -43,6 +43,22 @@ FORCE_LIGHT_HEAD = """
   const forceLight = () => {
     if (document.body) document.body.classList.remove("dark");
   };
+  const copyPlan = async (button) => {
+    const source = button.closest(".copy-plan-inline")?.querySelector(".copy-plan-source");
+    if (!source?.value) return;
+    await navigator.clipboard.writeText(source.value);
+    const original = button.textContent || "COPY PLAN";
+    button.textContent = "COPIED";
+    window.setTimeout(() => {
+      button.textContent = original;
+    }, 1200);
+  };
+  document.addEventListener("click", (event) => {
+    const button = event.target.closest?.(".inline-copy-btn");
+    if (!button) return;
+    event.preventDefault();
+    copyPlan(button);
+  });
   window.addEventListener("DOMContentLoaded", () => {
     forceLight();
     new MutationObserver(forceLight).observe(document.body, {
@@ -251,17 +267,15 @@ def should_use_heuristic_guard(
 def analyze_message(
     message: str,
     memory: list[dict] | None,
-) -> tuple[str, str, str, list[dict], dict, dict, dict, dict]:
+) -> tuple[str, str, list[dict], dict, dict, dict]:
     memory = memory or []
     if not message.strip():
         analysis = ScamAnalysis.from_heuristics(message, memory)
         return (
             render_analysis_html(message, analysis),
-            "",
             render_memory_html(analysis, memory),
             memory,
             {},
-            gr.update(visible=False),
             gr.update(interactive=True),
             gr.update(interactive=True),
         )
@@ -272,11 +286,9 @@ def analyze_message(
         analysis = analysis_error(exc)
         return (
             render_analysis_html(message, analysis),
-            build_handoff_message(message, analysis),
             render_memory_html(analysis, memory),
             memory,
             {},
-            gr.update(visible=True),
             gr.update(interactive=True),
             gr.update(interactive=True),
         )
@@ -290,11 +302,9 @@ def analyze_message(
         memory.append(entry)
     return (
         render_analysis_html(message, analysis),
-        build_handoff_message(message, analysis),
         render_memory_html(analysis, memory),
         memory,
         last_scan,
-        gr.update(visible=True),
         gr.update(interactive=True),
         gr.update(interactive=True),
     )
@@ -342,24 +352,15 @@ def remember_current(message: str, memory: list[dict] | None, last_scan: dict | 
     return render_save_status("Saved this scam pattern for this session."), render_current_memory(memory), memory
 
 
-def start_scan(message: str) -> tuple[str, str, dict, dict, dict]:
+def start_scan(message: str) -> tuple[str, dict, dict]:
     if not message.strip():
         analysis = ScamAnalysis.from_heuristics(message, [])
         return (
             render_analysis_html(message, analysis),
-            "",
-            gr.update(visible=False),
             gr.update(interactive=True),
             gr.update(interactive=True),
         )
-    return render_scanning_html(), "", gr.update(visible=False), gr.update(interactive=False), gr.update(interactive=False)
-
-
-COPY_HANDOFF_JS = """(text) => {
-    if (!text) return [];
-    navigator.clipboard.writeText(text);
-    return [];
-}"""
+    return render_scanning_html(), gr.update(interactive=False), gr.update(interactive=False)
 
 
 def build_app() -> gr.Blocks:
@@ -427,28 +428,16 @@ def build_app() -> gr.Blocks:
                     </div>
                     """
                 )
-                with gr.Column(visible=False, elem_classes=["handoff-panel"]) as handoff_panel:
-                    with gr.Row(elem_classes=["handoff-bar"]):
-                        gr.HTML("<div class='handoff-header'>safe_remedy_steps.sh</div>")
-                        copy_handoff = gr.Button("COPY PLAN", elem_classes=["copy-handoff-btn"])
-                    trusted_message = gr.Textbox(
-                        label=None,
-                        show_label=False,
-                        lines=6,
-                        interactive=False,
-                        elem_classes=["trusted-output"],
-                    )
-
         scan_event = analyze.click(
             fn=start_scan,
             inputs=message,
-            outputs=[result, trusted_message, handoff_panel, message, analyze],
+            outputs=[result, message, analyze],
             show_progress="hidden",
         )
         scan_event.then(
             fn=analyze_message,
             inputs=[message, memory_state],
-            outputs=[result, trusted_message, memory, memory_state, last_scan_state, handoff_panel, message, analyze],
+            outputs=[result, memory, memory_state, last_scan_state, message, analyze],
             show_progress="hidden",
         )
         demo.load(
@@ -458,14 +447,6 @@ def build_app() -> gr.Blocks:
             show_progress="hidden",
             api_visibility="private",
         )
-        copy_handoff.click(
-            fn=None,
-            inputs=trusted_message,
-            outputs=[],
-            js=COPY_HANDOFF_JS,
-            show_progress="hidden",
-        )
-
     return demo
 
 

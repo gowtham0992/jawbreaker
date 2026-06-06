@@ -34,6 +34,26 @@ RISK_BADGE = {
 }
 
 
+def build_copy_plan(message: str, analysis: ScamAnalysis) -> str:
+    cleaned = " ".join(message.strip().split())
+    if len(cleaned) > 500:
+        cleaned = cleaned[:497].rstrip() + "..."
+
+    risk = analysis.risk_level.replace("_", " ")
+    scam_type = analysis.scam_type.replace("_", " ")
+    risk_line = f"Jawbreaker marked it as {risk}"
+    if scam_type and scam_type != "none":
+        risk_line += f" ({scam_type})"
+
+    return (
+        "Can you check this message with me before I do anything?\n\n"
+        f"Message I received:\n\"{cleaned}\"\n\n"
+        f"{risk_line}.\n"
+        f"Safest next step: {analysis.safest_action}\n\n"
+        "I have not clicked any links, replied, or sent anything."
+    )
+
+
 def render_window(title: str, body: str, class_name: str = "") -> str:
     classes = f"retro-window {class_name}".strip()
     return f"""
@@ -102,12 +122,16 @@ def render_analysis_html(message: str, analysis: ScamAnalysis) -> str:
       <div class="tactics">{tactic_html or "<span class='tactic'>none found</span>"}</div>
     """
 
+    copy_plan = build_copy_plan(message, analysis)
     remedy = f"""
       <div class="remedy-copy">
         <p class="terminal-label">RECOMMENDED ACTION:</p>
         <p>{escape(analysis.safest_action)}</p>
       </div>
-      <div class="trusted-inline">{escape(analysis.trusted_person_message)}</div>
+      <div class="copy-plan-inline">
+        <textarea class="copy-plan-source" readonly>{escape(copy_plan)}</textarea>
+        <button type="button" class="inline-copy-btn">COPY PLAN</button>
+      </div>
     """
 
     return f"""
