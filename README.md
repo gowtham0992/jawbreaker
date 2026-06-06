@@ -53,6 +53,7 @@ Jawbreaker is deliberately narrow. It does not try to be a general assistant or 
 
 The final app will use a local small model through `llama.cpp` / `llama-cpp-python`. Candidate models will be chosen by an eval bakeoff:
 
+- Qwen3-0.6B GGUF Q4_K_M as the responsive CPU demo default
 - Qwen3-4B GGUF Q4_K_M
 - Qwen3-8B GGUF Q4_K_M
 - MiniCPM4-8B GGUF Q4_K_M

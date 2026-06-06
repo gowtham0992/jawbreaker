@@ -70,12 +70,12 @@ def get_analyzer():
 
 
 def resolve_model_path() -> Path:
-    model_path = Path(os.getenv("JAWBREAKER_MODEL_PATH", "models/qwen3-4b-gguf/Qwen3-4B-Q4_K_M.gguf"))
+    model_path = Path(os.getenv("JAWBREAKER_MODEL_PATH", "models/qwen3-0.6b-gguf/Qwen3-0.6B-Q4_K_M.gguf"))
     if model_path.exists():
         return model_path
 
-    repo_id = os.getenv("JAWBREAKER_MODEL_REPO", "Qwen/Qwen3-4B-GGUF")
-    filename = os.getenv("JAWBREAKER_MODEL_FILE", "Qwen3-4B-Q4_K_M.gguf")
+    repo_id = os.getenv("JAWBREAKER_MODEL_REPO", "unsloth/Qwen3-0.6B-GGUF")
+    filename = os.getenv("JAWBREAKER_MODEL_FILE", "Qwen3-0.6B-Q4_K_M.gguf")
     cache_dir = os.getenv("JAWBREAKER_MODEL_CACHE")
     try:
         from huggingface_hub import hf_hub_download
