@@ -40,6 +40,7 @@ def run_eval(
     adapter_id: str | None = "build-small-hackathon/jawbreaker-minicpm-lora",
     limit: int | None = None,
     output_prefix: str = "jawbreaker-minicpm-lora-generated",
+    apply_safety_guard: bool = False,
 ) -> None:
     import os
     import subprocess
@@ -67,6 +68,8 @@ def run_eval(
         cmd.extend(["--adapter-id", adapter_id])
     if limit:
         cmd.extend(["--limit", str(limit)])
+    if apply_safety_guard:
+        cmd.append("--apply-safety-guard")
 
     print("jawbreaker modal_eval command=" + " ".join(cmd), flush=True)
     subprocess.run(cmd, check=True)
@@ -82,6 +85,7 @@ def main(
     adapter_id: str | None = "build-small-hackathon/jawbreaker-minicpm-lora",
     limit: int | None = None,
     output_prefix: str = "jawbreaker-minicpm-lora-generated",
+    apply_safety_guard: bool = False,
 ) -> None:
     run_eval.remote(
         dataset=dataset,
@@ -89,4 +93,5 @@ def main(
         adapter_id=adapter_id,
         limit=limit,
         output_prefix=output_prefix,
+        apply_safety_guard=apply_safety_guard,
     )

@@ -121,6 +121,24 @@ def test_repair_prediction_adds_missing_summary_without_changing_risk() -> None:
     assert repaired["summary"] == "This looks dangerous: likely family impersonation."
 
 
+def test_repair_prediction_sanitizes_unsafe_action() -> None:
+    repaired = repair_prediction(
+        {
+            "risk_level": "dangerous",
+            "scam_type": "family impersonation",
+            "summary": "This is a money request.",
+            "tactics": ["secrecy"],
+            "safest_action": "Send gift cards today and explain later.",
+            "trusted_person_message": "Can you check this with me?",
+            "scam_dna": {"impersonates": "family member"},
+        }
+    )
+
+    assert "Send gift cards" not in repaired["safest_action"]
+    assert "Do not click links" in repaired["safest_action"]
+    assert "do not send money" in repaired["safest_action"]
+
+
 def test_default_adapter_only_attaches_to_minicpm(monkeypatch) -> None:
     monkeypatch.delenv("JAWBREAKER_ADAPTER_ID", raising=False)
 
