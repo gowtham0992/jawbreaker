@@ -861,19 +861,94 @@ button.primary:disabled {
   .main-grid {
     padding: 24px 20px 0;
   }
+
+  .main-grid,
+  .main-grid > div,
+  .main-grid > .column {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+  }
 }
 
 @media (max-width: 760px) {
+  :root {
+    --jb-shadow: 4px 4px 0 #000000;
+  }
+
+  .gradio-container {
+    max-width: none !important;
+    padding-bottom: 28px !important;
+  }
+
+  .topbar {
+    min-height: 0;
+    gap: 12px;
+    padding: 18px 16px 14px;
+  }
+
+  .brand-lockup {
+    gap: 10px;
+    width: 100%;
+  }
+
+  .brand-mark {
+    width: 34px;
+    height: 34px;
+    flex: 0 0 34px;
+  }
+
   .brand-name {
-    font-size: 22px;
+    min-width: 0;
+    font-size: clamp(28px, 9vw, 38px);
+    overflow-wrap: anywhere;
   }
 
   .status-tags {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 6px;
+    width: 100%;
     font-size: 10px;
+    white-space: normal;
+  }
+
+  .status-tags span {
+    display: block;
   }
 
   .main-grid {
+    display: flex !important;
+    flex-direction: column !important;
     gap: 24px !important;
+    padding: 22px 16px 0;
+  }
+
+  .main-grid > div,
+  .main-grid > .column,
+  .main-grid > .form,
+  .main-grid > .block {
+    flex: 0 0 auto !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  .scan-panel,
+  .retro-window,
+  .memory-card {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  .window-titlebar {
+    min-height: 34px;
+    padding: 9px 12px;
+    font-size: 10px;
+  }
+
+  .input-titlebar {
+    align-items: center;
   }
 
   .scan-panel .block,
@@ -888,22 +963,95 @@ button.primary:disabled {
   .panel-kicker {
     margin-left: 16px !important;
     margin-right: 16px !important;
+    font-size: 10px;
+  }
+
+  .scan-panel textarea {
+    min-height: 170px !important;
+    font-size: 15px !important;
+  }
+
+  .check-btn,
+  button.primary {
+    min-height: 50px !important;
+    font-size: 12px !important;
+    white-space: normal !important;
+  }
+
+  .status-body,
+  .window-body,
+  .dna-window .window-body,
+  .terminal-window .window-body {
+    padding: 18px;
+  }
+
+  .status-body {
+    gap: 12px;
+    text-align: left;
+  }
+
+  .standing-by {
+    width: 100%;
+    font-size: 12px;
+    text-align: left;
+  }
+
+  .status-body h2,
+  .empty-terminal h2,
+  .scanning-state h2 {
+    width: 100%;
+    font-size: 24px;
+    line-height: 1.12;
+    text-align: left;
+  }
+
+  .status-body p:last-child,
+  .empty-terminal p:last-child {
+    width: 100%;
+    font-size: 14px;
+    text-align: left;
   }
 
   .dna-grid {
     grid-template-columns: 1fr;
   }
 
+  .dna-value {
+    font-size: 18px;
+  }
+
   .verdict-header {
-    grid-template-columns: 1fr;
+    grid-template-columns: auto 1fr;
+    align-items: start;
+  }
+
+  .verdict-title {
+    font-size: 23px;
+  }
+
+  .verdict-subtitle {
+    font-size: 14px;
   }
 
   .copy-plan-inline {
     grid-template-columns: 1fr;
   }
 
+  .copy-plan-source {
+    max-height: 220px;
+  }
+
+  .inline-copy-btn {
+    min-height: 54px !important;
+  }
+
   .copy-handoff-btn {
     font-size: 11px !important;
     padding: 7px 9px !important;
+  }
+
+  .memory-row {
+    align-items: flex-start;
+    flex-direction: column;
   }
 }
