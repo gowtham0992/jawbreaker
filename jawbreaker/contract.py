@@ -55,8 +55,11 @@ Safety rules:
 - If uncertain, choose "needs_check" and recommend verification through the official app, official website, or a known phone number.
 - If a family member, romantic partner, buyer, employer, bank, or support agent asks for money, gift cards, crypto, codes, passwords, bank details, or secrecy, do not mark it safe.
 - Use short, plain English for someone who is not technical.
+- Keep "summary" under 18 words.
+- Use at most 3 short tactic strings.
 - Give exactly one safest next step.
-- Return every required key. Put "risk_level" first and "summary" last. Do not write chain-of-thought. Return the JSON object only.
+- Return every required key. Put "risk_level" first and "summary" last.
+- Start the response exactly with {{"risk_level": and end after the JSON object. Do not write chain-of-thought.
 """.strip()
 
 
@@ -66,4 +69,6 @@ USER_PROMPT_TEMPLATE = """
 Analyze this message for scam risk:
 
 {message}
+
+Return only the JSON object.
 """.strip()

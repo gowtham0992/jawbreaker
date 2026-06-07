@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import re
 from collections.abc import Callable, Iterable
 from pathlib import Path
 from time import perf_counter
@@ -187,11 +188,58 @@ def load_json_prediction(content: str) -> Prediction:
         start = content.find("{")
         end = content.rfind("}")
         if start == -1 or end == -1 or end <= start:
-            raise
-        prediction = json.loads(content[start : end + 1])
+            prediction = recover_prediction_fields(content)
+        else:
+            try:
+                prediction = json.loads(content[start : end + 1])
+            except json.JSONDecodeError:
+                prediction = recover_prediction_fields(content[start : end + 1])
     if not isinstance(prediction, dict):
         raise ValueError("model response must be a JSON object")
     return prediction
+
+
+def recover_prediction_fields(content: str) -> Prediction:
+    """Recover a usable prediction from near-JSON small-model output."""
+    prediction: Prediction = {}
+
+    string_fields = [
+        "risk_level",
+        "scam_type",
+        "safest_action",
+        "trusted_person_message",
+        "summary",
+    ]
+    for field in string_fields:
+        value = extract_json_string_field(content, field)
+        if value:
+            prediction[field] = value
+
+    tactics_match = re.search(r'"tactics"\s*:\s*\[(.*?)\]', content, flags=re.DOTALL)
+    if tactics_match:
+        prediction["tactics"] = re.findall(r'"([^"\\]*(?:\\.[^"\\]*)*)"', tactics_match.group(1))
+
+    scam_dna: dict[str, str] = {}
+    for key in ["impersonates", "pressure", "ask", "risk"]:
+        value = extract_json_string_field(content, key)
+        if value:
+            scam_dna[key] = value
+    if scam_dna:
+        prediction["scam_dna"] = scam_dna
+
+    if not prediction:
+        raise json.JSONDecodeError("could not recover prediction fields", content, 0)
+    return prediction
+
+
+def extract_json_string_field(content: str, field: str) -> str | None:
+    match = re.search(rf'"{re.escape(field)}"\s*:\s*"((?:[^"\\]|\\.)*)"', content, flags=re.DOTALL)
+    if not match:
+        return None
+    try:
+        return json.loads(f'"{match.group(1)}"')
+    except json.JSONDecodeError:
+        return match.group(1).replace('\\"', '"').replace("\\n", " ").strip()
 
 
 def strip_thinking_tokens(content: str) -> str:

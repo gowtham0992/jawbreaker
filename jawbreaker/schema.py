@@ -42,14 +42,24 @@ class ScamAnalysis:
             "code that just came",
             "pin",
             "card number",
+            "full card number",
+            "payment card",
             "bank login",
+            "bank details",
             "seed phrase",
             "username",
+            "parent login",
             "phone number on your account",
             "send your details",
+            "account details",
+            "upload id",
+            "insurance number",
+            "card details",
             "confirm ownership",
             "confirm your information",
             "confirm your billing info",
+            "account reset code",
+            "reset code",
         ]
         if any(token in text for token in credential_tokens):
             risk_level = "dangerous"
@@ -71,9 +81,12 @@ class ScamAnalysis:
             "wire",
             "$800",
             "send money",
+            "send funds",
             "processing fee",
             "onboarding fee",
+            "training fee",
             "cleanup fee",
+            "delivery tax",
             "pay the",
             "pay an",
             "buy equipment",
@@ -85,6 +98,13 @@ class ScamAnalysis:
             "insurance payment",
             "small insurance payment",
             "reimburse you",
+            "service fee",
+            "troubleshooting voucher",
+            "courier fee",
+            "refund the difference",
+            "payment app transfer",
+            "customer funds",
+            "forward them to our vendor",
         ]
         if any(token in text for token in payment_tokens):
             risk_level = "dangerous"
@@ -98,6 +118,8 @@ class ScamAnalysis:
                 "grandpa",
                 "auntie",
                 "niece",
+                "nephew",
+                "your daughter",
                 "new number",
                 "changed numbers",
                 "number only",
@@ -132,10 +154,16 @@ class ScamAnalysis:
                 "callback number",
                 "call the number in this alert",
                 "call the number in this message",
+                "call the number in this text",
+                "call the number shown",
+                "call the listed support number",
                 "device protection",
                 "subscription expired",
                 "avoid data loss",
                 "data loss",
+                "desktop access code",
+                "remote cleanup tool",
+                "remote access software",
             ]
         ):
             risk_level = "dangerous"
@@ -159,6 +187,7 @@ class ScamAnalysis:
             for token in [
                 "you are hired",
                 "job offer",
+                "task work",
                 "training starts",
                 "equipment shipment",
                 "payroll setup",
@@ -166,6 +195,7 @@ class ScamAnalysis:
                 "part-time assistant",
                 "tiktok shop",
                 "whatsapp",
+                "$720",
             ]
         ):
             risk_level = "dangerous"
@@ -183,15 +213,21 @@ class ScamAnalysis:
             token in text
             for token in [
                 "mover will pick it up",
+                "shipping agent",
                 "escrow service",
+                "escrow site",
                 "courier needs",
+                "courier fee",
                 "assistant will handle payment",
                 "email your bank name",
                 "extra money",
-            "marketplace",
-            "respond quickly",
-            "paperwork is missing",
-        ]
+                "overpaid",
+                "move off the marketplace",
+                "code to prove",
+                "marketplace",
+                "respond quickly",
+                "paperwork is missing",
+            ]
         ):
             if risk_level == "safe":
                 risk_level = "suspicious"

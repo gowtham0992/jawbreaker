@@ -8,7 +8,7 @@ from app import (
     run_analysis,
     should_use_heuristic_guard,
 )
-from jawbreaker.analyzers import repair_prediction
+from jawbreaker.analyzers import load_json_prediction, repair_prediction
 from jawbreaker.schema import ScamAnalysis
 
 
@@ -137,6 +137,28 @@ def test_repair_prediction_sanitizes_unsafe_action() -> None:
     assert "Send gift cards" not in repaired["safest_action"]
     assert "Do not click links" in repaired["safest_action"]
     assert "do not send money" in repaired["safest_action"]
+
+
+def test_load_json_prediction_recovers_near_json_model_output() -> None:
+    prediction = load_json_prediction(
+        """
+        {"risk_level": "dangerous", "scam_type": "tech_support",
+         "tactics": ["fake authority", "urgency"]
+         "scam_dna": {"impersonates": "device support", "pressure": "avoid data loss",
+         "ask": "call the alert number", "risk": "remote access theft"},
+         "safest_action": "Do not call the number. Contact official support directly.",
+         "trusted_person_message": "Can you check this with me?",
+         "summary": "Fake device warning pushing a support call."}
+        """
+    )
+
+    repaired = repair_prediction(prediction)
+
+    assert repaired["risk_level"] == "dangerous"
+    assert repaired["scam_type"] == "tech_support"
+    assert repaired["tactics"] == ["fake authority", "urgency"]
+    assert repaired["scam_dna"]["impersonates"] == "device support"
+    assert repaired["summary"] == "Fake device warning pushing a support call."
 
 
 def test_default_adapter_only_attaches_to_minicpm(monkeypatch) -> None:
