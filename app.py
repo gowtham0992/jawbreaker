@@ -12,6 +12,7 @@ from jawbreaker.analyzers import (
     heuristic_analyzer,
     prediction_to_analysis,
     repair_prediction,
+    should_apply_heuristic_guard,
     validate_prediction,
 )
 from jawbreaker.render import render_analysis_html, render_memory_html, render_scanning_html
@@ -212,7 +213,7 @@ def run_analysis(message: str, memory: list[dict] | None) -> ScamAnalysis:
     validation_errors = validate_prediction(prediction)
     model_analysis = prediction_to_analysis(prediction, similar_memory=heuristic.similar_memory)
     print(f"jawbreaker analyze elapsed={perf_counter() - started:.2f}s", flush=True)
-    if should_use_heuristic_guard(model_analysis, heuristic, validation_errors):
+    if should_use_heuristic_guard(model_analysis, heuristic, validation_errors, message):
         print(
             "jawbreaker guard=heuristic "
             f"model_risk={model_analysis.risk_level} heuristic_risk={heuristic.risk_level}",
@@ -282,21 +283,9 @@ def should_use_heuristic_guard(
     model_analysis: ScamAnalysis,
     heuristic: ScamAnalysis,
     validation_errors: list[str],
+    message: str = "",
 ) -> bool:
-    if validation_errors:
-        return True
-
-    risk_rank = {"safe": 0, "needs_check": 1, "suspicious": 2, "dangerous": 3}
-    if risk_rank[model_analysis.risk_level] < risk_rank[heuristic.risk_level]:
-        return heuristic.risk_level != "safe"
-
-    if heuristic.risk_level == "safe":
-        return False
-
-    dna_values = [value.strip() for value in model_analysis.scam_dna.values()]
-    has_dna = any(dna_values)
-    has_tactics = bool(model_analysis.tactics)
-    return not has_dna and not has_tactics
+    return should_apply_heuristic_guard(message, model_analysis, heuristic, validation_errors)
 
 
 @gpu_callback

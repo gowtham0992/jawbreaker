@@ -31,6 +31,15 @@ def test_device_protection_subscription_alert_is_tech_support() -> None:
     assert analysis.scam_type == "tech_support"
 
 
+def test_billing_link_with_account_closure_is_dangerous() -> None:
+    analysis = ScamAnalysis.from_heuristics(
+        "Streaming billing: payment failed and your account closes tonight. Update through this message link: http://billing-review.example"
+    )
+
+    assert analysis.risk_level == "dangerous"
+    assert analysis.scam_type == "credential_theft"
+
+
 def test_prediction_to_analysis_normalizes_model_json() -> None:
     analysis = prediction_to_analysis(
         {

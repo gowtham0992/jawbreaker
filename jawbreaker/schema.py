@@ -238,6 +238,24 @@ class ScamAnalysis:
             if risk_level == "safe":
                 risk_level = "suspicious"
             tactics.append("suspicious link")
+            if any(
+                token in text
+                for token in [
+                    "payment failed",
+                    "payment method",
+                    "update billing",
+                    "billing",
+                    "account closes",
+                    "secure your account",
+                    "enter the code",
+                    "payment card",
+                    "parent login",
+                    "card details",
+                ]
+            ):
+                risk_level = "dangerous"
+                scam_type = "credential_theft"
+                tactics.extend(["credential request", "fake authority"])
 
         if "reply yes or no" in text and "fraud alert" in text:
             risk_level = "needs_check"

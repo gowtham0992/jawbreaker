@@ -24,7 +24,12 @@ def test_guard_uses_heuristic_when_model_undercalls_dangerous_message() -> None:
         "Hi Grandma, I lost my phone. This is my new number. Can you send $800 today?"
     )
 
-    assert should_use_heuristic_guard(model, heuristic, validation_errors=[])
+    assert should_use_heuristic_guard(
+        model,
+        heuristic,
+        validation_errors=[],
+        message="Hi Grandma, I lost my phone. This is my new number. Can you send $800 today?",
+    )
 
 
 def test_guard_keeps_informative_model_result() -> None:
@@ -45,6 +50,70 @@ def test_guard_keeps_informative_model_result() -> None:
     )
 
     assert not should_use_heuristic_guard(model, heuristic, validation_errors=[])
+
+
+def test_guard_does_not_escalate_official_route_notice_to_dangerous() -> None:
+    message = "Credit union alert: we noticed a new login. If this was not you, open the official app."
+    model = ScamAnalysis(
+        risk_level="needs_check",
+        scam_type="possible_legitimate_alert",
+        summary="Verify this through the official app.",
+        tactics=["verification needed"],
+        scam_dna={
+            "Impersonates": "credit union",
+            "Pressure": "routine security notice",
+            "Ask": "open official app",
+            "Risk": "uncertain legitimacy",
+        },
+    )
+    heuristic = ScamAnalysis.from_heuristics(message)
+
+    assert not should_use_heuristic_guard(model, heuristic, validation_errors=[], message=message)
+
+
+def test_guard_does_not_escalate_password_changed_official_app_notice() -> None:
+    message = "Coinbase notice: your password was changed. Open the official app yourself to review account security."
+    model = ScamAnalysis(
+        risk_level="needs_check",
+        scam_type="possible_legitimate_alert",
+        summary="Verify this through the official app.",
+        tactics=["verification needed"],
+        scam_dna={
+            "Impersonates": "Coinbase",
+            "Pressure": "routine security notice",
+            "Ask": "open official app",
+            "Risk": "uncertain legitimacy",
+        },
+    )
+    heuristic = ScamAnalysis.from_heuristics(message)
+
+    assert heuristic.risk_level == "dangerous"
+    assert not should_use_heuristic_guard(model, heuristic, validation_errors=[], message=message)
+
+
+def test_eval_guard_keeps_official_route_notice_calibrated() -> None:
+    from eval.run_eval import apply_safety_guard
+
+    message = "Hospital portal: new test results are available. Sign in through your usual patient portal."
+    prediction = {
+        "risk_level": "needs_check",
+        "scam_type": "possible_legitimate_alert",
+        "summary": "Verify this through the normal patient portal.",
+        "tactics": ["verification needed"],
+        "safest_action": "Verify directly through the official app, official website, or a known phone number.",
+        "trusted_person_message": "Can you check this with me?",
+        "scam_dna": {
+            "impersonates": "hospital portal",
+            "pressure": "routine notice",
+            "ask": "use normal patient portal",
+            "risk": "uncertain legitimacy",
+        },
+    }
+
+    guarded, promoted = apply_safety_guard(message, prediction)
+
+    assert not promoted
+    assert guarded["risk_level"] == "needs_check"
 
 
 def test_remember_current_saves_last_scan_without_reanalysis(monkeypatch) -> None:

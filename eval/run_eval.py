@@ -20,6 +20,7 @@ from jawbreaker.analyzers import (  # noqa: E402
     prediction_file_analyzer,
     prediction_to_analysis,
     repair_prediction,
+    should_apply_heuristic_guard,
     validate_prediction,
     write_predictions,
 )
@@ -158,19 +159,7 @@ def build_analyzer(args: argparse.Namespace):
 def apply_safety_guard(message: str, prediction: dict[str, Any]) -> tuple[dict[str, Any], bool]:
     model_analysis = prediction_to_analysis(prediction)
     heuristic = ScamAnalysis.from_heuristics(message)
-
-    risk_rank = {"safe": 0, "needs_check": 1, "suspicious": 2, "dangerous": 3}
-    if risk_rank[model_analysis.risk_level] < risk_rank[heuristic.risk_level]:
-        if heuristic.risk_level != "safe":
-            return analysis_to_prediction(heuristic), True
-
-    if heuristic.risk_level == "safe":
-        return prediction, False
-
-    dna_values = [value.strip() for value in model_analysis.scam_dna.values()]
-    has_dna = any(dna_values)
-    has_tactics = bool(model_analysis.tactics)
-    if not has_dna and not has_tactics:
+    if should_apply_heuristic_guard(message, model_analysis, heuristic, validation_errors=[]):
         return analysis_to_prediction(heuristic), True
 
     return prediction, False
