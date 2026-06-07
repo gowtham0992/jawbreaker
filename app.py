@@ -50,9 +50,9 @@ FORCE_LIGHT_HEAD = """
     if (document.body) document.body.classList.remove("dark");
   };
   const copyPlan = async (button) => {
-    const source = button.closest(".copy-plan-inline")?.querySelector(".copy-plan-source");
-    if (!source?.value) return;
-    await navigator.clipboard.writeText(source.value);
+    const source = button.dataset.copy || "";
+    if (!source) return;
+    await navigator.clipboard.writeText(source);
     const original = button.textContent || "COPY PLAN";
     button.textContent = "COPIED";
     window.setTimeout(() => {

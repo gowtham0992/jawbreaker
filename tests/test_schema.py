@@ -51,7 +51,7 @@ def test_render_humanizes_model_style_labels() -> None:
         risk_level="dangerous",
         scam_type="credential_theft",
         summary="This message mentions credential_theft.",
-        tactics=["unknown_urgent_action", "credential_theft"],
+        tactics=["unknown_urgent_action", "unknown_urgent_payment", "credential_theft"],
         safest_action="Do not click the link.",
         scam_dna={
             "Impersonates": "legitimate_company",
@@ -66,3 +66,5 @@ def test_render_humanizes_model_style_labels() -> None:
     assert "legitimate company" in html
     assert "click a link and verify" in html
     assert "unknown_urgent_action" not in html
+    assert "urgent payment" in html
+    assert "data-copy=" in html

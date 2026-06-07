@@ -587,7 +587,9 @@ button.primary:disabled {
 }
 
 .copy-plan-source {
+  display: block;
   min-height: 126px !important;
+  max-height: 160px;
   width: 100% !important;
   border: var(--jb-line);
   border-radius: 4px;
@@ -600,8 +602,8 @@ button.primary:disabled {
   opacity: 1 !important;
   -webkit-text-fill-color: var(--jb-black) !important;
   overflow: auto !important;
-  resize: none !important;
   white-space: pre-wrap !important;
+  word-break: break-word;
 }
 
 .inline-copy-btn {

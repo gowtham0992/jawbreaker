@@ -44,7 +44,9 @@ def humanize(text: str) -> str:
         "credential theft": "credential theft",
         "credential request": "credential request",
         "unknown urgent action": "urgent action",
+        "unknown urgent payment": "urgent payment",
         "unknown website link": "suspicious link",
+        "fake payment portal": "fake payment portal",
         "legitimate company": "legitimate company",
         "sense of urgency": "urgency",
         "click link and verify": "click a link and verify",
@@ -144,14 +146,15 @@ def render_analysis_html(message: str, analysis: ScamAnalysis) -> str:
     """
 
     copy_plan = build_copy_plan(message, analysis)
+    copy_preview = escape(copy_plan)
     remedy = f"""
       <div class="remedy-copy">
         <p class="terminal-label">RECOMMENDED ACTION:</p>
         <p>{escape(humanize(analysis.safest_action))}</p>
       </div>
       <div class="copy-plan-inline">
-        <textarea class="copy-plan-source" readonly>{escape(copy_plan)}</textarea>
-        <button type="button" class="inline-copy-btn">COPY PLAN</button>
+        <div class="copy-plan-source">{copy_preview}</div>
+        <button type="button" class="inline-copy-btn" data-copy="{escape(copy_plan, quote=True)}">COPY PLAN</button>
       </div>
     """
 
