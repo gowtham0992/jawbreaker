@@ -130,6 +130,12 @@ class ScamAnalysis:
                 "call support",
                 "number shown",
                 "callback number",
+                "call the number in this alert",
+                "call the number in this message",
+                "device protection",
+                "subscription expired",
+                "avoid data loss",
+                "data loss",
             ]
         ):
             risk_level = "dangerous"
