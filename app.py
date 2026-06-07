@@ -422,7 +422,7 @@ def build_app() -> gr.Blocks:
                     """
                     <div class="window-titlebar input-titlebar">
                       <span class="traffic-dots" aria-hidden="true"><i></i><i></i><i></i></span>
-                      <span>analyze_message.sh</span>
+                      <span>Message to check</span>
                     </div>
                     <p class="panel-kicker">PASTE SUSPICIOUS TEXT BELOW:</p>
                     """
@@ -435,7 +435,7 @@ def build_app() -> gr.Blocks:
                     max_lines=16,
                 )
                 analyze = gr.Button("RUN SCAM DETECTOR", variant="primary", elem_classes=["check-btn"])
-                gr.Examples(examples=EXAMPLES, inputs=message, label="threat_history_log.db")
+                gr.Examples(examples=EXAMPLES, inputs=message, label="Try a sample")
                 memory = gr.HTML(render_current_memory([]))
 
             with gr.Column(scale=7):
@@ -443,7 +443,7 @@ def build_app() -> gr.Blocks:
                     """
                     <div class="home-stack">
                       <section class="retro-window status-window">
-                        <div class="window-titlebar"><span>system_status.log</span></div>
+                        <div class="window-titlebar"><span>Ready to help</span></div>
                         <div class="window-body status-body">
                           <p class="standing-by">SYSTEM STANDING BY</p>
                           <h2>Jawbreaker is ready to shield your loved ones from digital fraud.</h2>
@@ -451,7 +451,7 @@ def build_app() -> gr.Blocks:
                         </div>
                       </section>
                       <section class="retro-window guide-window">
-                        <div class="window-titlebar"><span>quick_start_manual.txt</span></div>
+                        <div class="window-titlebar"><span>How to use it</span></div>
                         <div class="window-body guide-body">
                           <p>1. Copy a text message from your phone or an email that feels off.</p>
                           <p>2. Paste it into the input area on the left of this screen.</p>

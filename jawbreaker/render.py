@@ -13,10 +13,10 @@ DNA_LABELS = {
 }
 
 VERDICT_COPY = {
-    "dangerous": ("CRITICAL: Scam Detected", "verdict_danger_override.log"),
-    "suspicious": ("WARNING: Suspicious Pattern Found", "verdict_suspicious_trace.log"),
-    "needs_check": ("REVIEW: Verify Before Acting", "verdict_needs_human_check.log"),
-    "safe": ("CLEAR: No Strong Scam Pattern", "verdict_safe_route.log"),
+    "dangerous": ("CRITICAL: Scam Detected", "Result"),
+    "suspicious": ("WARNING: Suspicious Pattern Found", "Result"),
+    "needs_check": ("REVIEW: Verify Before Acting", "Result"),
+    "safe": ("CLEAR: No Strong Scam Pattern", "Result"),
 }
 
 RISK_WINDOW_CLASS = {
@@ -96,7 +96,7 @@ def render_analysis_html(message: str, analysis: ScamAnalysis) -> str:
         return """
         <div class="home-stack">
           <section class="retro-window status-window">
-            <div class="window-titlebar"><span>system_status.log</span></div>
+            <div class="window-titlebar"><span>Ready to help</span></div>
             <div class="window-body status-body">
               <p class="standing-by">SYSTEM STANDING BY</p>
               <h2>Jawbreaker is ready to shield your loved ones from digital fraud.</h2>
@@ -104,7 +104,7 @@ def render_analysis_html(message: str, analysis: ScamAnalysis) -> str:
             </div>
           </section>
           <section class="retro-window guide-window">
-            <div class="window-titlebar"><span>quick_start_manual.txt</span></div>
+            <div class="window-titlebar"><span>How to use it</span></div>
             <div class="window-body guide-body">
               <p>1. Copy a text message from your phone or an email that feels off.</p>
               <p>2. Paste it into the input area on the left of this screen.</p>
@@ -161,8 +161,8 @@ def render_analysis_html(message: str, analysis: ScamAnalysis) -> str:
     return f"""
     <div class="report-stack">
       {render_window(verdict_file, verdict, f"verdict-window {risk_class}")}
-      {render_window("scam_signature_dna.bin", dna, "dna-window")}
-      {render_window("safe_remedy_steps.sh", remedy, "action-window")}
+      {render_window("How this scam works", dna, "dna-window")}
+      {render_window("What to do next", remedy, "action-window")}
     </div>
     """
 
@@ -170,7 +170,7 @@ def render_analysis_html(message: str, analysis: ScamAnalysis) -> str:
 def render_scanning_html() -> str:
     return """
     <section class="retro-window scanning-state terminal-window">
-      <div class="window-titlebar"><span>scanning_in_progress.sh</span></div>
+      <div class="window-titlebar"><span>Checking the message</span></div>
       <div class="window-body">
         <p class="terminal-progress">[██████████░░] 84% COMPLETE</p>
         <div class="terminal-log">
@@ -188,7 +188,7 @@ def render_scanning_html() -> str:
 def render_memory_html(analysis: ScamAnalysis, memory: list[dict]) -> str:
     if not memory:
         return render_window(
-            "threat_history_log.db",
+            "Recent checks",
             "<p class='memory-empty'>No scam memory saved yet.</p>",
             "memory-card muted",
         )
@@ -202,4 +202,4 @@ def render_memory_html(analysis: ScamAnalysis, memory: list[dict]) -> str:
         """
         for item in memory[-5:]
     )
-    return render_window("threat_history_log.db", f"<p class='memory-title'>Session scam memory</p>{items}", "memory-card")
+    return render_window("Recent checks", f"<p class='memory-title'>Session scam memory</p>{items}", "memory-card")
