@@ -160,6 +160,123 @@ def heuristic_analyzer(message: str) -> Prediction:
     return analysis_to_prediction(ScamAnalysis.from_heuristics(message))
 
 
+def has_high_confidence_danger_signal(message: str, heuristic: ScamAnalysis) -> bool:
+    text = message.lower()
+    scam_type = heuristic.scam_type
+    tactics = set(heuristic.tactics)
+
+    high_confidence_types = {
+        "callback_phishing",
+        "family_impersonation",
+        "job_scam",
+        "payment_request",
+        "prize_scam",
+        "tech_support",
+    }
+    if scam_type in high_confidence_types:
+        return True
+
+    if scam_type == "credential_theft":
+        if any(
+            token in text
+            for token in [
+                "do not share this code",
+                "do not share your code",
+                "we will never ask for it",
+                "open the official app",
+                "open the app directly",
+            ]
+        ):
+            return False
+        has_link_or_callback = any(token in text for token in ["http://", "https://", "call the number", "call this"])
+        has_sensitive_secret = any(
+            token in text
+            for token in [
+                "password",
+                "pin",
+                "one-time code",
+                "verification code",
+                "card number",
+                "bank login",
+                "bank details",
+                "seed phrase",
+                "upload id",
+                "insurance number",
+                "payment card",
+                "account reset code",
+                "reset code",
+            ]
+        )
+        asks_for_secret = any(
+            token in text
+            for token in [
+                "send your",
+                "send the",
+                "reply with",
+                "enter your",
+                "enter the",
+                "provide your",
+                "provide the",
+                "share your",
+                "share the",
+                "read your",
+                "read the",
+                "verify your",
+                "confirm your",
+            ]
+        )
+        return has_link_or_callback or (has_sensitive_secret and asks_for_secret)
+
+    return "payment pressure" in tactics and any(
+        token in text
+        for token in [
+            "gift card",
+            "wire",
+            "crypto",
+            "send money",
+            "send funds",
+            "deposit a check",
+            "refund the difference",
+            "courier fee",
+            "service fee",
+        ]
+    )
+
+
+def should_apply_heuristic_guard(
+    message: str,
+    model_analysis: ScamAnalysis,
+    heuristic: ScamAnalysis,
+    validation_errors: Iterable[str],
+) -> bool:
+    if list(validation_errors):
+        return True
+
+    risk_rank = {"safe": 0, "needs_check": 1, "suspicious": 2, "dangerous": 3}
+    model_rank = risk_rank[model_analysis.risk_level]
+    heuristic_rank = risk_rank[heuristic.risk_level]
+
+    if model_rank < heuristic_rank:
+        if heuristic.risk_level == "safe":
+            return False
+        if heuristic.risk_level == "dangerous":
+            return has_high_confidence_danger_signal(message, heuristic)
+        return True
+
+    if heuristic.risk_level == "safe":
+        return False
+
+    dna_values = [value.strip() for value in model_analysis.scam_dna.values()]
+    has_dna = any(dna_values)
+    has_tactics = bool(model_analysis.tactics)
+    if has_dna or has_tactics:
+        return False
+
+    if heuristic.risk_level == "dangerous":
+        return has_high_confidence_danger_signal(message, heuristic)
+    return True
+
+
 def load_prediction_jsonl(path: Path) -> dict[str, Prediction]:
     predictions: dict[str, Prediction] = {}
     for line_number, line in enumerate(path.read_text(encoding="utf-8").splitlines(), start=1):
