@@ -32,11 +32,19 @@ The generated set is for scale and regression pressure. The 100-case hand-curate
 
 ## Current Runtime Decision
 
-The deployed Space uses `openbmb/MiniCPM4.1-8B` through Transformers on ZeroGPU to make OpenBMB MiniCPM central to the app.
+The deployed Space uses `openbmb/MiniCPM4.1-8B` through Transformers on ZeroGPU with the published adapter `build-small-hackathon/jawbreaker-minicpm-lora-v3`.
 
 The GGUF / `llama-cpp-python` path remains available for local eval and badge evidence, but it is not the primary live demo path. The live app also uses a deterministic heuristic guard so an obvious high-risk scam is not rendered as safe if the small model under-calls the risk.
 
-If MiniCPM Space latency is unacceptable during final demo testing, `Qwen/Qwen3-0.6B` remains the fallback via `JAWBREAKER_TRANSFORMERS_MODEL_ID`.
+If MiniCPM Space latency is unacceptable during final demo testing, `Qwen/Qwen3-0.6B` remains the fallback via `JAWBREAKER_TRANSFORMERS_MODEL_ID`, but the current judged model path is MiniCPM LoRA v3.
+
+## Current Results
+
+MiniCPM LoRA v3:
+
+- Adapter: `build-small-hackathon/jawbreaker-minicpm-lora-v3`
+- 100-case product eval: `90/100` risk accuracy, `0` dangerous undercalls, `0` invalid predictions, `0` model errors
+- 215-case hard eval: `210/215` risk accuracy (`97.7%`), `0` dangerous-as-safe, `0` dangerous-as-needs-check, `0` safe-as-dangerous-or-suspicious, `0` unsafe action violations, `0` invalid predictions, `0` model errors
 
 ## Running Backends
 
@@ -54,6 +62,18 @@ python3 eval/run_eval.py \
   --model-id openbmb/MiniCPM4.1-8B \
   --trust-remote-code \
   --dataset eval/generated_eval.jsonl
+```
+
+Published v3 adapter through Transformers:
+
+```bash
+python3 eval/run_eval.py \
+  --backend transformers \
+  --model-id openbmb/MiniCPM4.1-8B \
+  --adapter-id build-small-hackathon/jawbreaker-minicpm-lora-v3 \
+  --trust-remote-code \
+  --attn-implementation eager \
+  --dataset eval/scam_eval.jsonl
 ```
 
 Saved prediction replay:

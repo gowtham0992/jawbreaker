@@ -11,6 +11,7 @@ from jawbreaker.analyzers import (
     build_transformers_analyzer,
     heuristic_analyzer,
     prediction_to_analysis,
+    repair_prediction,
     validate_prediction,
 )
 from jawbreaker.render import render_analysis_html, render_memory_html, render_scanning_html
@@ -28,6 +29,9 @@ EXAMPLES = [
     "Coinbase alert: We received a request to update the phone number on your account. If this wasn't you, call support immediately at [callback number].",
     "Hi! I'm a recruiter from TikTok Shop. We are looking for a part-time assistant. Flexible remote work, 60 minutes per day, $330-$750 per day. Contact me on WhatsApp at [phone number].",
 ]
+
+DEFAULT_TRANSFORMERS_MODEL_ID = "openbmb/MiniCPM4.1-8B"
+DEFAULT_ADAPTER_ID = "build-small-hackathon/jawbreaker-minicpm-lora-v3"
 
 FORCE_LIGHT_JS = """() => {
     const forceLight = () => document.body.classList.remove('dark');
@@ -113,6 +117,15 @@ def _env_bool(name: str, default: bool | None = None) -> bool | None:
     return value.strip().lower() in {"1", "true", "yes", "on"}
 
 
+def default_adapter_id(model_id: str) -> str | None:
+    configured = os.getenv("JAWBREAKER_ADAPTER_ID")
+    if configured is not None:
+        return configured or None
+    if model_id == DEFAULT_TRANSFORMERS_MODEL_ID:
+        return DEFAULT_ADAPTER_ID
+    return None
+
+
 @lru_cache(maxsize=1)
 def get_analyzer():
     backend = current_backend()
@@ -136,8 +149,10 @@ def get_analyzer():
         )
 
     if backend in {"transformers", "zerogpu"}:
+        model_id = os.getenv("JAWBREAKER_TRANSFORMERS_MODEL_ID", DEFAULT_TRANSFORMERS_MODEL_ID)
         return build_transformers_analyzer(
-            os.getenv("JAWBREAKER_TRANSFORMERS_MODEL_ID", "openbmb/MiniCPM4.1-8B"),
+            model_id,
+            adapter_id=default_adapter_id(model_id),
             max_new_tokens=_env_int("JAWBREAKER_MAX_TOKENS", 192) or 192,
             temperature=float(os.getenv("JAWBREAKER_TEMPERATURE", "0")),
             device_map=os.getenv("JAWBREAKER_DEVICE_MAP", "auto"),
@@ -187,6 +202,8 @@ def run_analysis(message: str, memory: list[dict] | None) -> ScamAnalysis:
         )
         heuristic.summary = f"{heuristic.summary} Jawbreaker used its safety fallback because the model response was not usable."
         return heuristic
+    raw_validation_errors = validate_prediction(prediction)
+    prediction = repair_prediction(prediction)
     validation_errors = validate_prediction(prediction)
     model_analysis = prediction_to_analysis(prediction, similar_memory=heuristic.similar_memory)
     print(f"jawbreaker analyze elapsed={perf_counter() - started:.2f}s", flush=True)
@@ -197,6 +214,8 @@ def run_analysis(message: str, memory: list[dict] | None) -> ScamAnalysis:
             flush=True,
         )
         return heuristic
+    if raw_validation_errors:
+        print(f"jawbreaker schema_repaired errors={raw_validation_errors}", flush=True)
     return model_analysis
 
 
@@ -389,7 +408,7 @@ def build_app() -> gr.Blocks:
               </div>
               <div class="status-tags">
                 <span>[ SECURE_ENV: ACTIVE ]</span>
-                <span>[ MODEL: LOCAL_SCAN ]</span>
+                <span>[ MODEL: MINICPM_LORA_V3 ]</span>
               </div>
             </header>
             """

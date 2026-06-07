@@ -71,6 +71,39 @@ def prediction_to_analysis(prediction: Prediction, *, similar_memory: str = "") 
     )
 
 
+def repair_prediction(prediction: Prediction) -> Prediction:
+    repaired = dict(prediction)
+    risk_level = repaired.get("risk_level")
+    if risk_level not in {"dangerous", "suspicious", "needs_check", "safe"}:
+        risk_level = "needs_check"
+        repaired["risk_level"] = risk_level
+
+    if not isinstance(repaired.get("scam_type"), str):
+        repaired["scam_type"] = "unknown"
+    if not isinstance(repaired.get("tactics"), list):
+        repaired["tactics"] = []
+    if not isinstance(repaired.get("scam_dna"), dict):
+        repaired["scam_dna"] = {}
+
+    if not isinstance(repaired.get("safest_action"), str):
+        repaired["safest_action"] = (
+            "Do not click links or reply. Verify through an official app, website, or known phone number."
+        )
+    if not isinstance(repaired.get("trusted_person_message"), str):
+        repaired["trusted_person_message"] = "Can you check this for me before I respond or click anything?"
+    if not isinstance(repaired.get("summary"), str):
+        scam_type = str(repaired.get("scam_type") or "unknown").replace("_", " ")
+        if risk_level == "dangerous":
+            repaired["summary"] = f"This looks dangerous: likely {scam_type}."
+        elif risk_level == "suspicious":
+            repaired["summary"] = f"This has warning signs of {scam_type}."
+        elif risk_level == "needs_check":
+            repaired["summary"] = "This should be verified through a trusted route before acting."
+        else:
+            repaired["summary"] = "No strong scam pattern was found."
+    return repaired
+
+
 def heuristic_analyzer(message: str) -> Prediction:
     return analysis_to_prediction(ScamAnalysis.from_heuristics(message))
 
@@ -174,6 +207,7 @@ def build_llama_cpp_analyzer(
 def build_transformers_analyzer(
     model_id: str,
     *,
+    adapter_id: str | None = None,
     max_new_tokens: int = 192,
     temperature: float = 0.0,
     device_map: str = "auto",
@@ -192,7 +226,7 @@ def build_transformers_analyzer(
     started = perf_counter()
     print(
         "jawbreaker transformers load_start "
-        f"model_id={model_id} device_map={device_map} dtype={dtype} "
+        f"model_id={model_id} adapter_id={adapter_id} device_map={device_map} dtype={dtype} "
         f"trust_remote_code={trust_remote_code} attn_implementation={attn_implementation}",
         flush=True,
     )
@@ -208,6 +242,14 @@ def build_transformers_analyzer(
         model_id,
         **model_kwargs,
     )
+    if adapter_id:
+        try:
+            from peft import PeftModel
+        except ImportError as exc:
+            raise SystemExit("peft is required when using a Transformers LoRA adapter.") from exc
+        print(f"jawbreaker transformers adapter_load_start adapter_id={adapter_id}", flush=True)
+        model = PeftModel.from_pretrained(model, adapter_id)
+        print(f"jawbreaker transformers adapter_load_ready adapter_id={adapter_id}", flush=True)
     model.eval()
     device = getattr(model, "device", "unknown")
     hf_device_map = getattr(model, "hf_device_map", None)

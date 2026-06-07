@@ -22,6 +22,8 @@
 - [x] Eval set included
 - [x] Runtime decision documented
 - [x] Local inference path documented
+- [x] Fine-tuned MiniCPM LoRA adapter published and evaluated
+- [x] Modal training/eval evidence documented
 - [x] No commercial cloud API path documented
 
 ## Bonus Badges
@@ -29,7 +31,7 @@
 - [ ] Off the Grid evidence finalized
 - [ ] Llama Champion evidence finalized
 - [x] Off-Brand
-- [x] Well-Tuned cut from final claims
+- [x] Well-Tuned
 - [x] Sharing is Caring
 - [x] Field Notes
 

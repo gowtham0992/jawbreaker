@@ -1,4 +1,5 @@
 from app import build_handoff_message, remember_current, run_analysis, should_use_heuristic_guard
+from jawbreaker.analyzers import repair_prediction
 from jawbreaker.schema import ScamAnalysis
 
 
@@ -93,3 +94,19 @@ def test_run_analysis_falls_back_to_heuristic_when_model_fails(monkeypatch) -> N
     assert analysis.risk_level == "dangerous"
     assert analysis.scam_type == "family_impersonation"
     assert "safety fallback" in analysis.summary
+
+
+def test_repair_prediction_adds_missing_summary_without_changing_risk() -> None:
+    repaired = repair_prediction(
+        {
+            "risk_level": "dangerous",
+            "scam_type": "family impersonation",
+            "tactics": ["urgency"],
+            "safest_action": "Do not send money.",
+            "trusted_person_message": "Can you check this with me?",
+            "scam_dna": {"impersonates": "family member"},
+        }
+    )
+
+    assert repaired["risk_level"] == "dangerous"
+    assert repaired["summary"] == "This looks dangerous: likely family impersonation."

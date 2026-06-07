@@ -60,6 +60,77 @@ def test_score_rows_tracks_dangerous_as_safe() -> None:
 
     assert metrics["risk_level_accuracy"] == 0
     assert metrics["dangerous_as_safe"] == ["case_1"]
+    assert metrics["dangerous_as_needs_check"] == []
+    assert metrics["suspicious_as_safe"] == []
+
+
+def test_score_rows_tracks_dangerous_undercalls_and_suspicious_as_safe() -> None:
+    run_eval = load_run_eval_module()
+    rows = [
+        {
+            "id": "danger_case",
+            "category": "family_impersonation",
+            "input": "Grandpa, I need money before midnight.",
+            "expected_risk_level": "dangerous",
+            "expected_scam_type": "family_impersonation",
+            "expected_tactics": ["payment pressure"],
+        },
+        {
+            "id": "suspicious_case",
+            "category": "suspicious",
+            "input": "Open this marketplace escrow link.",
+            "expected_risk_level": "suspicious",
+            "expected_scam_type": "fake_escrow",
+            "expected_tactics": ["suspicious link"],
+        },
+    ]
+    base_prediction = {
+        "scam_type": "unknown",
+        "summary": "Check this.",
+        "tactics": [],
+        "safest_action": "Verify through a trusted route.",
+        "trusted_person_message": "Can you check this?",
+        "scam_dna": {"impersonates": "", "pressure": "", "ask": "", "risk": ""},
+    }
+    predictions = {
+        "danger_case": {**base_prediction, "risk_level": "needs_check"},
+        "suspicious_case": {**base_prediction, "risk_level": "safe"},
+    }
+
+    metrics = run_eval.score_rows(rows, predictions, elapsed=0.01)
+
+    assert metrics["dangerous_as_needs_check"] == ["danger_case"]
+    assert metrics["suspicious_as_safe"] == ["suspicious_case"]
+
+
+def test_score_rows_tracks_model_errors() -> None:
+    run_eval = load_run_eval_module()
+    rows = [
+        {
+            "id": "case_1",
+            "category": "safe_benign",
+            "input": "Dentist appointment Tuesday.",
+            "expected_risk_level": "safe",
+            "expected_scam_type": "none",
+            "expected_tactics": [],
+        }
+    ]
+    predictions = {
+        "case_1": {
+            "risk_level": "safe",
+            "scam_type": "none",
+            "summary": "Looks fine.",
+            "tactics": [],
+            "safest_action": "No action needed.",
+            "trusted_person_message": "Can you check this?",
+            "scam_dna": {"impersonates": "", "pressure": "", "ask": "", "risk": ""},
+            "_jawbreaker_model_error": "JSONDecodeError('empty')",
+        }
+    }
+
+    metrics = run_eval.score_rows(rows, predictions, elapsed=0.01)
+
+    assert metrics["model_errors"] == [{"id": "case_1", "error": "JSONDecodeError('empty')"}]
 
 
 def test_has_unsafe_action_allows_do_not_send_money() -> None:

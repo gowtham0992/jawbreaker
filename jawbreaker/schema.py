@@ -46,6 +46,10 @@ class ScamAnalysis:
             "seed phrase",
             "username",
             "phone number on your account",
+            "send your details",
+            "confirm ownership",
+            "confirm your information",
+            "confirm your billing info",
         ]
         if any(token in text for token in credential_tokens):
             risk_level = "dangerous"
@@ -77,6 +81,10 @@ class ScamAnalysis:
             "$300",
             "$500",
             "hospital bill",
+            "paying a bill",
+            "insurance payment",
+            "small insurance payment",
+            "reimburse you",
         ]
         if any(token in text for token in payment_tokens):
             risk_level = "dangerous"
@@ -85,7 +93,20 @@ class ScamAnalysis:
 
         if any(
             token in text
-            for token in ["grandma", "grandpa", "niece", "new number", "changed numbers", "number only", "don't tell", "dont tell"]
+            for token in [
+                "grandma",
+                "grandpa",
+                "auntie",
+                "niece",
+                "new number",
+                "changed numbers",
+                "number only",
+                "phone broke",
+                "temporary phone",
+                "don't tell",
+                "dont tell",
+                "do not tell",
+            ]
         ):
             risk_level = "dangerous"
             scam_type = "family_impersonation"
@@ -151,6 +172,25 @@ class ScamAnalysis:
             risk_level = "dangerous"
             scam_type = "romance_scam"
             tactics.extend(["emotional manipulation", "payment pressure"])
+
+        if any(
+            token in text
+            for token in [
+                "mover will pick it up",
+                "escrow service",
+                "courier needs",
+                "assistant will handle payment",
+                "email your bank name",
+                "extra money",
+            "marketplace",
+            "respond quickly",
+            "paperwork is missing",
+        ]
+        ):
+            if risk_level == "safe":
+                risk_level = "suspicious"
+                scam_type = "marketplace_scam"
+            tactics.extend(["marketplace", "payment pressure"])
 
         if "http://" in text or "https://" in text:
             if risk_level == "safe":

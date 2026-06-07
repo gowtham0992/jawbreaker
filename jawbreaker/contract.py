@@ -8,19 +8,16 @@ ANALYSIS_SCHEMA = {
     "required": [
         "risk_level",
         "scam_type",
-        "summary",
         "tactics",
+        "scam_dna",
         "safest_action",
         "trusted_person_message",
-        "scam_dna",
+        "summary",
     ],
     "properties": {
         "risk_level": {"type": "string", "enum": ["dangerous", "suspicious", "needs_check", "safe"]},
         "scam_type": {"type": "string"},
-        "summary": {"type": "string"},
         "tactics": {"type": "array", "items": {"type": "string"}},
-        "safest_action": {"type": "string"},
-        "trusted_person_message": {"type": "string"},
         "scam_dna": {
             "type": "object",
             "required": ["impersonates", "pressure", "ask", "risk"],
@@ -31,6 +28,9 @@ ANALYSIS_SCHEMA = {
                 "risk": {"type": "string"},
             },
         },
+        "safest_action": {"type": "string"},
+        "trusted_person_message": {"type": "string"},
+        "summary": {"type": "string"},
     },
 }
 
@@ -53,9 +53,10 @@ Safety rules:
 - Never advise calling a phone number from the suspicious message.
 - Never advise replying with a verification code, password, PIN, bank detail, or gift card code.
 - If uncertain, choose "needs_check" and recommend verification through the official app, official website, or a known phone number.
+- If a family member, romantic partner, buyer, employer, bank, or support agent asks for money, gift cards, crypto, codes, passwords, bank details, or secrecy, do not mark it safe.
 - Use short, plain English for someone who is not technical.
 - Give exactly one safest next step.
-- Do not write chain-of-thought. Return the JSON object only.
+- Return every required key. Put "risk_level" first and "summary" last. Do not write chain-of-thought. Return the JSON object only.
 """.strip()
 
 

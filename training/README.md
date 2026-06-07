@@ -89,12 +89,36 @@ Run training on Modal:
 modal run training/modal_train.py
 ```
 
-Publish the adapter for the Well-Tuned badge only after eval says it is better:
+The current shipped adapter was trained with the v3 contrastive data:
+
+```bash
+python3 training/generate_v3_data.py
+
+modal run training/modal_train.py \
+  --train-file training/data/train_v3.jsonl \
+  --dev-file training/data/dev_v3.jsonl \
+  --output-name jawbreaker-minicpm-lora-v3 \
+  --epochs 3 \
+  --learning-rate 7e-5 \
+  --warmup-ratio 0.05 \
+  --weight-decay 0.01 \
+  --lr-scheduler-type cosine \
+  --max-length 768 \
+  --batch-size 1 \
+  --grad-accum 16 \
+  --lora-r 32 \
+  --lora-alpha 64 \
+  --lora-dropout 0.05 \
+  --push-to-hub \
+  --hub-model-id build-small-hackathon/jawbreaker-minicpm-lora-v3
+```
+
+Publish a new adapter for the Well-Tuned badge only after eval says it is better:
 
 ```bash
 modal run training/modal_train.py \
   --push-to-hub \
-  --hub-model-id gowtham0992/jawbreaker-minicpm-lora
+  --hub-model-id build-small-hackathon/jawbreaker-minicpm-lora
 ```
 
 The Modal job writes checkpoints to the `jawbreaker-training` Modal volume under `/outputs`.
@@ -106,7 +130,7 @@ python3 training/train_lora.py \
   --model-id openbmb/MiniCPM4.1-8B \
   --output-dir training/output/jawbreaker-minicpm-lora \
   --push-to-hub \
-  --hub-model-id gowtham0992/jawbreaker-minicpm-lora
+  --hub-model-id build-small-hackathon/jawbreaker-minicpm-lora
 ```
 
 ## Deployment Decision Rule
@@ -120,3 +144,8 @@ Use the fine-tuned adapter only if it beats the base model on:
 - acceptable Space latency
 
 If the adapter improves JSON but hurts safety, do not deploy it.
+
+Current decision: ship `build-small-hackathon/jawbreaker-minicpm-lora-v3`.
+
+- 100-case product eval: `90/100` risk accuracy, no dangerous undercalls, no invalid predictions, no model errors.
+- 215-case hard eval: `210/215` risk accuracy, no dangerous undercalls, no safe dangerous/suspicious false alarms, no unsafe action violations, no invalid predictions, no model errors.

@@ -70,6 +70,7 @@ For responsive model inference without paid hardware:
 - set Space hardware to `ZeroGPU`
 - set Space variable `JAWBREAKER_BACKEND=zerogpu`
 - keep `JAWBREAKER_TRANSFORMERS_MODEL_ID=openbmb/MiniCPM4.1-8B` for the OpenBMB-targeted build
+- keep `JAWBREAKER_ADAPTER_ID=build-small-hackathon/jawbreaker-minicpm-lora-v3`; the app also defaults to this adapter when the variable is omitted
 - keep `JAWBREAKER_TRUST_REMOTE_CODE=true`; MiniCPM requires custom model code through Transformers
 - keep `JAWBREAKER_ATTENTION_IMPLEMENTATION=eager`; Discord reports MiniCPM4.1 SDPA mask issues in some Transformers/PyTorch environments
 - fallback model if latency is unacceptable: `Qwen/Qwen3-0.6B`

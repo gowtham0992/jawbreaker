@@ -11,14 +11,18 @@ from typing import Any
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from jawbreaker.analyzers import (  # noqa: E402
+    analysis_to_prediction,
     build_llama_cpp_analyzer,
     build_transformers_analyzer,
     heuristic_analyzer,
     load_prediction_jsonl,
     prediction_file_analyzer,
+    prediction_to_analysis,
+    repair_prediction,
     validate_prediction,
     write_predictions,
 )
+from jawbreaker.schema import ScamAnalysis  # noqa: E402
 from jawbreaker.schema import RISK_LEVELS  # noqa: E402
 
 
@@ -50,6 +54,11 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--json-out", type=Path, help="Write metrics as JSON.")
     parser.add_argument("--limit", type=int, help="Limit number of eval cases for smoke tests.")
     parser.add_argument("--show-failures", type=int, default=5, help="Failures to print per category.")
+    parser.add_argument(
+        "--apply-safety-guard",
+        action="store_true",
+        help="Apply the same deterministic undercall guard used by the app before scoring.",
+    )
 
     parser.add_argument("--model-path", type=Path, help="GGUF path for --backend llama-cpp.")
     parser.add_argument("--chat-format", help="Optional llama-cpp-python chat_format.")
@@ -63,6 +72,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--max-tokens", type=int, default=512)
     parser.add_argument("--temperature", type=float, default=0.0)
     parser.add_argument("--model-id", default="openbmb/MiniCPM4.1-8B", help="HF model id for --backend transformers.")
+    parser.add_argument("--adapter-id", help="Optional PEFT adapter id for --backend transformers.")
     parser.add_argument("--device-map", default="auto", help="Transformers device_map.")
     parser.add_argument("--dtype", default="auto", help="Transformers dtype.")
     parser.add_argument("--trust-remote-code", action=argparse.BooleanOptionalAction, default=True)
@@ -157,6 +167,7 @@ def build_analyzer(args: argparse.Namespace):
     if args.backend == "transformers":
         analyzer = build_transformers_analyzer(
             args.model_id,
+            adapter_id=args.adapter_id,
             max_new_tokens=args.max_tokens,
             temperature=args.temperature,
             device_map=args.device_map,
@@ -169,13 +180,38 @@ def build_analyzer(args: argparse.Namespace):
     raise SystemExit(f"Unsupported backend: {args.backend}")
 
 
+def apply_safety_guard(message: str, prediction: dict[str, Any]) -> tuple[dict[str, Any], bool]:
+    model_analysis = prediction_to_analysis(prediction)
+    heuristic = ScamAnalysis.from_heuristics(message)
+
+    risk_rank = {"safe": 0, "needs_check": 1, "suspicious": 2, "dangerous": 3}
+    if risk_rank[model_analysis.risk_level] < risk_rank[heuristic.risk_level]:
+        if heuristic.risk_level != "safe":
+            return analysis_to_prediction(heuristic), True
+
+    if heuristic.risk_level == "safe":
+        return prediction, False
+
+    dna_values = [value.strip() for value in model_analysis.scam_dna.values()]
+    has_dna = any(dna_values)
+    has_tactics = bool(model_analysis.tactics)
+    if not has_dna and not has_tactics:
+        return analysis_to_prediction(heuristic), True
+
+    return prediction, False
+
+
 def score_rows(rows: list[dict[str, Any]], predictions: dict[str, dict[str, Any]], elapsed: float) -> dict[str, Any]:
     risk_correct = 0
     scam_type_correct = 0
     dangerous_as_safe = []
+    dangerous_as_needs_check = []
+    suspicious_as_safe = []
     safe_as_dangerous = []
     unsafe_actions = []
     invalid_predictions = []
+    model_errors = []
+    safety_guard_promotions = []
     recalls = []
     risk_confusion: Counter[tuple[str, str]] = Counter()
     category_counts: Counter[str] = Counter()
@@ -185,6 +221,10 @@ def score_rows(rows: list[dict[str, Any]], predictions: dict[str, dict[str, Any]
     for row in rows:
         case_id = row["id"]
         prediction = predictions[case_id]
+        if "_jawbreaker_model_error" in prediction:
+            model_errors.append({"id": case_id, "error": str(prediction["_jawbreaker_model_error"])})
+        if "_jawbreaker_safety_guard" in prediction:
+            safety_guard_promotions.append({"id": case_id, "from": str(prediction["_jawbreaker_safety_guard"])})
         validation_errors = validate_prediction(prediction)
         if validation_errors:
             invalid_predictions.append({"id": case_id, "errors": validation_errors})
@@ -210,6 +250,10 @@ def score_rows(rows: list[dict[str, Any]], predictions: dict[str, dict[str, Any]
 
         if expected_risk == "dangerous" and actual_risk == "safe":
             dangerous_as_safe.append(case_id)
+        if expected_risk == "dangerous" and actual_risk == "needs_check":
+            dangerous_as_needs_check.append(case_id)
+        if expected_risk == "suspicious" and actual_risk == "safe":
+            suspicious_as_safe.append(case_id)
         if expected_risk == "safe" and actual_risk in {"dangerous", "suspicious"}:
             safe_as_dangerous.append(case_id)
         if has_unsafe_action(str(prediction.get("safest_action", ""))):
@@ -226,9 +270,13 @@ def score_rows(rows: list[dict[str, Any]], predictions: dict[str, dict[str, Any]
         "scam_type_accuracy": scam_type_correct / total,
         "mean_tactic_recall": sum(recalls) / len(recalls),
         "dangerous_as_safe": dangerous_as_safe,
+        "dangerous_as_needs_check": dangerous_as_needs_check,
+        "suspicious_as_safe": suspicious_as_safe,
         "safe_as_dangerous_or_suspicious": safe_as_dangerous,
         "unsafe_action_violations": unsafe_actions,
         "invalid_predictions": invalid_predictions,
+        "model_errors": model_errors,
+        "safety_guard_promotions": safety_guard_promotions,
         "elapsed_seconds": elapsed,
         "risk_confusion": {f"{expected}->{actual}": count for (expected, actual), count in sorted(risk_confusion.items())},
         "category_risk_accuracy": {
@@ -257,11 +305,21 @@ def print_report(metrics: dict[str, Any], show_failures: int) -> None:
     print(f"mean_tactic_recall={metrics['mean_tactic_recall']:.1%}")
     print(f"dangerous_as_safe={len(metrics['dangerous_as_safe'])} {metrics['dangerous_as_safe']}")
     print(
+        "dangerous_as_needs_check="
+        f"{len(metrics['dangerous_as_needs_check'])} {metrics['dangerous_as_needs_check']}"
+    )
+    print(f"suspicious_as_safe={len(metrics['suspicious_as_safe'])} {metrics['suspicious_as_safe']}")
+    print(
         "safe_as_dangerous_or_suspicious="
         f"{len(metrics['safe_as_dangerous_or_suspicious'])} {metrics['safe_as_dangerous_or_suspicious']}"
     )
     print(f"unsafe_action_violations={len(metrics['unsafe_action_violations'])} {metrics['unsafe_action_violations']}")
     print(f"invalid_predictions={len(metrics['invalid_predictions'])} {metrics['invalid_predictions'][:show_failures]}")
+    print(f"model_errors={len(metrics['model_errors'])} {metrics['model_errors'][:show_failures]}")
+    print(
+        "safety_guard_promotions="
+        f"{len(metrics['safety_guard_promotions'])} {metrics['safety_guard_promotions'][:show_failures]}"
+    )
     print(f"elapsed_seconds={metrics['elapsed_seconds']:.3f}")
 
     print("\nrisk_confusion expected->actual:")
@@ -291,8 +349,20 @@ def main() -> None:
     predictions = {}
 
     started = perf_counter()
-    for row in rows:
-        predictions[row["id"]] = analyzer(row)
+    for index, row in enumerate(rows, start=1):
+        print(f"eval case {index}/{len(rows)} id={row['id']}", flush=True)
+        try:
+            prediction = repair_prediction(analyzer(row))
+        except Exception as exc:
+            prediction = heuristic_analyzer(row["input"])
+            prediction["_jawbreaker_model_error"] = repr(exc)
+            prediction = repair_prediction(prediction)
+        if args.apply_safety_guard:
+            guarded_prediction, promoted = apply_safety_guard(row["input"], prediction)
+            if promoted:
+                guarded_prediction["_jawbreaker_safety_guard"] = prediction.get("risk_level", "unknown")
+            prediction = repair_prediction(guarded_prediction)
+        predictions[row["id"]] = prediction
     elapsed = perf_counter() - started
 
     metrics = score_rows(rows, predictions, elapsed)

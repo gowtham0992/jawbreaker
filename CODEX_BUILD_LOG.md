@@ -48,3 +48,19 @@ Codex then helped pivot the deployed default to `openbmb/MiniCPM4.1-8B` for Open
 Codex added a deterministic synthetic data generator, a generated holdout eval set, a Transformers eval backend, and a PEFT/LoRA training script for MiniCPM.
 
 The deployed app also now falls back to deterministic scam analysis when model inference fails or returns malformed JSON, preventing the user-facing "could not analyze" state from becoming the main demo experience.
+
+## MiniCPM LoRA v3
+
+Codex helped build a contrastive hard-case training pass after v2 under-called some dangerous scams as `needs_check`.
+
+The v3 path added:
+
+- `training/generate_v3_data.py` for targeted package, bank, tech-support, prize, job, family, marketplace, and safe/legitimate contrast cases
+- Modal A100 training with `openbmb/MiniCPM4.1-8B`
+- published adapter `build-small-hackathon/jawbreaker-minicpm-lora-v3`
+- Modal eval launcher for scoring the published adapter
+
+Measured results:
+
+- 100-case product eval: `90/100` risk accuracy, `0` dangerous undercalls, `0` invalid predictions, `0` model errors
+- 215-case hard eval: `210/215` risk accuracy (`97.7%`), `0` dangerous-as-safe, `0` dangerous-as-needs-check, `0` safe-as-dangerous-or-suspicious, `0` unsafe action violations, `0` invalid predictions, `0` model errors

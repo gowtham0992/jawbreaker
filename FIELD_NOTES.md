@@ -97,3 +97,25 @@ Added two sanitized real-world scam examples from a friend:
 - TikTok Shop part-time assistant / WhatsApp job lure
 
 Names, timestamps, and phone numbers were removed before committing. These examples are useful demo candidates because they are realistic, recent, and easier to explain than fully synthetic samples.
+
+## 2026-06-06 MiniCPM LoRA v3
+
+The v1 and v2 LoRA passes proved that fine-tuning could improve JSON reliability, but v2 still had an unacceptable pattern on the hard eval: dangerous scams sometimes became `needs_check`.
+
+The v3 pass focused on contrastive boundary sharpening:
+
+- dangerous package, bank, tech-support, prize, job, family, and marketplace messages
+- legitimate notices that should remain `needs_check`
+- benign but scary-looking messages that should remain safe
+- sanitized real-world-inspired Coinbase callback and TikTok Shop recruiter patterns without private phone numbers or chat metadata
+
+Modal A100 training completed and published `build-small-hackathon/jawbreaker-minicpm-lora-v3`.
+
+Eval decision:
+
+- v2 hard raw: `167/215` risk accuracy (`77.7%`)
+- v2 hard guarded: `183/215` risk accuracy (`85.1%`)
+- v3 hard raw: `210/215` risk accuracy (`97.7%`)
+- v3 hard raw had `0` dangerous-as-safe, `0` dangerous-as-needs-check, `0` safe-as-dangerous-or-suspicious, `0` unsafe action violations, `0` invalid predictions, and `0` model errors
+
+Decision: ship v3 as the default MiniCPM adapter while keeping the deterministic guard as product safety defense-in-depth.

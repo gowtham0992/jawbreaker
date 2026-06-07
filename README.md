@@ -56,7 +56,11 @@ Jawbreaker is deliberately narrow. It does not try to be a general assistant or 
 
 ## Model Runtime
 
-The deployed Space uses `openbmb/MiniCPM4.1-8B` through Hugging Face Transformers on ZeroGPU.
+The deployed Space uses `openbmb/MiniCPM4.1-8B` through Hugging Face Transformers on ZeroGPU with the published Jawbreaker LoRA adapter:
+
+- Adapter: `build-small-hackathon/jawbreaker-minicpm-lora-v3`
+- Training: PEFT/LoRA on Modal A100
+- Runtime: ZeroGPU in the Hugging Face Space
 
 Why this model:
 
@@ -76,14 +80,24 @@ Safety architecture:
 - The UI always recommends verification through official channels or a known phone number, never the suspicious link or number.
 - Session memory is local to the current Gradio session and helps show repeated scam patterns.
 
+Current eval results:
+
+- 100-case product eval, raw v3: `90/100` risk accuracy, `0` invalid predictions, `0` model errors, `0` dangerous undercalls.
+- 215-case hard eval, raw v3: `210/215` risk accuracy (`97.7%`), `0` dangerous-as-safe, `0` dangerous-as-needs-check, `0` safe-as-dangerous-or-suspicious, `0` unsafe action violations, `0` invalid predictions, `0` model errors.
+
 Training/eval artifacts:
 
 - `eval/scam_eval.jsonl`: 100 hand-curated synthetic/sanitized eval cases.
 - `eval/field_examples.jsonl`: sanitized real-world examples from a friend, with names and phone numbers removed.
 - `training/generate_jawbreaker_data.py`: deterministic generator for larger train/dev/test splits.
+- `training/generate_v3_data.py`: contrastive hard-case generator used for the v3 LoRA pass.
 - `training/data/train.jsonl`, `dev.jsonl`, `test.jsonl`: generated SFT records for Jawbreaker JSON behavior.
+- `training/data/train_v3.jsonl`, `dev_v3.jsonl`, `test_v3.jsonl`: v3 contrastive training split.
 - `eval/generated_eval.jsonl`: generated holdout eval set.
-- `training/train_lora.py`: PEFT/LoRA scaffold for publishing a Jawbreaker MiniCPM adapter if it beats the base model.
+- `eval/hard_v2_eval.jsonl`: hard eval set used to compare v2 and v3 adapters.
+- `training/train_lora.py`: PEFT/LoRA script for publishing Jawbreaker MiniCPM adapters.
+- `training/modal_train.py`: Modal A100 training launcher.
+- `training/modal_eval.py`: Modal A100 eval launcher.
 - `HONEST_SUBMISSION.md`: guardrails to avoid overclaiming synthetic data, fine-tuning, or runtime behavior.
 
 ## Bonus Badges Targeted
@@ -91,7 +105,7 @@ Training/eval artifacts:
 - Off the Grid: local model inference, no cloud APIs for scam analysis.
 - Llama Champion: local/eval tooling supports the llama.cpp runtime.
 - Off-Brand: custom Gradio UI beyond the default look.
-- Well-Tuned: not claimed unless a fine-tuned adapter is actually trained, published, and evaluated.
+- Well-Tuned: targeted; the v3 MiniCPM LoRA adapter is trained, published, and evaluated.
 - Sharing is Caring: Codex/agent trace published in this repo.
 - Field Notes: build report published before submission.
 
@@ -99,7 +113,7 @@ Training/eval artifacts:
 
 - OpenAI Codex Track: public GitHub repo with Codex-attributed commits linked in this README.
 - OpenBMB Awards: targeted; MiniCPM is the deployed model and performs the central scam analysis.
-- Modal Awards: not currently targeted; Modal is not part of the deployment path.
+- Modal Awards: Modal was used for training and eval runs, but Modal is not part of the live deployment path.
 - NVIDIA Nemotron Quest: not targeted; no NeMoTron model is used.
 
 ## Safety Boundary

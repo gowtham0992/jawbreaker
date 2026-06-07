@@ -168,16 +168,16 @@ def build_prediction(scenario: dict, message: str, index: int) -> dict:
     return {
         "risk_level": scenario["risk"],
         "scam_type": scenario["scam_type"],
-        "summary": summary_for(scenario),
         "tactics": scenario["tactics"],
-        "safest_action": scenario["safe_action"],
-        "trusted_person_message": trusted_message_for(scenario, message),
         "scam_dna": {
             "impersonates": first(scenario["impersonates"], index),
             "pressure": first(scenario["pressure"], index),
             "ask": first(scenario["ask"], index),
             "risk": scenario["risk_text"],
         },
+        "safest_action": scenario["safe_action"],
+        "trusted_person_message": trusted_message_for(scenario, message),
+        "summary": summary_for(scenario),
     }
 
 
@@ -253,7 +253,7 @@ def sft_row(case_id: str, item: dict, prediction: dict) -> dict:
         "messages": [
             {"role": "system", "content": SYSTEM_PROMPT},
             {"role": "user", "content": user_prompt},
-            {"role": "assistant", "content": json.dumps(prediction, ensure_ascii=True, sort_keys=True)},
+            {"role": "assistant", "content": json.dumps(prediction, ensure_ascii=True)},
         ],
         "input": item["message"],
         "prediction": prediction,

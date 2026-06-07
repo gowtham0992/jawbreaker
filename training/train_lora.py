@@ -86,6 +86,9 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--batch-size", type=int, default=1)
     parser.add_argument("--grad-accum", type=int, default=16)
     parser.add_argument("--learning-rate", type=float, default=2e-4)
+    parser.add_argument("--warmup-ratio", type=float, default=0.0)
+    parser.add_argument("--weight-decay", type=float, default=0.0)
+    parser.add_argument("--lr-scheduler-type", default="linear")
     parser.add_argument("--lora-r", type=int, default=16)
     parser.add_argument("--lora-alpha", type=int, default=32)
     parser.add_argument("--lora-dropout", type=float, default=0.05)
@@ -138,6 +141,9 @@ def main() -> None:
         per_device_eval_batch_size=args.batch_size,
         gradient_accumulation_steps=args.grad_accum,
         learning_rate=args.learning_rate,
+        warmup_ratio=args.warmup_ratio,
+        weight_decay=args.weight_decay,
+        lr_scheduler_type=args.lr_scheduler_type,
         logging_steps=10,
         eval_strategy="steps",
         eval_steps=50,
