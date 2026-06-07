@@ -274,6 +274,7 @@ def build_transformers_analyzer(
         except TypeError:
             prompt = tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
         inputs = tokenizer(prompt, return_tensors="pt").to(model.device)
+        inputs.pop("token_type_ids", None)
         generation_kwargs: dict[str, Any] = {
             "max_new_tokens": max_new_tokens,
             "do_sample": temperature > 0,
