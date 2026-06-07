@@ -1,4 +1,13 @@
-from app import build_handoff_message, remember_current, run_analysis, should_use_heuristic_guard
+from app import (
+    DEFAULT_ADAPTER_ID,
+    DEFAULT_TRANSFORMERS_MAX_TOKENS,
+    DEFAULT_TRANSFORMERS_MODEL_ID,
+    build_handoff_message,
+    default_adapter_id,
+    remember_current,
+    run_analysis,
+    should_use_heuristic_guard,
+)
 from jawbreaker.analyzers import repair_prediction
 from jawbreaker.schema import ScamAnalysis
 
@@ -110,3 +119,11 @@ def test_repair_prediction_adds_missing_summary_without_changing_risk() -> None:
 
     assert repaired["risk_level"] == "dangerous"
     assert repaired["summary"] == "This looks dangerous: likely family impersonation."
+
+
+def test_default_adapter_only_attaches_to_minicpm(monkeypatch) -> None:
+    monkeypatch.delenv("JAWBREAKER_ADAPTER_ID", raising=False)
+
+    assert default_adapter_id(DEFAULT_TRANSFORMERS_MODEL_ID) == DEFAULT_ADAPTER_ID
+    assert default_adapter_id("Qwen/Qwen3-0.6B") is None
+    assert DEFAULT_TRANSFORMERS_MAX_TOKENS == 512

@@ -1,5 +1,6 @@
 from jawbreaker.schema import ScamAnalysis
 from jawbreaker.analyzers import prediction_to_analysis
+from jawbreaker.render import render_analysis_html
 
 
 def test_family_impersonation_is_dangerous() -> None:
@@ -43,3 +44,25 @@ def test_prediction_to_analysis_normalizes_model_json() -> None:
     assert analysis.risk_level == "needs_check"
     assert analysis.scam_dna["Impersonates"] == "USPS"
     assert analysis.similar_memory == "This resembles a saved pattern."
+
+
+def test_render_humanizes_model_style_labels() -> None:
+    analysis = ScamAnalysis(
+        risk_level="dangerous",
+        scam_type="credential_theft",
+        summary="This message mentions credential_theft.",
+        tactics=["unknown_urgent_action", "credential_theft"],
+        safest_action="Do not click the link.",
+        scam_dna={
+            "Impersonates": "legitimate_company",
+            "Pressure": "sense_of_urgency",
+            "Ask": "click_link_and_verify",
+            "Risk": "credential_theft",
+        },
+    )
+
+    html = render_analysis_html("USPS: verify now", analysis)
+
+    assert "legitimate company" in html
+    assert "click a link and verify" in html
+    assert "unknown_urgent_action" not in html

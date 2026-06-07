@@ -32,6 +32,7 @@ EXAMPLES = [
 
 DEFAULT_TRANSFORMERS_MODEL_ID = "openbmb/MiniCPM4.1-8B"
 DEFAULT_ADAPTER_ID = "build-small-hackathon/jawbreaker-minicpm-lora-v3"
+DEFAULT_TRANSFORMERS_MAX_TOKENS = 512
 
 FORCE_LIGHT_JS = """() => {
     const forceLight = () => document.body.classList.remove('dark');
@@ -153,7 +154,8 @@ def get_analyzer():
         return build_transformers_analyzer(
             model_id,
             adapter_id=default_adapter_id(model_id),
-            max_new_tokens=_env_int("JAWBREAKER_MAX_TOKENS", 192) or 192,
+            max_new_tokens=_env_int("JAWBREAKER_MAX_TOKENS", DEFAULT_TRANSFORMERS_MAX_TOKENS)
+            or DEFAULT_TRANSFORMERS_MAX_TOKENS,
             temperature=float(os.getenv("JAWBREAKER_TEMPERATURE", "0")),
             device_map=os.getenv("JAWBREAKER_DEVICE_MAP", "auto"),
             dtype=os.getenv("JAWBREAKER_TORCH_DTYPE", "auto"),

@@ -34,13 +34,34 @@ RISK_BADGE = {
 }
 
 
+def humanize(text: str) -> str:
+    cleaned = str(text or "").replace("_", " ").replace("-", " ")
+    words = " ".join(cleaned.split())
+    if not words:
+        return "Unknown"
+
+    aliases = {
+        "credential theft": "credential theft",
+        "credential request": "credential request",
+        "unknown urgent action": "urgent action",
+        "unknown website link": "suspicious link",
+        "legitimate company": "legitimate company",
+        "sense of urgency": "urgency",
+        "click link and verify": "click a link and verify",
+        "safe benign": "safe message",
+        "needs check": "needs check",
+    }
+    lowered = words.lower()
+    return aliases.get(lowered, words)
+
+
 def build_copy_plan(message: str, analysis: ScamAnalysis) -> str:
     cleaned = " ".join(message.strip().split())
     if len(cleaned) > 500:
         cleaned = cleaned[:497].rstrip() + "..."
 
     risk = analysis.risk_level.replace("_", " ")
-    scam_type = analysis.scam_type.replace("_", " ")
+    scam_type = humanize(analysis.scam_type)
     risk_line = f"Jawbreaker marked it as {risk}"
     if scam_type and scam_type != "none":
         risk_line += f" ({scam_type})"
@@ -91,19 +112,19 @@ def render_analysis_html(message: str, analysis: ScamAnalysis) -> str:
         </div>
         """
 
-    tactic_html = "".join(f"<span class='tactic'>{escape(tactic)}</span>" for tactic in analysis.tactics)
+    tactic_html = "".join(f"<span class='tactic'>{escape(humanize(tactic))}</span>" for tactic in analysis.tactics)
     dna_html = "".join(
         f"""
         <div class="dna-item">
           <div class="dna-label">{escape(DNA_LABELS.get(label, label))}</div>
-          <div class="dna-value">{escape(value)}</div>
+          <div class="dna-value">{escape(humanize(value))}</div>
         </div>
         """
         for label, value in analysis.scam_dna.items()
     )
     memory_html = f"<p><strong>Memory:</strong> {escape(analysis.similar_memory)}</p>" if analysis.similar_memory else ""
     verdict_title, verdict_file = VERDICT_COPY[analysis.risk_level]
-    verdict_subtitle = analysis.summary.replace("This looks dangerous: likely ", "Likely ").rstrip(".")
+    verdict_subtitle = humanize(analysis.summary.replace("This looks dangerous: likely ", "Likely ").rstrip("."))
     risk_class = RISK_WINDOW_CLASS[analysis.risk_level]
 
     verdict = f"""
@@ -126,7 +147,7 @@ def render_analysis_html(message: str, analysis: ScamAnalysis) -> str:
     remedy = f"""
       <div class="remedy-copy">
         <p class="terminal-label">RECOMMENDED ACTION:</p>
-        <p>{escape(analysis.safest_action)}</p>
+        <p>{escape(humanize(analysis.safest_action))}</p>
       </div>
       <div class="copy-plan-inline">
         <textarea class="copy-plan-source" readonly>{escape(copy_plan)}</textarea>

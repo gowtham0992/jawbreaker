@@ -580,24 +580,26 @@ button.primary:disabled {
 
 .copy-plan-inline {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 160px;
+  grid-template-columns: minmax(0, 1fr) 150px;
   align-items: stretch;
   gap: 12px;
   margin-top: 14px;
 }
 
 .copy-plan-source {
-  min-height: 84px !important;
+  min-height: 126px !important;
   width: 100% !important;
   border: var(--jb-line);
   border-radius: 4px;
-  background: var(--jb-white);
+  background: var(--jb-white) !important;
   box-sizing: border-box !important;
   padding: 12px !important;
-  color: var(--jb-black);
+  color: var(--jb-black) !important;
   font-size: 13px;
   line-height: 1.35;
-  overflow: hidden !important;
+  opacity: 1 !important;
+  -webkit-text-fill-color: var(--jb-black) !important;
+  overflow: auto !important;
   resize: none !important;
   white-space: pre-wrap !important;
 }
