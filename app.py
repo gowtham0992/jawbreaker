@@ -33,6 +33,7 @@ EXAMPLES = [
 DEFAULT_TRANSFORMERS_MODEL_ID = "openbmb/MiniCPM4.1-8B"
 DEFAULT_ADAPTER_ID = "build-small-hackathon/jawbreaker-minicpm-lora-v3"
 DEFAULT_TRANSFORMERS_MAX_TOKENS = 512
+LOGO_PATH = Path("jawbreaker_logo.png")
 
 FORCE_LIGHT_JS = """() => {
     const forceLight = () => document.body.classList.remove('dark');
@@ -399,6 +400,7 @@ def remember_current(message: str, memory: list[dict] | None, last_scan: dict | 
 
 
 def build_app() -> gr.Blocks:
+    gr.set_static_paths(paths=[LOGO_PATH.resolve()])
     with gr.Blocks(title="Jawbreaker") as demo:
         memory_state = gr.State([])
         last_scan_state = gr.State({})
@@ -407,7 +409,9 @@ def build_app() -> gr.Blocks:
             """
             <header class="topbar">
               <div class="brand-lockup">
-                <span class="brand-mark" aria-hidden="true">J</span>
+                <span class="brand-mark" aria-hidden="true">
+                  <img src="/gradio_api/file=jawbreaker_logo.png" alt="" />
+                </span>
                 <span class="brand-name">JAWBREAKER</span>
               </div>
               <div class="status-tags">
@@ -485,4 +489,5 @@ if __name__ == "__main__":
         css=app_css(),
         js=FORCE_LIGHT_JS,
         head=FORCE_LIGHT_HEAD,
+        favicon_path=str(LOGO_PATH),
     )
