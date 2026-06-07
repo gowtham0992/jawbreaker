@@ -28,6 +28,8 @@ EXAMPLES = [
     "Hi Grandma, I lost my phone. This is my new number. Can you send $800 for rent today? Please don't tell Mom.",
     "Coinbase alert: We received a request to update the phone number on your account. If this wasn't you, call support immediately at [callback number].",
     "Hi! I'm a recruiter from TikTok Shop. We are looking for a part-time assistant. Flexible remote work, 60 minutes per day, $330-$750 per day. Contact me on WhatsApp at [phone number].",
+    "Your dentist appointment is confirmed for Tuesday at 2:00 PM. Reply C to confirm or R to reschedule.",
+    "Your verification code is 482913. Do not share this code with anyone. We will never ask for it by phone.",
 ]
 
 DEFAULT_TRANSFORMERS_MODEL_ID = "openbmb/MiniCPM4.1-8B"
