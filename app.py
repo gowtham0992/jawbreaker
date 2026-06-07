@@ -1,7 +1,7 @@
 import os
 from functools import lru_cache
 from pathlib import Path
-from time import perf_counter
+from time import perf_counter, sleep
 from typing import Any
 
 import gradio as gr
@@ -300,11 +300,11 @@ def should_use_heuristic_guard(
 def analyze_message(
     message: str,
     memory: list[dict] | None,
-) -> tuple[str, str, list[dict], dict, dict, dict]:
+):
     memory = memory or []
     if not message.strip():
         analysis = ScamAnalysis.from_heuristics(message, memory)
-        return (
+        yield (
             render_analysis_html(message, analysis),
             render_memory_html(analysis, memory),
             memory,
@@ -312,12 +312,24 @@ def analyze_message(
             gr.update(interactive=True),
             gr.update(interactive=True),
         )
+        return
+
+    for active_step, progress in [(0, 12), (1, 30), (2, 54), (3, 76)]:
+        yield (
+            render_scanning_html(active_step=active_step, progress=progress),
+            render_current_memory(memory),
+            memory,
+            {},
+            gr.update(interactive=False),
+            gr.update(interactive=False),
+        )
+        sleep(0.25)
 
     try:
         analysis = run_analysis(message, memory)
     except Exception as exc:
         analysis = analysis_error(exc)
-        return (
+        yield (
             render_analysis_html(message, analysis),
             render_memory_html(analysis, memory),
             memory,
@@ -325,6 +337,7 @@ def analyze_message(
             gr.update(interactive=True),
             gr.update(interactive=True),
         )
+        return
 
     last_scan = {
         "message": message,
@@ -333,7 +346,7 @@ def analyze_message(
     entry = last_scan["entry"]
     if not memory or memory[-1].get("text") != entry.get("text"):
         memory.append(entry)
-    return (
+    yield (
         render_analysis_html(message, analysis),
         render_memory_html(analysis, memory),
         memory,
@@ -383,17 +396,6 @@ def remember_current(message: str, memory: list[dict] | None, last_scan: dict | 
 
     memory.append(entry)
     return render_save_status("Saved this scam pattern for this session."), render_current_memory(memory), memory
-
-
-def start_scan(message: str) -> tuple[str, dict, dict]:
-    if not message.strip():
-        analysis = ScamAnalysis.from_heuristics(message, [])
-        return (
-            render_analysis_html(message, analysis),
-            gr.update(interactive=True),
-            gr.update(interactive=True),
-        )
-    return render_scanning_html(), gr.update(interactive=False), gr.update(interactive=False)
 
 
 def build_app() -> gr.Blocks:
@@ -461,13 +463,7 @@ def build_app() -> gr.Blocks:
                     </div>
                     """
                 )
-        scan_event = analyze.click(
-            fn=start_scan,
-            inputs=message,
-            outputs=[result, message, analyze],
-            show_progress="hidden",
-        )
-        scan_event.then(
+        analyze.click(
             fn=analyze_message,
             inputs=[message, memory_state],
             outputs=[result, memory, memory_state, last_scan_state, message, analyze],

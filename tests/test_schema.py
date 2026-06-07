@@ -1,6 +1,6 @@
 from jawbreaker.schema import ScamAnalysis
 from jawbreaker.analyzers import prediction_to_analysis
-from jawbreaker.render import render_analysis_html
+from jawbreaker.render import render_analysis_html, render_scanning_html
 
 
 def test_family_impersonation_is_dangerous() -> None:
@@ -68,3 +68,11 @@ def test_render_humanizes_model_style_labels() -> None:
     assert "unknown_urgent_action" not in html
     assert "urgent payment" in html
     assert "data-copy=" in html
+
+
+def test_render_scanning_html_tracks_progress() -> None:
+    html = render_scanning_html(active_step=2, progress=54)
+
+    assert "54% COMPLETE" in html
+    assert "✓ Preparing the safety model" in html
+    assert "> Checking scam pressure signals" in html

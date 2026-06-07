@@ -33,6 +33,14 @@ RISK_BADGE = {
     "safe": "CLEAR",
 }
 
+SCAN_STEPS = [
+    "Preparing the safety model...",
+    "Reading the message...",
+    "Checking scam pressure signals...",
+    "Building the safest next step...",
+    "Writing the report...",
+]
+
 
 def humanize(text: str) -> str:
     cleaned = str(text or "").replace("_", " ").replace("-", " ")
@@ -167,22 +175,34 @@ def render_analysis_html(message: str, analysis: ScamAnalysis) -> str:
     """
 
 
-def render_scanning_html() -> str:
+def render_scanning_html(active_step: int = 0, progress: int = 12) -> str:
+    progress = max(0, min(100, progress))
+    filled = max(1, round(progress / 100 * 12))
+    bar = "█" * filled + "░" * (12 - filled)
+    lines = []
+    for index, step in enumerate(SCAN_STEPS):
+        if index < active_step:
+            class_name = "terminal-done"
+            prefix = "✓"
+        elif index == active_step:
+            class_name = "terminal-active"
+            prefix = ">"
+        else:
+            class_name = "terminal-muted"
+            prefix = ">"
+        lines.append(f'<p class="{class_name}">{prefix} {escape(step)}</p>')
+
     return """
     <section class="retro-window scanning-state terminal-window">
       <div class="window-titlebar"><span>Checking the message</span></div>
       <div class="window-body">
-        <p class="terminal-progress">[██████████░░] 84% COMPLETE</p>
+        <p class="terminal-progress">[%s] %s%% COMPLETE</p>
         <div class="terminal-log">
-          <p>> importing offline AI model runtime...</p>
-          <p>> checking message semantics and urgency markers...</p>
-          <p>> comparing against known scam signatures...</p>
-          <p>> building safe response plan...</p>
-          <p class="terminal-muted">> finalizing report...</p>
+          %s
         </div>
       </div>
     </section>
-    """
+    """ % (bar, progress, "\n".join(lines))
 
 
 def render_memory_html(analysis: ScamAnalysis, memory: list[dict]) -> str:
