@@ -22,6 +22,15 @@ def test_legitimate_fraud_alert_needs_check_not_dangerous() -> None:
     assert analysis.scam_type == "possible_legitimate_alert"
 
 
+def test_device_protection_subscription_alert_is_tech_support() -> None:
+    analysis = ScamAnalysis.from_heuristics(
+        "Device protection team: subscription expired. Call the number in this alert to avoid data loss."
+    )
+
+    assert analysis.risk_level == "dangerous"
+    assert analysis.scam_type == "tech_support"
+
+
 def test_prediction_to_analysis_normalizes_model_json() -> None:
     analysis = prediction_to_analysis(
         {
