@@ -14,6 +14,55 @@ Prediction = dict[str, Any]
 Analyzer = Callable[[str], Prediction]
 
 
+UNSAFE_ACTION_PHRASES = [
+    "click the link",
+    "open the link",
+    "use the link",
+    "call the number in the message",
+    "call the number shown",
+    "call the number in this alert",
+    "reply with your code",
+    "send the code",
+    "send money",
+    "wire money",
+    "wire payment",
+    "send funds",
+    "send crypto",
+    "buy gift cards",
+    "send gift cards",
+    "text me the codes",
+    "share your password",
+    "share your pin",
+    "share the login code",
+    "install remote access",
+]
+
+SAFE_ACTION_BY_RISK = {
+    "dangerous": (
+        "Do not click links, do not reply, and do not send money. Contact the company or person using an "
+        "official app, official website, or a number you already trust."
+    ),
+    "suspicious": (
+        "Pause before acting. Do not use links or phone numbers from the message. Verify through an official "
+        "app, official website, or known phone number."
+    ),
+    "needs_check": "Verify directly through the official app, official website, or a known phone number.",
+    "safe": "If this came from someone you know and asks for nothing sensitive, it is probably safe.",
+}
+
+
+def has_unsafe_action(action: str) -> bool:
+    text = f" {action.lower()} "
+    safe_prefixes = ["do not", "don't", "never", "avoid", "do n't"]
+    for phrase in UNSAFE_ACTION_PHRASES:
+        if phrase not in text:
+            continue
+        if any(f"{prefix} {phrase}" in text for prefix in safe_prefixes):
+            continue
+        return True
+    return False
+
+
 def analysis_to_prediction(analysis: ScamAnalysis) -> Prediction:
     return {
         "risk_level": analysis.risk_level,
@@ -89,6 +138,8 @@ def repair_prediction(prediction: Prediction) -> Prediction:
         repaired["safest_action"] = (
             "Do not click links or reply. Verify through an official app, website, or known phone number."
         )
+    if has_unsafe_action(str(repaired.get("safest_action", ""))):
+        repaired["safest_action"] = SAFE_ACTION_BY_RISK[str(risk_level)]
     if not isinstance(repaired.get("trusted_person_message"), str):
         repaired["trusted_person_message"] = "Can you check this for me before I respond or click anything?"
     if not isinstance(repaired.get("summary"), str):
@@ -274,6 +325,7 @@ def build_transformers_analyzer(
         except TypeError:
             prompt = tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
         inputs = tokenizer(prompt, return_tensors="pt").to(model.device)
+        inputs.pop("token_type_ids", None)
         generation_kwargs: dict[str, Any] = {
             "max_new_tokens": max_new_tokens,
             "do_sample": temperature > 0,
