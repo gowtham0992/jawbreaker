@@ -43,7 +43,7 @@ Jawbreaker helps a real person pause before clicking, replying, or sending money
 - Event: Hugging Face Build Small Hackathon
 - Track: Backyard AI
 - App: Gradio Space under `build-small-hackathon`
-- Status: MVP deployed; demo/story polish in progress
+- Status: Public Space deployed; demo/story polish in progress
 - Demo video: To be added before submission
 - Social post: To be added before submission
 - Public GitHub repo: https://github.com/gowtham0992/jawbreaker
