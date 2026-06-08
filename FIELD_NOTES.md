@@ -141,3 +141,15 @@ Why this replaced the earlier 8B v3 adapter:
 The 470-case eval attempt timed out around case 341, so it is not used as final evidence. The committed final evidence is the completed 320-case and 394-case guarded reports under `eval/reports/`.
 
 Decision: ship MiniCPM5-1B LoRA v4 as the default model, keep the deterministic guard as product safety defense-in-depth, and document the 8B path as comparison/history rather than the live model.
+
+## 2026-06-07 Hub Packaging
+
+Published the public review artifacts:
+
+- Final model card: `build-small-hackathon/jawbreaker-minicpm5-1b-lora-v4`
+- Public dataset/eval bundle: `build-small-hackathon/jawbreaker-scam-defense-data`
+- Live app: `build-small-hackathon/jawbreaker`
+
+The dataset bundle includes synthetic/sanitized training and eval JSONL files plus the completed 320-case and 394-case guarded eval reports. It does not include raw private chats, Discord logs, emails, phone numbers, timestamps, or personal message metadata.
+
+Collection creation through the CLI returned `403` for the current token even after repo uploads succeeded. Treat the collection as a manual Hub UI task unless a token with collection permissions is created.

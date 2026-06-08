@@ -39,6 +39,9 @@ Jawbreaker helps a real person pause before clicking, replying, or sending money
 - Demo video: To be added before submission
 - Social post: To be added before submission
 - Public GitHub repo: https://github.com/gowtham0992/jawbreaker
+- Live Space: https://huggingface.co/spaces/build-small-hackathon/jawbreaker
+- Final model adapter: https://huggingface.co/build-small-hackathon/jawbreaker-minicpm5-1b-lora-v4
+- Public dataset/eval bundle: https://huggingface.co/datasets/build-small-hackathon/jawbreaker-scam-defense-data
 
 ## Built With Codex
 
@@ -94,6 +97,7 @@ Current eval results:
 
 Training/eval artifacts:
 
+- Hugging Face dataset: `build-small-hackathon/jawbreaker-scam-defense-data` publishes the sanitized/synthetic evals, generated training splits, and final v4 reports.
 - `eval/scam_eval.jsonl`: 100 hand-curated synthetic/sanitized eval cases.
 - `eval/field_examples.jsonl`: sanitized real-world examples from a friend, with names and phone numbers removed.
 - `training/generate_jawbreaker_data.py`: deterministic generator for larger train/dev/test splits.

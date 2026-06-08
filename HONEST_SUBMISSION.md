@@ -11,6 +11,7 @@ Jawbreaker should compete hard without gaming the hackathon.
 - Codex usage: the GitHub repo has Codex-attributed commits and the build logs document Codex's role.
 - Custom UI: the app uses a custom Gradio interface, not the default demo look.
 - Eval work: the repo includes hand-curated synthetic/sanitized eval cases plus generated synthetic train/dev/test data.
+- Public data page: sanitized/synthetic eval and training artifacts are published at `build-small-hackathon/jawbreaker-scam-defense-data`.
 - Well-Tuned: a MiniCPM LoRA adapter was trained on Modal, published to Hugging Face, and evaluated before deployment.
 - Modal usage: Modal was used for training and eval; it is not the live inference backend.
 - Safety guardrails: model JSON is validated, unsafe actions are checked in eval, and a deterministic fallback handles malformed model output.
