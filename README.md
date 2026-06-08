@@ -1,6 +1,6 @@
 ---
 title: Jawbreaker
-emoji: 🎯
+emoji: 🍬
 colorFrom: yellow
 colorTo: red
 sdk: gradio
