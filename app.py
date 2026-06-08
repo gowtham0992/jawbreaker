@@ -1162,7 +1162,7 @@ def paper_shield_html() -> str:
     <section class="hero" aria-labelledby="heroTitle">
       <h2 id="heroTitle">Is this message safe?</h2>
       <p>Paste a text, email, or DM. Jawbreaker will show the risk, the warning signs, and the safest next step before you reply, click, or pay.</p>
-      <div class="safety-note">Safety aid only, not legal, financial, or cybersecurity advice. Always verify through official channels.</div>
+      <div class="safety-note">Safety aid only, not legal, financial, or cybersecurity advice. Always verify through official channels. First check may take up to 30s while ZeroGPU wakes up.</div>
     </section>
 
     <section class="workspace">
