@@ -144,7 +144,6 @@ Training/eval artifacts:
 | Tiny Titan | Targeted | The deployed model is `openbmb/MiniCPM5-1B`, well under the 4B badge threshold. |
 | Off Brand | Targeted | Custom Gradio UI beyond the stock component look. |
 | Best Demo | Pending | Demo video and social post still need to be recorded, published, and linked before final submission. |
-| Bonus Quest Champion | Candidate | The app stacks practical track fit, MiniCPM, Codex, Modal, Tiny Titan, Off Brand, public data/model artifacts, and build field notes. |
 | Judges' Wildcard | Automatic | Every submission is considered. |
 
 Not claiming:
@@ -152,6 +151,7 @@ Not claiming:
 - Best Agent: Jawbreaker is not a multi-step agentic app.
 - NVIDIA Nemotron Quest: no NeMoTron model is used.
 - llama.cpp as live runtime: local/eval tooling supports GGUF experiments, but the judge-facing Space uses Transformers on ZeroGPU.
+- Bonus Quest Champion: not claimed unless a specific bonus quest name and completion receipt are added before submission.
 
 ## Safety Boundary
 
