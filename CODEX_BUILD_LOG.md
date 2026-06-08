@@ -64,3 +64,29 @@ Measured results:
 
 - 100-case product eval: `90/100` risk accuracy, `0` dangerous undercalls, `0` invalid predictions, `0` model errors
 - 215-case hard eval: `210/215` risk accuracy (`97.7%`), `0` dangerous-as-safe, `0` dangerous-as-needs-check, `0` safe-as-dangerous-or-suspicious, `0` unsafe action violations, `0` invalid predictions, `0` model errors
+
+## MiniCPM5-1B LoRA v4
+
+Codex helped turn the Tiny Titan experiment into the final model path.
+
+The final deployed path is:
+
+- Base model: `openbmb/MiniCPM5-1B`
+- Adapter: `build-small-hackathon/jawbreaker-minicpm5-1b-lora-v4`
+- Runtime: Transformers on ZeroGPU
+- Training and eval: Modal
+
+The completed hard guarded eval evidence:
+
+- 394 cases
+- `96.19%` risk accuracy
+- `96.19%` scam type accuracy
+- `96.55%` mean tactic recall
+- `0` dangerous-as-safe
+- `0` dangerous-as-needs-check
+- `0` suspicious-as-safe
+- `0` unsafe action violations
+- `0` invalid predictions
+- `0` model errors
+
+Codex also helped add the committed eval reports under `eval/reports/`, update the Space and GitHub code defaults, and keep the Hugging Face Space history separate from GitHub history through cherry-picked Space sync commits.
