@@ -1,5 +1,7 @@
 # Field Notes
 
+These are build field notes: product decisions, model/runtime pivots, eval observations, and packaging notes. They are not ethnographic user research or a claim of completed real-user validation.
+
 ## 2026-06-05
 
 Kickoff confirmed the submission shape:

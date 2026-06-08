@@ -420,7 +420,7 @@ def paper_shield_html() -> str:
     .brand h1 {{
       margin: 0;
       font-family: var(--font-display);
-      font-size: clamp(2rem, 5vw, 3.4rem);
+      font-size: clamp(1.7rem, 3.8vw, 2.75rem);
       line-height: .92;
       letter-spacing: 0;
       min-width: 0;
@@ -465,13 +465,13 @@ def paper_shield_html() -> str:
     .hero {{
       display: grid;
       gap: 7px;
-      padding: 22px 0 20px;
+      padding: 18px 0 16px;
     }}
 
     .hero h2 {{
       margin: 0;
       font-family: var(--font-display);
-      font-size: clamp(2rem, 3.8vw, 3.25rem);
+      font-size: clamp(1.7rem, 2.7vw, 2.35rem);
       line-height: 1;
       letter-spacing: 0;
       max-width: 100%;
@@ -482,10 +482,26 @@ def paper_shield_html() -> str:
     .hero p {{
       margin: 0;
       color: var(--color-muted);
-      font-size: clamp(.98rem, 1.18vw, 1.08rem);
+      font-size: clamp(.88rem, 1vw, .98rem);
       line-height: 1.35;
       max-width: none;
       white-space: nowrap;
+    }}
+
+    .safety-note {{
+      width: fit-content;
+      max-width: 100%;
+      margin-top: 4px;
+      border: 1.5px solid var(--color-rule);
+      border-radius: 999px;
+      background: var(--color-paper-soft);
+      padding: 6px 10px;
+      color: var(--color-muted);
+      font-family: var(--font-label);
+      font-size: .68rem;
+      font-weight: 800;
+      line-height: 1.25;
+      white-space: normal;
     }}
 
     .workspace {{
@@ -638,7 +654,7 @@ def paper_shield_html() -> str:
     }}
 
     .card-body {{
-      padding: clamp(22px, 4vw, 36px);
+      padding: clamp(18px, 3vw, 28px);
     }}
 
     .result-top .card-body {{
@@ -674,8 +690,8 @@ def paper_shield_html() -> str:
       margin: 0 0 12px;
       max-width: 22ch;
       font-family: var(--font-display);
-      font-size: clamp(1.75rem, 3.4vw, 2.7rem);
-      line-height: 1;
+      font-size: clamp(1.45rem, 2.5vw, 2.05rem);
+      line-height: 1.04;
       min-width: 0;
       overflow-wrap: anywhere;
     }}
@@ -685,7 +701,7 @@ def paper_shield_html() -> str:
       max-width: 34rem;
       color: var(--color-muted);
       line-height: 1.5;
-      font-size: 1.06rem;
+      font-size: .94rem;
     }}
 
     .standby-list {{
@@ -726,7 +742,7 @@ def paper_shield_html() -> str:
       display: grid;
       gap: 6px;
       align-content: center;
-      min-height: 86px;
+      min-height: 72px;
       border: 2px solid var(--color-rule);
       border-radius: 6px;
       background: var(--color-paper-soft);
@@ -741,7 +757,7 @@ def paper_shield_html() -> str:
 
     .standby-tile span {{
       color: var(--color-muted);
-      font-size: 1rem;
+      font-size: .9rem;
       line-height: 1.3;
     }}
 
@@ -791,14 +807,14 @@ def paper_shield_html() -> str:
     }}
 
     .stamp {{
-      width: 82px;
-      height: 82px;
+      width: 68px;
+      height: 68px;
       display: grid;
       place-items: center;
       border: 3px solid var(--color-rule);
       border-radius: 50%;
       font-family: var(--font-label);
-      font-size: .62rem;
+      font-size: .54rem;
       font-weight: 950;
       text-align: center;
       text-transform: uppercase;
@@ -809,14 +825,14 @@ def paper_shield_html() -> str:
     .verdict-title {{
       margin: 0 0 10px;
       font-family: var(--font-display);
-      font-size: clamp(1.85rem, 3.1vw, 3rem);
+      font-size: clamp(1.45rem, 2.25vw, 2.1rem);
       line-height: 1.03;
       overflow-wrap: anywhere;
     }}
 
     .summary {{
       margin: 0;
-      font-size: 1.08rem;
+      font-size: .96rem;
       line-height: 1.45;
     }}
 
@@ -844,8 +860,8 @@ def paper_shield_html() -> str:
       margin: 0;
       font-family: var(--font-display);
       font-weight: 800;
-      font-size: clamp(1.22rem, 1.75vw, 1.58rem);
-      line-height: 1.12;
+      font-size: clamp(1.05rem, 1.35vw, 1.25rem);
+      line-height: 1.18;
       overflow-wrap: anywhere;
     }}
 
@@ -856,8 +872,8 @@ def paper_shield_html() -> str:
     }}
 
     .dna-item {{
-      min-height: 82px;
-      padding: 12px;
+      min-height: 70px;
+      padding: 10px;
       border: 2px solid var(--color-rule);
       border-radius: 4px;
       background: linear-gradient(135deg, var(--color-paper) 0 78%, var(--color-fold) 79%);
@@ -873,7 +889,7 @@ def paper_shield_html() -> str:
 
     .dna-value {{
       font-family: var(--font-display);
-      font-size: clamp(1.02rem, 1.32vw, 1.24rem);
+      font-size: clamp(.9rem, 1.08vw, 1rem);
       font-weight: 800;
       line-height: 1.12;
       overflow-wrap: anywhere;
@@ -913,7 +929,7 @@ def paper_shield_html() -> str:
       border-radius: 4px;
       background: var(--color-paper);
       padding: 14px;
-      font-size: .98rem;
+      font-size: .86rem;
       line-height: 1.38;
     }}
 
@@ -923,7 +939,7 @@ def paper_shield_html() -> str:
       background: var(--color-paper);
       font-family: var(--font-label);
       font-weight: 950;
-      font-size: .92rem;
+      font-size: .78rem;
       text-transform: uppercase;
       box-shadow: var(--shadow-hard);
       white-space: nowrap;
@@ -955,7 +971,7 @@ def paper_shield_html() -> str:
       border: 1.5px solid var(--color-rule);
       border-radius: 4px;
       background: var(--color-danger-soft);
-      font-size: .94rem;
+      font-size: .84rem;
       line-height: 1.28;
     }}
 
@@ -1059,7 +1075,7 @@ def paper_shield_html() -> str:
       .hero h2 {{
         max-width: 100%;
         white-space: normal;
-        font-size: clamp(2rem, 10vw, 3rem);
+        font-size: clamp(1.8rem, 8vw, 2.55rem);
       }}
 
       .hero p {{
@@ -1095,9 +1111,9 @@ def paper_shield_html() -> str:
       }}
 
       .stamp {{
-        width: 88px;
-        height: 88px;
-        font-size: .68rem;
+        width: 72px;
+        height: 72px;
+        font-size: .58rem;
       }}
 
       .dna-grid {{
@@ -1137,6 +1153,7 @@ def paper_shield_html() -> str:
     <section class="hero" aria-labelledby="heroTitle">
       <h2 id="heroTitle">Is this message safe?</h2>
       <p>Paste a text, email, or DM. Jawbreaker will show the risk, the warning signs, and the safest next step before you reply, click, or pay.</p>
+      <div class="safety-note">Safety aid only, not legal, financial, or cybersecurity advice. Always verify through official channels.</div>
     </section>
 
     <section class="workspace">

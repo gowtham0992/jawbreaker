@@ -59,7 +59,8 @@ This project is being built with OpenAI Codex in the Codex desktop app. Codex is
 Codex evidence:
 
 - Public GitHub repo linked from this Space README.
-- Codex-attributed commits will be included for build work.
+- Codex-attributed commits are included for build work.
+- Codex scaffolded and iterated on `app.py`, the custom Gradio Server UI, `jawbreaker/` analyzer/schema/render modules, `eval/run_eval.py`, `training/train_lora.py`, `training/modal_train.py`, `training/modal_eval.py`, and the public submission docs.
 - `AGENT_TRACE.md` records the development process.
 - `FIELD_NOTES.md` records product and technical decisions.
 - `HONEST_SUBMISSION.md` records what the project can and cannot honestly claim.
@@ -79,6 +80,7 @@ The deployed Space uses `openbmb/MiniCPM5-1B` through Hugging Face Transformers 
 
 - Adapter: `build-small-hackathon/jawbreaker-minicpm5-1b-lora-v4`
 - Training: PEFT/LoRA on Modal A100
+- Eval: guarded Modal A100 runs across 320-case and 394-case hard suites
 - Runtime: ZeroGPU in the Hugging Face Space
 
 Why this model:
@@ -119,8 +121,8 @@ Training/eval artifacts:
 - `eval/hard_v4_eval.jsonl`, `hard_v5_eval.jsonl`, `hard_v6_eval.jsonl`: expanded hard evals used during 1B calibration.
 - `eval/reports/jawbreaker-minicpm5-1b-lora-v4-hard394-guarded.json`: main final model evidence.
 - `training/train_lora.py`: PEFT/LoRA script for publishing Jawbreaker MiniCPM adapters.
-- `training/modal_train.py`: Modal A100 training launcher.
-- `training/modal_eval.py`: Modal A100 eval launcher.
+- `training/modal_train.py`: Modal A100 training launcher used for the MiniCPM LoRA passes.
+- `training/modal_eval.py`: Modal A100 eval launcher used for guarded hard-suite scoring.
 - `HONEST_SUBMISSION.md`: guardrails to avoid overclaiming synthetic data, fine-tuning, or runtime behavior.
 
 ## Prize Eligibility
@@ -130,11 +132,11 @@ Training/eval artifacts:
 | Backyard AI | Targeted | Practical scam-defense app for someone close, with a focused safety workflow. |
 | Best MiniCPM Build | Targeted | `openbmb/MiniCPM5-1B` is the core runtime model, with a published Jawbreaker LoRA adapter. |
 | Best Use of Codex | Targeted | Public GitHub repo includes Codex-attributed commits plus `AGENT_TRACE.md` and `CODEX_BUILD_LOG.md`. |
-| Best Use of Modal | Targeted | Modal was used for LoRA training and guarded eval runs; see `training/modal_train.py`, `training/modal_eval.py`, and eval reports. |
+| Best Use of Modal | Targeted | Modal A100 was used for PEFT/LoRA training and guarded eval runs across the MiniCPM calibration path; see `training/modal_train.py`, `training/modal_eval.py`, and eval reports. |
 | Tiny Titan | Targeted | The deployed model is `openbmb/MiniCPM5-1B`, well under the 4B badge threshold. |
 | Off Brand | Targeted | Custom Gradio UI beyond the stock component look. |
 | Best Demo | Pending | Demo video and social post still need to be recorded, published, and linked before final submission. |
-| Bonus Quest Champion | Candidate | The app stacks practical track fit, MiniCPM, Codex, Modal, Tiny Titan, Off Brand, public data/model artifacts, and field notes. |
+| Bonus Quest Champion | Candidate | The app stacks practical track fit, MiniCPM, Codex, Modal, Tiny Titan, Off Brand, public data/model artifacts, and build field notes. |
 | Judges' Wildcard | Automatic | Every submission is considered. |
 
 Not claiming:
@@ -146,3 +148,5 @@ Not claiming:
 ## Safety Boundary
 
 Jawbreaker is not legal, financial, or cybersecurity advice. It is a local-first safety aid that helps non-experts slow down and verify suspicious messages. The safest action should never ask the user to click the suspicious link or call a number from the suspicious message.
+
+`FIELD_NOTES.md` is a build-observation log: product decisions, model/runtime pivots, eval results, and packaging notes. It is not presented as ethnographic user research.

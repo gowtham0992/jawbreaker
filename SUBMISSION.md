@@ -32,12 +32,11 @@
 
 ## Bonus Badges
 
-- [ ] Off the Grid evidence finalized
-- [ ] Llama Champion evidence finalized
 - [x] Off-Brand
 - [x] Well-Tuned
 - [x] Sharing is Caring
 - [x] Field Notes
+- [ ] Best Demo evidence finalized
 
 ## Codex Track Evidence
 
@@ -45,6 +44,7 @@
 - [x] GitHub repo is linked from README
 - [x] Codex build log exists
 - [x] Agent trace exists
+- [x] README includes file-level Codex contribution summary
 - [x] Meaningful feature commits include Codex co-author trailer
 
 ## Final Manual Tasks
