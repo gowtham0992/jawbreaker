@@ -504,6 +504,15 @@ def paper_shield_html() -> str:
       white-space: normal;
     }}
 
+    .privacy-note {{
+      margin: -3px 0 12px;
+      color: var(--color-muted);
+      font-family: var(--font-label);
+      font-size: .66rem;
+      font-weight: 800;
+      line-height: 1.35;
+    }}
+
     .workspace {{
       display: grid;
       grid-template-columns: minmax(320px, 430px) minmax(0, 1fr);
@@ -1160,6 +1169,7 @@ def paper_shield_html() -> str:
       <aside>
         <form id="scanForm" class="paper note">
           <p class="section-label">Message to check</p>
+          <p class="privacy-note">Public demo privacy: redact passwords, bank numbers, SSNs, addresses, and private codes before pasting.</p>
           <textarea id="messageInput" placeholder="Paste a text, email, or DM here."></textarea>
           <button id="scanButton" class="run" type="submit">Check message</button>
           <div class="samples" id="samples" aria-label="Sample messages"></div>
