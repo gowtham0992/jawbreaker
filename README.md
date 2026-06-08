@@ -1,23 +1,31 @@
 ---
 title: Jawbreaker
+emoji: 🎯
+colorFrom: yellow
+colorTo: red
 sdk: gradio
 sdk_version: 6.16.0
 python_version: 3.12
 app_file: app.py
-emoji: 🍬
-colorFrom: yellow
-colorTo: red
 license: mit
 short_description: Local-first scam defense for someone you love.
 tags:
-  - gradio
-  - build-small-hackathon
-  - backyard-ai
-  - openbmb
-  - minicpm
-  - local-first
-  - llama-cpp
-  - zerogpu
+- gradio
+- build-small-hackathon
+- backyard-ai
+- openbmb
+- minicpm
+- minicpm5
+- tiny-titan
+- well-tuned
+- off-brand
+- sharing-is-caring
+- field-notes
+- modal
+- codex
+- local-first
+- scam-defense
+- zerogpu
 ---
 
 <p align="center">
