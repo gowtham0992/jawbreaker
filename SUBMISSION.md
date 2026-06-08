@@ -21,7 +21,7 @@
 - [x] Model name and parameter count documented
 - [x] Eval set included
 - [x] Sanitized dataset page published on Hugging Face
-- [ ] Hugging Face collection links Space, model, dataset, and reports
+- [x] Hugging Face collection links Space, model, dataset, and reports
 - [x] Runtime decision documented
 - [x] Local inference path documented
 - [x] Fine-tuned MiniCPM LoRA adapter published and evaluated
@@ -49,7 +49,7 @@
 
 - [ ] Set Space variables to MiniCPM5-1B + Jawbreaker LoRA v4.
 - [x] Publish sanitized dataset/eval artifact page.
-- [ ] Create/update Hugging Face collection for the full submission package. Current token can create/upload repos but returned `403` for collection creation.
+- [x] Create/update Hugging Face collection for the full submission package.
 - [ ] Choose one real or realistic sanitized scam message for the primary demo.
 - [ ] Record 60-90 second demo video.
 - [ ] Add demo video link to README.

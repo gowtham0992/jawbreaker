@@ -42,6 +42,7 @@ Jawbreaker helps a real person pause before clicking, replying, or sending money
 - Live Space: https://huggingface.co/spaces/build-small-hackathon/jawbreaker
 - Final model adapter: https://huggingface.co/build-small-hackathon/jawbreaker-minicpm5-1b-lora-v4
 - Public dataset/eval bundle: https://huggingface.co/datasets/build-small-hackathon/jawbreaker-scam-defense-data
+- Hugging Face collection: https://huggingface.co/collections/build-small-hackathon/jawbreaker-6a263632dcd0b6d41ca914ff
 
 ## Built With Codex
 

@@ -149,7 +149,8 @@ Published the public review artifacts:
 - Final model card: `build-small-hackathon/jawbreaker-minicpm5-1b-lora-v4`
 - Public dataset/eval bundle: `build-small-hackathon/jawbreaker-scam-defense-data`
 - Live app: `build-small-hackathon/jawbreaker`
+- Hub collection: `build-small-hackathon/jawbreaker-6a263632dcd0b6d41ca914ff`
 
 The dataset bundle includes synthetic/sanitized training and eval JSONL files plus the completed 320-case and 394-case guarded eval reports. It does not include raw private chats, Discord logs, emails, phone numbers, timestamps, or personal message metadata.
 
-Collection creation through the CLI returned `403` for the current token even after repo uploads succeeded. Treat the collection as a manual Hub UI task unless a token with collection permissions is created.
+The collection links the live Space, final MiniCPM5-1B LoRA v4 adapter, and public dataset/eval bundle so judges can inspect the full submission package from one Hub page.
