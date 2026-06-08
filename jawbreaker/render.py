@@ -209,7 +209,7 @@ def render_memory_html(analysis: ScamAnalysis, memory: list[dict]) -> str:
     if not memory:
         return render_window(
             "Recent checks",
-            "<p class='memory-empty'>No scam memory saved yet.</p>",
+            "<p class='memory-empty'>No messages checked yet this session.</p>",
             "memory-card muted",
         )
 
