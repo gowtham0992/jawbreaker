@@ -8,7 +8,7 @@ sdk_version: 6.16.0
 python_version: 3.12
 app_file: app.py
 license: mit
-short_description: Local-first scam defense for someone you love.
+short_description: Private scam defense for someone you love.
 tags:
 - build-small-hackathon
 - backyard-ai

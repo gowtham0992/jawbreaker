@@ -1150,7 +1150,7 @@ def paper_shield_html() -> str:
         <img src="{logo_uri}" alt="" />
         <div class="brand-copy">
           <h1>Jawbreaker</h1>
-          <p class="tagline">Local-first scam defense for someone you love.</p>
+          <p class="tagline">Private scam defense for someone you love.</p>
         </div>
       </div>
       <div class="status" aria-label="Runtime status">
@@ -1162,21 +1162,21 @@ def paper_shield_html() -> str:
     <section class="hero" aria-labelledby="heroTitle">
       <h2 id="heroTitle">Is this message safe?</h2>
       <p>Paste a text, email, or DM. Jawbreaker will show the risk, the warning signs, and the safest next step before you reply, click, or pay.</p>
-      <div class="safety-note">Safety aid only, not legal, financial, or cybersecurity advice. Always verify through official channels. First check may take up to 30s while ZeroGPU wakes up.</div>
+      <div class="safety-note">Safety aid only, not legal, financial, or cybersecurity advice. Always verify through official channels. First check may take up to 30s while the secure system wakes up.</div>
     </section>
 
     <section class="workspace">
       <aside>
         <form id="scanForm" class="paper note">
           <p class="section-label">Message to check</p>
-          <p class="privacy-note">Public demo privacy: redact passwords, bank numbers, SSNs, addresses, and private codes before pasting.</p>
+          <p class="privacy-note">For your privacy: remove passwords, account numbers, ID numbers, addresses, and personal codes before pasting.</p>
           <textarea id="messageInput" placeholder="Paste a text, email, or DM here."></textarea>
           <button id="scanButton" class="run" type="submit">Check message</button>
           <div class="samples" id="samples" aria-label="Sample messages"></div>
         </form>
         <section class="paper memory" aria-live="polite">
           <h3>Earlier checks</h3>
-          <div class="memory-list" id="memoryList">No scam memory saved yet.</div>
+          <div class="memory-list" id="memoryList">No messages checked yet this session.</div>
         </section>
       </aside>
 
@@ -1250,7 +1250,7 @@ def paper_shield_html() -> str:
     function showStandby() {{
       result.innerHTML = `
         <article class="card standby-card">
-          <div class="card-head"><span>Ready to check</span><span>private model</span></div>
+          <div class="card-head"><span>Ready to check</span><span>private safety check</span></div>
           <div class="card-body">
             <div>
               <div class="shield-mark" aria-hidden="true"></div>
@@ -1288,7 +1288,7 @@ def paper_shield_html() -> str:
           <div class="card-body">
             <div class="fold-loader">
               <div class="fold-bar" id="foldBar" style="--progress: 12%"></div>
-              <p class="loading-line">> waking the local safety model...</p>
+              <p class="loading-line">> waking the safety check...</p>
               <p class="loading-line">> reading the message...</p>
               <p class="loading-line muted">> checking pressure and impersonation...</p>
               <p class="loading-line muted">> preparing the safest next step...</p>
@@ -1313,7 +1313,7 @@ def paper_shield_html() -> str:
 
     function renderMemory(items) {{
       if (!items || !items.length) {{
-        memoryList.textContent = "No scam memory saved yet.";
+        memoryList.textContent = "No messages checked yet this session.";
         return;
       }}
       memoryList.innerHTML = items.slice(-4).reverse().map((item) => {{
