@@ -3,7 +3,7 @@
 ## Required
 
 - [x] Gradio Space created under `build-small-hackathon`
-- [ ] Space made public before June 15, 2026
+- [x] Space made public before June 15, 2026
 - [ ] Demo video linked in Space README
 - [ ] Social post linked in Space README
 - [x] Public GitHub repo linked in Space README
@@ -57,5 +57,5 @@
 - [ ] Add demo video link to README.
 - [ ] Draft and publish social post.
 - [ ] Add social post link to README.
-- [ ] Make the Hugging Face Space public.
+- [x] Make the Hugging Face Space public.
 - [ ] Final smoke test after making the Space public.
