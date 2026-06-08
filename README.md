@@ -25,6 +25,11 @@ tags:
 - codex
 - local-first
 - scam-defense
+models:
+- openbmb/MiniCPM5-1B
+- build-small-hackathon/jawbreaker-minicpm5-1b-lora-v4
+datasets:
+- build-small-hackathon/jawbreaker-scam-defense-data
 ---
 
 <p align="center">
@@ -47,6 +52,8 @@ Scam defense for someone you love.
 Jawbreaker is designed for local, on-device inference to protect user privacy. For this hackathon demo, it is hosted on Hugging Face ZeroGPU so judges can try the same app without local setup.
 
 Jawbreaker helps a real person pause before clicking, replying, or sending money. Paste a suspicious text, email, or DM and Jawbreaker breaks it into plain-English warning signs: what the sender is pretending to be, what pressure tactic is being used, what they want, and the safest next step.
+
+The problem is specific: scam messages now arrive as urgent, personal, plausible requests. A package fee, a bank callback, a fake recruiter, or a "new phone number" from a family member can pressure someone into clicking or paying before they ask for help. Jawbreaker turns that moment into a small safety workflow: paste the message, get a clear verdict, see the warning signs, and copy a short plan to someone you trust.
 
 ## Hackathon
 
@@ -148,6 +155,15 @@ Training/eval artifacts:
 | Best Demo | Pending | Demo video and social post still need to be recorded, published, and linked before final submission. |
 | Bonus Quest Champion | Stretch target | Jawbreaker stacks multiple bonus criteria: Well-Tuned, Off Brand, Tiny Titan, Sharing is Caring, Field Notes, and Best Demo once the video/social links are added. |
 | Judges' Wildcard | Automatic | Every submission is considered. |
+
+Bonus badge evidence:
+
+- **Well-Tuned:** published MiniCPM5-1B LoRA adapter with guarded 394-case and 320-case eval reports.
+- **Off Brand:** custom `gr.Server` app shell instead of stock Gradio component layout.
+- **Tiny Titan:** 1B runtime model with a narrow, safety-critical task.
+- **Sharing is Caring:** public dataset/eval bundle plus `AGENT_TRACE.md` and `CODEX_BUILD_LOG.md`.
+- **Field Notes:** `FIELD_NOTES.md` documents model/runtime pivots, eval decisions, and submission tradeoffs.
+- **Best Demo:** pending until the demo video and social post links are added.
 
 Not claiming:
 
