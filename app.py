@@ -229,8 +229,7 @@ def run_analysis(message: str, memory: list[dict] | None) -> ScamAnalysis:
     return model_analysis
 
 
-@gpu_callback
-def warm_model() -> None:
+def warm_model_impl() -> None:
     backend = current_backend()
     if not should_warm_model():
         print(f"jawbreaker warm_model skip backend={backend}", flush=True)
@@ -241,6 +240,11 @@ def warm_model() -> None:
     get_analyzer()
     print(f"jawbreaker warm_model ready elapsed={perf_counter() - started:.2f}s", flush=True)
     return None
+
+
+@gpu_callback
+def warm_model() -> None:
+    return warm_model_impl()
 
 
 def memory_entry_from_analysis(message: str, analysis: ScamAnalysis) -> dict[str, Any]:
@@ -897,20 +901,21 @@ def paper_shield_html() -> str:
       </div>
       <div class="status">
         <span>[ SECURE ENV: ACTIVE ]</span>
+        <span>[ STATUS: <span id="modelState">STARTING</span> ]</span>
         <span>[ MODEL: <span id="modelLabel">{model_label}</span> ]</span>
       </div>
     </header>
 
     <section class="hero" aria-labelledby="heroTitle">
-      <h2 id="heroTitle">Paper shield for shady messages.</h2>
-      <p>Paste a text, email, or DM. Jawbreaker folds it into a plain-English safety card: what it is, why it is risky, and what to do next.</p>
+      <h2 id="heroTitle">Check a message before you act.</h2>
+      <p>Jawbreaker turns a suspicious text, email, or DM into a simple safety card: the risk, the warning signs, and the safest next step.</p>
     </section>
 
     <section class="workspace">
       <aside>
         <form id="scanForm" class="paper note">
-          <p class="section-label">Message to check</p>
-          <textarea id="messageInput" placeholder="Paste the suspicious message here."></textarea>
+          <p class="section-label">Paste the message here</p>
+          <textarea id="messageInput" placeholder="Paste a suspicious text, email, or DM."></textarea>
           <button id="scanButton" class="run" type="submit">Check this message</button>
           <div class="samples" id="samples" aria-label="Sample messages"></div>
         </form>
@@ -938,6 +943,7 @@ def paper_shield_html() -> str:
     const samples = document.getElementById("samples");
     const memoryList = document.getElementById("memoryList");
     const modelLabel = document.getElementById("modelLabel");
+    const modelState = document.getElementById("modelState");
 
     const labels = {{
       dangerous: ["Dangerous", "This looks dangerous"],
@@ -973,8 +979,8 @@ def paper_shield_html() -> str:
           <div class="card-body">
             <div>
               <div class="shield-mark" aria-hidden="true"></div>
-              <h3>Fold the message into a safety plan.</h3>
-              <p>Jawbreaker checks impersonation, pressure, risky asks, and the safest next step. Nothing here asks you to click the original link or reply.</p>
+              <h3>Paste first. Act after.</h3>
+              <p>Jawbreaker checks impersonation, pressure, risky asks, and the safest next step. It will never ask you to click the original link or reply.</p>
             </div>
           </div>
         </article>
@@ -984,14 +990,14 @@ def paper_shield_html() -> str:
     function showLoading() {{
       result.innerHTML = `
         <article class="card loading-card">
-          <div class="card-head"><span>Checking the message</span><span id="progressText">12% complete</span></div>
+          <div class="card-head"><span>Checking the message</span><span id="progressText">Starting</span></div>
           <div class="card-body">
             <div class="fold-loader">
               <div class="fold-bar" id="foldBar" style="--progress: 12%"></div>
-              <p class="loading-line">> reading message shape...</p>
-              <p class="loading-line">> checking pressure and impersonation...</p>
-              <p class="loading-line muted">> folding safest next step...</p>
-              <p class="loading-line muted">> preparing copyable note...</p>
+              <p class="loading-line">> waking the local safety model...</p>
+              <p class="loading-line">> reading the message...</p>
+              <p class="loading-line muted">> checking pressure and impersonation...</p>
+              <p class="loading-line muted">> preparing the safest next step...</p>
             </div>
           </div>
         </article>
@@ -1006,8 +1012,8 @@ def paper_shield_html() -> str:
           return;
         }}
         bar.style.setProperty("--progress", `${{progress}}%`);
-        text.textContent = `${{progress}}% complete`;
-      }}, 420);
+        text.textContent = progress < 88 ? `${{progress}}% complete` : "Almost ready";
+      }}, 700);
       return timer;
     }}
 
@@ -1135,6 +1141,19 @@ def paper_shield_html() -> str:
     }});
 
     showStandby();
+    clientPromise
+      .then((client) => {{
+        modelState.textContent = "WAKING";
+        return client.predict("/warm");
+      }})
+      .then((response) => {{
+        const payload = response.data?.[0] || response;
+        modelState.textContent = "READY";
+        modelLabel.textContent = payload.model || modelLabel.textContent;
+      }})
+      .catch(() => {{
+        modelState.textContent = "ON DEMAND";
+      }});
   </script>
 </body>
 </html>"""
@@ -1144,8 +1163,15 @@ def build_server() -> gr.Server:
     app = gr.Server()
 
     @app.api(name="analyze")
+    @gpu_callback
     def analyze_api(message: str, memory: list[dict] | None = None) -> dict[str, Any]:
         return analysis_payload(message, memory)
+
+    @app.api(name="warm")
+    @gpu_callback
+    def warm_api() -> dict[str, str]:
+        warm_model_impl()
+        return {"status": "ready", "backend": current_backend(), "model": model_status_label()}
 
     @app.get("/", response_class=HTMLResponse)
     async def homepage() -> HTMLResponse:
