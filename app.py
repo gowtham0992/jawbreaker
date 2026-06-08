@@ -420,7 +420,7 @@ def paper_shield_html() -> str:
     .brand h1 {{
       margin: 0;
       font-family: var(--font-display);
-      font-size: clamp(1.7rem, 3.8vw, 2.75rem);
+      font-size: clamp(1.55rem, 3vw, 2.35rem);
       line-height: .92;
       letter-spacing: 0;
       min-width: 0;
@@ -436,7 +436,7 @@ def paper_shield_html() -> str:
     .tagline {{
       margin: 0;
       color: var(--color-muted);
-      font-size: clamp(.98rem, 1.2vw, 1.1rem);
+      font-size: clamp(.86rem, 1vw, .96rem);
       line-height: 1.25;
     }}
 
@@ -471,7 +471,7 @@ def paper_shield_html() -> str:
     .hero h2 {{
       margin: 0;
       font-family: var(--font-display);
-      font-size: clamp(1.7rem, 2.7vw, 2.35rem);
+      font-size: clamp(1.45rem, 2.1vw, 1.9rem);
       line-height: 1;
       letter-spacing: 0;
       max-width: 100%;
@@ -482,7 +482,7 @@ def paper_shield_html() -> str:
     .hero p {{
       margin: 0;
       color: var(--color-muted);
-      font-size: clamp(.88rem, 1vw, .98rem);
+      font-size: clamp(.8rem, .9vw, .9rem);
       line-height: 1.35;
       max-width: none;
       white-space: nowrap;
@@ -498,7 +498,7 @@ def paper_shield_html() -> str:
       padding: 6px 10px;
       color: var(--color-muted);
       font-family: var(--font-label);
-      font-size: .68rem;
+      font-size: .62rem;
       font-weight: 800;
       line-height: 1.25;
       white-space: normal;
@@ -547,7 +547,7 @@ def paper_shield_html() -> str:
       background-size: 100% 32px;
       color: var(--color-ink);
       padding: 16px;
-      font-size: 1.06rem;
+      font-size: .92rem;
       line-height: 1.55;
       outline: 2px solid transparent;
       outline-offset: 2px;
@@ -654,11 +654,11 @@ def paper_shield_html() -> str:
     }}
 
     .card-body {{
-      padding: clamp(18px, 3vw, 28px);
+      padding: clamp(16px, 2.4vw, 24px);
     }}
 
     .result-top .card-body {{
-      padding: clamp(18px, 3vw, 28px);
+      padding: clamp(16px, 2.4vw, 24px);
     }}
 
     .standby-card .card-body {{
@@ -690,7 +690,7 @@ def paper_shield_html() -> str:
       margin: 0 0 12px;
       max-width: 22ch;
       font-family: var(--font-display);
-      font-size: clamp(1.45rem, 2.5vw, 2.05rem);
+      font-size: clamp(1.3rem, 2vw, 1.75rem);
       line-height: 1.04;
       min-width: 0;
       overflow-wrap: anywhere;
@@ -701,7 +701,7 @@ def paper_shield_html() -> str:
       max-width: 34rem;
       color: var(--color-muted);
       line-height: 1.5;
-      font-size: .94rem;
+      font-size: .84rem;
     }}
 
     .standby-list {{
@@ -825,14 +825,14 @@ def paper_shield_html() -> str:
     .verdict-title {{
       margin: 0 0 10px;
       font-family: var(--font-display);
-      font-size: clamp(1.45rem, 2.25vw, 2.1rem);
+      font-size: clamp(1.2rem, 1.75vw, 1.55rem);
       line-height: 1.03;
       overflow-wrap: anywhere;
     }}
 
     .summary {{
       margin: 0;
-      font-size: .96rem;
+      font-size: .84rem;
       line-height: 1.45;
     }}
 
@@ -860,7 +860,7 @@ def paper_shield_html() -> str:
       margin: 0;
       font-family: var(--font-display);
       font-weight: 800;
-      font-size: clamp(1.05rem, 1.35vw, 1.25rem);
+      font-size: clamp(.94rem, 1.1vw, 1.05rem);
       line-height: 1.18;
       overflow-wrap: anywhere;
     }}
@@ -889,7 +889,7 @@ def paper_shield_html() -> str:
 
     .dna-value {{
       font-family: var(--font-display);
-      font-size: clamp(.9rem, 1.08vw, 1rem);
+      font-size: clamp(.78rem, .9vw, .88rem);
       font-weight: 800;
       line-height: 1.12;
       overflow-wrap: anywhere;
@@ -929,7 +929,7 @@ def paper_shield_html() -> str:
       border-radius: 4px;
       background: var(--color-paper);
       padding: 14px;
-      font-size: .86rem;
+      font-size: .78rem;
       line-height: 1.38;
     }}
 
@@ -971,7 +971,7 @@ def paper_shield_html() -> str:
       border: 1.5px solid var(--color-rule);
       border-radius: 4px;
       background: var(--color-danger-soft);
-      font-size: .84rem;
+      font-size: .76rem;
       line-height: 1.28;
     }}
 
@@ -1055,7 +1055,7 @@ def paper_shield_html() -> str:
       }}
 
       .tagline {{
-        font-size: 1rem;
+        font-size: .9rem;
       }}
 
       .status {{
@@ -1075,7 +1075,7 @@ def paper_shield_html() -> str:
       .hero h2 {{
         max-width: 100%;
         white-space: normal;
-        font-size: clamp(1.8rem, 8vw, 2.55rem);
+        font-size: clamp(1.6rem, 7vw, 2.15rem);
       }}
 
       .hero p {{
@@ -1093,7 +1093,7 @@ def paper_shield_html() -> str:
 
       textarea {{
         min-height: 190px;
-        font-size: 1rem;
+        font-size: .9rem;
       }}
 
       .paper::after {{
