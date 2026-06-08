@@ -467,6 +467,12 @@ def build_transformers_analyzer(
         model = PeftModel.from_pretrained(model, adapter_id)
         print(f"jawbreaker transformers adapter_load_ready adapter_id={adapter_id}", flush=True)
     model.eval()
+    if temperature <= 0 and hasattr(model, "generation_config"):
+        # MiniCPM5 ships sampling defaults. Jawbreaker uses deterministic decoding,
+        # so clear them to avoid noisy Transformers warnings in Space logs.
+        model.generation_config.do_sample = False
+        model.generation_config.temperature = None
+        model.generation_config.top_p = None
     device = getattr(model, "device", "unknown")
     hf_device_map = getattr(model, "hf_device_map", None)
     print(
