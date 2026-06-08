@@ -120,22 +120,25 @@ Training/eval artifacts:
 - `training/modal_eval.py`: Modal A100 eval launcher.
 - `HONEST_SUBMISSION.md`: guardrails to avoid overclaiming synthetic data, fine-tuning, or runtime behavior.
 
-## Bonus Badges Targeted
+## Prize Eligibility
 
-- Off the Grid: local model inference, no cloud APIs for scam analysis.
-- Llama Champion: local/eval tooling supports the llama.cpp runtime.
-- Off-Brand: custom Gradio UI beyond the default look.
-- Tiny Titan: targeted; the deployed model is `openbmb/MiniCPM5-1B`.
-- Well-Tuned: targeted; the MiniCPM5-1B v4 LoRA adapter is trained, published, and evaluated.
-- Sharing is Caring: Codex/agent trace published in this repo.
-- Field Notes: build report published before submission.
+| Prize / Badge | Status | Evidence |
+| --- | --- | --- |
+| Backyard AI | Targeted | Practical scam-defense app for someone close, with a focused safety workflow. |
+| Best MiniCPM Build | Targeted | `openbmb/MiniCPM5-1B` is the core runtime model, with a published Jawbreaker LoRA adapter. |
+| Best Use of Codex | Targeted | Public GitHub repo includes Codex-attributed commits plus `AGENT_TRACE.md` and `CODEX_BUILD_LOG.md`. |
+| Best Use of Modal | Targeted | Modal was used for LoRA training and guarded eval runs; see `training/modal_train.py`, `training/modal_eval.py`, and eval reports. |
+| Tiny Titan | Targeted | The deployed model is `openbmb/MiniCPM5-1B`, well under the 4B badge threshold. |
+| Off Brand | Targeted | Custom Gradio UI beyond the stock component look. |
+| Best Demo | Pending | Demo video and social post still need to be recorded, published, and linked before final submission. |
+| Bonus Quest Champion | Candidate | The app stacks practical track fit, MiniCPM, Codex, Modal, Tiny Titan, Off Brand, public data/model artifacts, and field notes. |
+| Judges' Wildcard | Automatic | Every submission is considered. |
 
-## Sponsor Eligibility Notes
+Not claiming:
 
-- OpenAI Codex Track: public GitHub repo with Codex-attributed commits linked in this README.
-- OpenBMB Awards: targeted; MiniCPM is the deployed model and performs the central scam analysis.
-- Modal Awards: Modal was used for training and eval runs, but Modal is not part of the live deployment path.
-- NVIDIA Nemotron Quest: not targeted; no NeMoTron model is used.
+- Best Agent: Jawbreaker is not a multi-step agentic app.
+- NVIDIA Nemotron Quest: no NeMoTron model is used.
+- llama.cpp as live runtime: local/eval tooling supports GGUF experiments, but the judge-facing Space uses Transformers on ZeroGPU.
 
 ## Safety Boundary
 
