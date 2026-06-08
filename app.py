@@ -1,10 +1,14 @@
 import os
+import json
+from dataclasses import asdict
 from functools import lru_cache
+from html import escape
 from pathlib import Path
 from time import perf_counter, sleep
 from typing import Any
 
 import gradio as gr
+from fastapi.responses import HTMLResponse
 
 from jawbreaker.analyzers import (
     build_llama_cpp_analyzer,
@@ -259,6 +263,901 @@ def render_save_status(message: str = "") -> str:
     return f"<div class='save-status'>{message}</div>"
 
 
+def model_status_label() -> str:
+    model_id = os.getenv("JAWBREAKER_TRANSFORMERS_MODEL_ID", DEFAULT_TRANSFORMERS_MODEL_ID)
+    adapter_id = default_adapter_id(model_id)
+    if adapter_id:
+        return adapter_id.rsplit("/", 1)[-1].replace("jawbreaker-", "").upper()
+    return model_id.rsplit("/", 1)[-1].upper()
+
+
+def analysis_payload(message: str, memory: list[dict] | None = None) -> dict[str, Any]:
+    memory = memory or []
+    started = perf_counter()
+    if not message.strip():
+        analysis = ScamAnalysis.from_heuristics(message, memory)
+    else:
+        analysis = run_analysis(message, memory)
+
+    entry = memory_entry_from_analysis(message, analysis)
+    if message.strip() and (not memory or memory[-1].get("text") != entry.get("text")):
+        memory.append(entry)
+
+    return {
+        "analysis": asdict(analysis),
+        "copy_plan": build_handoff_message(message, analysis),
+        "memory": memory[-6:],
+        "message": message,
+        "model_label": model_status_label(),
+        "elapsed_seconds": round(perf_counter() - started, 2),
+    }
+
+
+def logo_data_uri() -> str:
+    import base64
+
+    if not LOGO_PATH.exists():
+        return ""
+    encoded = base64.b64encode(LOGO_PATH.read_bytes()).decode("ascii")
+    return f"data:image/png;base64,{encoded}"
+
+
+def paper_shield_html() -> str:
+    examples_json = json.dumps(EXAMPLES).replace("</", "<\\/")
+    logo_uri = logo_data_uri()
+    model_label = escape(model_status_label())
+    return f"""<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Jawbreaker</title>
+  <style>
+    :root {{
+      color-scheme: light;
+      --paper: #fffaf0;
+      --paper-strong: #fff4d8;
+      --ink: #17130f;
+      --muted: #6f6256;
+      --line: #201812;
+      --gold: #f6c900;
+      --danger: #e95f5d;
+      --danger-soft: #ffe0df;
+      --safe: #2e9d65;
+      --safe-soft: #dcf7e7;
+      --check: #c17b18;
+      --check-soft: #fff0ca;
+      --shadow: 8px 8px 0 #050505;
+      --radius: 6px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      --serif: Georgia, "Times New Roman", Times, serif;
+      --sans: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }}
+
+    * {{ box-sizing: border-box; }}
+    html {{ background: #f8f2e4; }}
+    body {{
+      margin: 0;
+      min-height: 100vh;
+      background:
+        linear-gradient(135deg, rgba(0,0,0,.035) 0 1px, transparent 1px 28px),
+        radial-gradient(circle at 20% 10%, rgba(246,201,0,.16), transparent 26rem),
+        #f8f2e4;
+      color: var(--ink);
+      font-family: var(--sans);
+    }}
+
+    button, textarea {{ font: inherit; }}
+    button {{ cursor: pointer; }}
+
+    .shell {{
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 28px 0 56px;
+    }}
+
+    .topbar {{
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      padding-bottom: 18px;
+      border-bottom: 2px solid var(--line);
+    }}
+
+    .brand {{
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      min-width: 0;
+    }}
+
+    .brand img {{
+      width: 44px;
+      height: 44px;
+      border: 2px solid var(--line);
+      border-radius: 8px;
+      background: white;
+    }}
+
+    .brand h1 {{
+      margin: 0;
+      font-family: var(--serif);
+      font-size: clamp(2rem, 5vw, 3.4rem);
+      line-height: .92;
+      letter-spacing: 0;
+    }}
+
+    .status {{
+      display: grid;
+      gap: 5px;
+      font-family: var(--mono);
+      font-weight: 800;
+      font-size: .8rem;
+      text-align: right;
+      white-space: nowrap;
+    }}
+
+    .hero {{
+      display: grid;
+      grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr);
+      gap: 44px;
+      align-items: end;
+      padding: 38px 0 24px;
+    }}
+
+    .hero h2 {{
+      margin: 0;
+      font-family: var(--serif);
+      font-size: clamp(2.4rem, 7vw, 5.5rem);
+      line-height: .92;
+      letter-spacing: 0;
+      max-width: 8ch;
+    }}
+
+    .hero p {{
+      margin: 0;
+      color: var(--muted);
+      font-size: clamp(1.05rem, 2vw, 1.35rem);
+      line-height: 1.35;
+      max-width: 38rem;
+    }}
+
+    .workspace {{
+      display: grid;
+      grid-template-columns: minmax(320px, .88fr) minmax(0, 1.12fr);
+      gap: 38px;
+      align-items: start;
+    }}
+
+    .paper {{
+      position: relative;
+      background: #fffdf7;
+      border: 2px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }}
+
+    .paper::after {{
+      content: "";
+      position: absolute;
+      right: -2px;
+      top: -2px;
+      width: 42px;
+      height: 42px;
+      background: linear-gradient(135deg, #efe2c5 0 49%, var(--line) 50% 53%, #fffaf0 54%);
+      border-left: 2px solid rgba(0,0,0,.25);
+      border-bottom: 2px solid rgba(0,0,0,.25);
+      border-bottom-left-radius: 5px;
+    }}
+
+    .note {{
+      padding: 28px;
+    }}
+
+    .section-label {{
+      margin: 0 0 13px;
+      font-family: var(--mono);
+      font-size: .82rem;
+      font-weight: 900;
+      text-transform: uppercase;
+    }}
+
+    textarea {{
+      width: 100%;
+      min-height: 255px;
+      resize: vertical;
+      border: 2px solid var(--line);
+      border-radius: 4px;
+      background:
+        linear-gradient(#fffdf8 31px, rgba(0,0,0,.08) 32px),
+        #fffdf8;
+      background-size: 100% 32px;
+      color: var(--ink);
+      padding: 16px;
+      font-size: 1rem;
+      line-height: 1.55;
+      outline: none;
+    }}
+
+    textarea:focus {{
+      box-shadow: 0 0 0 4px rgba(246, 201, 0, .28);
+    }}
+
+    .run {{
+      width: 100%;
+      margin-top: 18px;
+      min-height: 58px;
+      border: 2px solid var(--line);
+      border-radius: 999px;
+      background: var(--gold);
+      color: var(--ink);
+      font-family: var(--mono);
+      font-weight: 950;
+      text-transform: uppercase;
+      box-shadow: 0 5px 0 #050505;
+      transition: transform .16s ease, box-shadow .16s ease, opacity .16s ease;
+    }}
+
+    .run:active {{
+      transform: translateY(3px);
+      box-shadow: 0 2px 0 #050505;
+    }}
+
+    .run[disabled] {{
+      opacity: .55;
+      cursor: wait;
+    }}
+
+    .samples {{
+      margin-top: 22px;
+      display: grid;
+      gap: 9px;
+    }}
+
+    .sample {{
+      border: 1.5px solid var(--line);
+      border-radius: 999px;
+      background: #fffaf0;
+      padding: 10px 14px;
+      text-align: left;
+      font-size: .91rem;
+      line-height: 1.2;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }}
+
+    .result-stack {{
+      display: grid;
+      gap: 24px;
+    }}
+
+    .card {{
+      position: relative;
+      border: 2px solid var(--line);
+      border-radius: var(--radius);
+      background: #fffdf7;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }}
+
+    .card-head {{
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      min-height: 42px;
+      padding: 10px 18px;
+      background: var(--line);
+      color: white;
+      font-family: var(--mono);
+      font-weight: 900;
+      font-size: .82rem;
+    }}
+
+    .card-body {{
+      padding: clamp(22px, 4vw, 36px);
+    }}
+
+    .standby-card .card-body {{
+      min-height: 360px;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      background:
+        linear-gradient(90deg, transparent 49%, rgba(0,0,0,.08) 50%, transparent 51%),
+        linear-gradient(0deg, transparent 49%, rgba(0,0,0,.08) 50%, transparent 51%),
+        #fffdf7;
+      background-size: 42px 42px;
+    }}
+
+    .shield-mark {{
+      width: min(180px, 42vw);
+      aspect-ratio: 1;
+      margin: 0 auto 22px;
+      border: 2px solid var(--line);
+      border-radius: 50%;
+      background:
+        radial-gradient(circle, #e84f4b 0 22%, #fff4d8 23% 38%, #f58b72 39% 56%, #fff4d8 57% 72%, #181512 73% 100%);
+      box-shadow: 6px 6px 0 #050505;
+    }}
+
+    .standby-card h3 {{
+      margin: 0 auto 12px;
+      max-width: 14ch;
+      font-family: var(--serif);
+      font-size: clamp(2rem, 5vw, 3.7rem);
+      line-height: 1;
+    }}
+
+    .standby-card p {{
+      margin: 0 auto;
+      max-width: 34rem;
+      color: var(--muted);
+      line-height: 1.5;
+      font-size: 1.04rem;
+    }}
+
+    .loading-card .card-body {{
+      min-height: 300px;
+      background: #151313;
+      color: #fff8e8;
+      font-family: var(--mono);
+    }}
+
+    .fold-loader {{
+      display: grid;
+      gap: 18px;
+    }}
+
+    .fold-bar {{
+      height: 18px;
+      border: 2px solid #fff8e8;
+      background: linear-gradient(90deg, var(--gold) var(--progress, 12%), transparent 0);
+      box-shadow: 4px 4px 0 #000;
+    }}
+
+    .loading-line {{
+      margin: 0;
+      font-weight: 900;
+      color: #5cff83;
+    }}
+
+    .loading-line.muted {{ color: #9f9a92; }}
+
+    .verdict-card.dangerous .stamp {{ background: var(--danger); }}
+    .verdict-card.suspicious .stamp,
+    .verdict-card.needs_check .stamp {{ background: var(--check); }}
+    .verdict-card.safe .stamp {{ background: var(--safe); }}
+
+    .verdict-layout {{
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr);
+      gap: 22px;
+      align-items: center;
+    }}
+
+    .stamp {{
+      width: 132px;
+      height: 132px;
+      display: grid;
+      place-items: center;
+      border: 3px solid var(--line);
+      border-radius: 50%;
+      color: white;
+      font-family: var(--mono);
+      font-size: .98rem;
+      font-weight: 950;
+      text-align: center;
+      text-transform: uppercase;
+      transform: rotate(-9deg);
+      box-shadow: 5px 5px 0 #050505;
+    }}
+
+    .verdict-title {{
+      margin: 0 0 10px;
+      font-family: var(--serif);
+      font-size: clamp(2rem, 4vw, 3.4rem);
+      line-height: .95;
+    }}
+
+    .summary {{
+      margin: 0;
+      font-size: 1.08rem;
+      line-height: 1.45;
+    }}
+
+    .action-card {{
+      background: var(--safe-soft);
+    }}
+
+    .action-card .card-body {{
+      display: grid;
+      gap: 20px;
+    }}
+
+    .action-title {{
+      margin: 0;
+      font-family: var(--mono);
+      font-weight: 950;
+      text-transform: uppercase;
+      font-size: .78rem;
+    }}
+
+    .action-text {{
+      margin: 0;
+      font-family: var(--serif);
+      font-weight: 800;
+      font-size: clamp(1.55rem, 3.3vw, 2.5rem);
+      line-height: 1.05;
+    }}
+
+    .dna-grid {{
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }}
+
+    .dna-item {{
+      min-height: 112px;
+      padding: 16px;
+      border: 2px solid var(--line);
+      border-radius: 4px;
+      background: linear-gradient(135deg, #fffdf7 0 78%, #f0e4cc 79%);
+    }}
+
+    .dna-label {{
+      margin-bottom: 9px;
+      font-family: var(--mono);
+      font-size: .68rem;
+      font-weight: 950;
+      text-transform: uppercase;
+    }}
+
+    .dna-value {{
+      font-family: var(--serif);
+      font-size: clamp(1.18rem, 2.4vw, 1.65rem);
+      font-weight: 800;
+      line-height: 1.05;
+    }}
+
+    .tactics {{
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 16px;
+    }}
+
+    .tag {{
+      border: 1.5px solid var(--line);
+      background: #ff706b;
+      padding: 6px 9px;
+      border-radius: 999px;
+      font-family: var(--mono);
+      font-size: .7rem;
+      font-weight: 950;
+      text-transform: uppercase;
+    }}
+
+    .copy-card {{
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 180px;
+      gap: 14px;
+      align-items: stretch;
+    }}
+
+    .copy-note {{
+      max-height: 170px;
+      overflow: auto;
+      white-space: pre-wrap;
+      border: 2px solid var(--line);
+      border-radius: 4px;
+      background: #fffdf7;
+      padding: 14px;
+      font-size: .95rem;
+      line-height: 1.35;
+    }}
+
+    .copy-btn {{
+      border: 2px solid var(--line);
+      border-radius: 4px;
+      background: #fffdf7;
+      font-family: var(--mono);
+      font-weight: 950;
+      text-transform: uppercase;
+      box-shadow: 4px 4px 0 #050505;
+    }}
+
+    .memory {{
+      margin-top: 28px;
+      padding: 18px;
+    }}
+
+    .memory h3 {{
+      margin: 0 0 12px;
+      font-family: var(--mono);
+      font-size: .82rem;
+      text-transform: uppercase;
+    }}
+
+    .memory-list {{
+      display: grid;
+      gap: 10px;
+    }}
+
+    .memory-row {{
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 12px;
+      align-items: start;
+      padding: 12px;
+      border: 1.5px solid var(--line);
+      border-radius: 4px;
+      background: #fff4f4;
+      font-size: .88rem;
+      line-height: 1.25;
+    }}
+
+    .memory-badge {{
+      padding: 5px 7px;
+      border: 1.5px solid var(--line);
+      background: #ff706b;
+      font-family: var(--mono);
+      font-size: .68rem;
+      font-weight: 950;
+      text-transform: uppercase;
+    }}
+
+    .error {{
+      border: 2px solid var(--line);
+      background: var(--danger-soft);
+      padding: 14px;
+      border-radius: 4px;
+      font-weight: 800;
+    }}
+
+    @media (max-width: 860px) {{
+      .shell {{
+        width: min(100% - 22px, 620px);
+        padding-top: 18px;
+      }}
+
+      .topbar {{
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 14px;
+      }}
+
+      .status {{
+        text-align: left;
+        white-space: normal;
+      }}
+
+      .hero {{
+        grid-template-columns: 1fr;
+        gap: 16px;
+        padding: 26px 0 22px;
+      }}
+
+      .hero h2 {{
+        max-width: 10ch;
+      }}
+
+      .workspace {{
+        grid-template-columns: 1fr;
+        gap: 28px;
+      }}
+
+      .note {{
+        padding: 20px;
+      }}
+
+      textarea {{
+        min-height: 190px;
+        font-size: 1rem;
+      }}
+
+      .paper::after {{
+        width: 34px;
+        height: 34px;
+      }}
+
+      .verdict-layout {{
+        grid-template-columns: 1fr;
+        justify-items: start;
+      }}
+
+      .stamp {{
+        width: 105px;
+        height: 105px;
+        font-size: .82rem;
+      }}
+
+      .dna-grid {{
+        grid-template-columns: 1fr;
+      }}
+
+      .copy-card {{
+        grid-template-columns: 1fr;
+      }}
+
+      .copy-btn {{
+        min-height: 58px;
+      }}
+    }}
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <header class="topbar">
+      <div class="brand">
+        <img src="{logo_uri}" alt="" />
+        <h1>Jawbreaker</h1>
+      </div>
+      <div class="status">
+        <span>[ SECURE ENV: ACTIVE ]</span>
+        <span>[ MODEL: <span id="modelLabel">{model_label}</span> ]</span>
+      </div>
+    </header>
+
+    <section class="hero" aria-labelledby="heroTitle">
+      <h2 id="heroTitle">Paper shield for shady messages.</h2>
+      <p>Paste a text, email, or DM. Jawbreaker folds it into a plain-English safety card: what it is, why it is risky, and what to do next.</p>
+    </section>
+
+    <section class="workspace">
+      <aside>
+        <form id="scanForm" class="paper note">
+          <p class="section-label">Message to check</p>
+          <textarea id="messageInput" placeholder="Paste the suspicious message here."></textarea>
+          <button id="scanButton" class="run" type="submit">Check this message</button>
+          <div class="samples" id="samples" aria-label="Sample messages"></div>
+        </form>
+        <section class="paper memory" aria-live="polite">
+          <h3>Recent checks</h3>
+          <div class="memory-list" id="memoryList">No scam memory saved yet.</div>
+        </section>
+      </aside>
+
+      <section id="result" class="result-stack" aria-live="polite"></section>
+    </section>
+  </main>
+
+  <script type="application/json" id="examplesData">{examples_json}</script>
+  <script type="module">
+    import {{ Client }} from "https://cdn.jsdelivr.net/npm/@gradio/client/dist/index.min.js";
+
+    const examples = JSON.parse(document.getElementById("examplesData").textContent);
+    const state = {{ memory: [] }};
+    const clientPromise = Client.connect(window.location.origin);
+    const form = document.getElementById("scanForm");
+    const messageInput = document.getElementById("messageInput");
+    const scanButton = document.getElementById("scanButton");
+    const result = document.getElementById("result");
+    const samples = document.getElementById("samples");
+    const memoryList = document.getElementById("memoryList");
+    const modelLabel = document.getElementById("modelLabel");
+
+    const labels = {{
+      dangerous: ["Dangerous", "This looks dangerous"],
+      suspicious: ["Suspicious", "This looks suspicious"],
+      needs_check: ["Check first", "Verify before acting"],
+      safe: ["Looks safe", "No strong scam pattern"]
+    }};
+
+    const dnaLabels = {{
+      Impersonates: "Who they pretend to be",
+      Pressure: "How they pressure you",
+      Ask: "What they want",
+      Risk: "What could happen"
+    }};
+
+    function escapeHtml(value) {{
+      return String(value || "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#39;");
+    }}
+
+    function humanize(value) {{
+      return String(value || "Unknown").replaceAll("_", " ").replaceAll("-", " ");
+    }}
+
+    function showStandby() {{
+      result.innerHTML = `
+        <article class="card standby-card">
+          <div class="card-head"><span>Ready to help</span><span>private local scan</span></div>
+          <div class="card-body">
+            <div>
+              <div class="shield-mark" aria-hidden="true"></div>
+              <h3>Fold the message into a safety plan.</h3>
+              <p>Jawbreaker checks impersonation, pressure, risky asks, and the safest next step. Nothing here asks you to click the original link or reply.</p>
+            </div>
+          </div>
+        </article>
+      `;
+    }}
+
+    function showLoading() {{
+      result.innerHTML = `
+        <article class="card loading-card">
+          <div class="card-head"><span>Checking the message</span><span id="progressText">12% complete</span></div>
+          <div class="card-body">
+            <div class="fold-loader">
+              <div class="fold-bar" id="foldBar" style="--progress: 12%"></div>
+              <p class="loading-line">> reading message shape...</p>
+              <p class="loading-line">> checking pressure and impersonation...</p>
+              <p class="loading-line muted">> folding safest next step...</p>
+              <p class="loading-line muted">> preparing copyable note...</p>
+            </div>
+          </div>
+        </article>
+      `;
+      let progress = 12;
+      const timer = window.setInterval(() => {{
+        progress = Math.min(88, progress + 8);
+        const bar = document.getElementById("foldBar");
+        const text = document.getElementById("progressText");
+        if (!bar || !text) {{
+          window.clearInterval(timer);
+          return;
+        }}
+        bar.style.setProperty("--progress", `${{progress}}%`);
+        text.textContent = `${{progress}}% complete`;
+      }}, 420);
+      return timer;
+    }}
+
+    function renderMemory(items) {{
+      if (!items || !items.length) {{
+        memoryList.textContent = "No scam memory saved yet.";
+        return;
+      }}
+      memoryList.innerHTML = items.slice(-4).reverse().map((item) => `
+        <div class="memory-row">
+          <span>${{escapeHtml(item.summary)}}</span>
+          <strong class="memory-badge">${{escapeHtml(item.risk_level || "check")}}</strong>
+        </div>
+      `).join("");
+    }}
+
+    function renderVerdict(payload) {{
+      const analysis = payload.analysis || {{}};
+      const risk = analysis.risk_level || "needs_check";
+      const label = labels[risk] || labels.needs_check;
+      const dna = analysis.scam_dna || {{}};
+      const tactics = analysis.tactics || [];
+      modelLabel.textContent = payload.model_label || modelLabel.textContent;
+      state.memory = payload.memory || state.memory;
+      renderMemory(state.memory);
+
+      const dnaHtml = ["Impersonates", "Pressure", "Ask", "Risk"].map((key) => `
+        <div class="dna-item">
+          <div class="dna-label">${{dnaLabels[key]}}</div>
+          <div class="dna-value">${{escapeHtml(humanize(dna[key]))}}</div>
+        </div>
+      `).join("");
+
+      const tacticsHtml = tactics.length
+        ? tactics.map((tag) => `<span class="tag">${{escapeHtml(humanize(tag))}}</span>`).join("")
+        : `<span class="tag">none found</span>`;
+
+      result.innerHTML = `
+        <article class="card verdict-card ${{escapeHtml(risk)}}">
+          <div class="card-head"><span>Verdict card</span><span>${{escapeHtml(payload.elapsed_seconds)}}s</span></div>
+          <div class="card-body">
+            <div class="verdict-layout">
+              <div class="stamp">${{escapeHtml(label[0])}}</div>
+              <div>
+                <h3 class="verdict-title">${{escapeHtml(label[1])}}</h3>
+                <p class="summary">${{escapeHtml(analysis.summary)}}</p>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <article class="card action-card">
+          <div class="card-head"><span>What to do now</span><span>safe action</span></div>
+          <div class="card-body">
+            <p class="action-title">Recommended action</p>
+            <p class="action-text">${{escapeHtml(analysis.safest_action)}}</p>
+            <div class="copy-card">
+              <div class="copy-note" id="copyNote">${{escapeHtml(payload.copy_plan)}}</div>
+              <button class="copy-btn" id="copyButton" type="button">Copy plan</button>
+            </div>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="card-head"><span>Why Jawbreaker thinks so</span><span>Scam DNA</span></div>
+          <div class="card-body">
+            <div class="dna-grid">${{dnaHtml}}</div>
+            <div class="tactics">${{tacticsHtml}}</div>
+          </div>
+        </article>
+      `;
+
+      document.getElementById("copyButton").addEventListener("click", async () => {{
+        await navigator.clipboard.writeText(payload.copy_plan || "");
+        const button = document.getElementById("copyButton");
+        button.textContent = "Copied";
+        window.setTimeout(() => button.textContent = "Copy plan", 1200);
+      }});
+    }}
+
+    function showError(error) {{
+      result.innerHTML = `
+        <article class="card">
+          <div class="card-head"><span>Could not finish</span><span>try again</span></div>
+          <div class="card-body"><div class="error">${{escapeHtml(error.message || error)}}</div></div>
+        </article>
+      `;
+    }}
+
+    examples.forEach((example) => {{
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "sample";
+      button.textContent = example;
+      button.addEventListener("click", () => {{
+        messageInput.value = example;
+        messageInput.focus();
+      }});
+      samples.appendChild(button);
+    }});
+
+    form.addEventListener("submit", async (event) => {{
+      event.preventDefault();
+      const message = messageInput.value.trim();
+      if (!message) {{
+        messageInput.focus();
+        return;
+      }}
+      scanButton.disabled = true;
+      const timer = showLoading();
+      try {{
+        const client = await clientPromise;
+        const response = await client.predict("/analyze", {{
+          message,
+          memory: state.memory
+        }});
+        window.clearInterval(timer);
+        renderVerdict(response.data?.[0] || response);
+      }} catch (error) {{
+        window.clearInterval(timer);
+        showError(error);
+      }} finally {{
+        scanButton.disabled = false;
+      }}
+    }});
+
+    showStandby();
+  </script>
+</body>
+</html>"""
+
+
+def build_server() -> gr.Server:
+    app = gr.Server()
+
+    @app.api(name="analyze")
+    def analyze_api(message: str, memory: list[dict] | None = None) -> dict[str, Any]:
+        return analysis_payload(message, memory)
+
+    @app.get("/", response_class=HTMLResponse)
+    async def homepage() -> HTMLResponse:
+        return HTMLResponse(paper_shield_html())
+
+    @app.get("/health")
+    async def health() -> dict[str, str]:
+        return {"status": "ok", "backend": current_backend(), "model": model_status_label()}
+
+    return app
+
+
 def build_handoff_message(message: str, analysis: ScamAnalysis) -> str:
     cleaned = " ".join(message.strip().split())
     if len(cleaned) > 500:
@@ -475,10 +1374,13 @@ def build_app() -> gr.Blocks:
 
 
 if __name__ == "__main__":
-    build_app().launch(
-        theme=app_theme(),
-        css=app_css(),
-        js=FORCE_LIGHT_JS,
-        head=FORCE_LIGHT_HEAD,
-        favicon_path=str(LOGO_PATH),
-    )
+    if _env_bool("JAWBREAKER_LEGACY_BLOCKS", False):
+        build_app().launch(
+            theme=app_theme(),
+            css=app_css(),
+            js=FORCE_LIGHT_JS,
+            head=FORCE_LIGHT_HEAD,
+            favicon_path=str(LOGO_PATH),
+        )
+    else:
+        build_server().launch(favicon_path=str(LOGO_PATH))
