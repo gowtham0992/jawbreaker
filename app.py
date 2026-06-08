@@ -901,7 +901,7 @@ def paper_shield_html() -> str:
       </div>
       <div class="status">
         <span>[ SECURE ENV: ACTIVE ]</span>
-        <span>[ STATUS: <span id="modelState">STARTING</span> ]</span>
+        <span>[ STATUS: <span id="modelState">ON DEMAND</span> ]</span>
         <span>[ MODEL: <span id="modelLabel">{model_label}</span> ]</span>
       </div>
     </header>
@@ -980,7 +980,7 @@ def paper_shield_html() -> str:
             <div>
               <div class="shield-mark" aria-hidden="true"></div>
               <h3>Paste first. Act after.</h3>
-              <p>Jawbreaker checks impersonation, pressure, risky asks, and the safest next step. It will never ask you to click the original link or reply.</p>
+              <p>Jawbreaker checks impersonation, pressure, risky asks, and the safest next step. The first scan may take longer while the private GPU wakes up.</p>
             </div>
           </div>
         </article>
@@ -1123,6 +1123,7 @@ def paper_shield_html() -> str:
         return;
       }}
       scanButton.disabled = true;
+      modelState.textContent = "CHECKING";
       const timer = showLoading();
       try {{
         const client = await clientPromise;
@@ -1132,8 +1133,10 @@ def paper_shield_html() -> str:
         }});
         window.clearInterval(timer);
         renderVerdict(response.data?.[0] || response);
+        modelState.textContent = "READY";
       }} catch (error) {{
         window.clearInterval(timer);
+        modelState.textContent = "ON DEMAND";
         showError(error);
       }} finally {{
         scanButton.disabled = false;
@@ -1141,19 +1144,6 @@ def paper_shield_html() -> str:
     }});
 
     showStandby();
-    clientPromise
-      .then((client) => {{
-        modelState.textContent = "WAKING";
-        return client.predict("/warm");
-      }})
-      .then((response) => {{
-        const payload = response.data?.[0] || response;
-        modelState.textContent = "READY";
-        modelLabel.textContent = payload.model || modelLabel.textContent;
-      }})
-      .catch(() => {{
-        modelState.textContent = "ON DEMAND";
-      }});
   </script>
 </body>
 </html>"""
