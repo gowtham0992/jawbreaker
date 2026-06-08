@@ -119,3 +119,25 @@ Eval decision:
 - v3 hard raw had `0` dangerous-as-safe, `0` dangerous-as-needs-check, `0` safe-as-dangerous-or-suspicious, `0` unsafe action violations, `0` invalid predictions, and `0` model errors
 
 Decision: ship v3 as the default MiniCPM adapter while keeping the deterministic guard as product safety defense-in-depth.
+
+## 2026-06-07 MiniCPM5-1B Promotion
+
+Jawbreaker promoted the Tiny Titan experiment to the production path.
+
+Final deployed model path:
+
+- Base: `openbmb/MiniCPM5-1B`
+- Adapter: `build-small-hackathon/jawbreaker-minicpm5-1b-lora-v4`
+- Runtime: Hugging Face Transformers on ZeroGPU
+- Training/eval infrastructure: Modal
+
+Why this replaced the earlier 8B v3 adapter:
+
+- The 1B model fits the Tiny Titan spirit and the OpenBMB sponsor path.
+- The v4 adapter cleared the safety bar on the completed 394-case hard guarded eval.
+- It had `0` dangerous-as-safe, `0` dangerous-as-needs-check, `0` suspicious-as-safe, `0` unsafe action violations, `0` invalid predictions, and `0` model errors.
+- It beat the 8B v3 adapter on the hard guarded evals while being much smaller.
+
+The 470-case eval attempt timed out around case 341, so it is not used as final evidence. The committed final evidence is the completed 320-case and 394-case guarded reports under `eval/reports/`.
+
+Decision: ship MiniCPM5-1B LoRA v4 as the default model, keep the deterministic guard as product safety defense-in-depth, and document the 8B path as comparison/history rather than the live model.

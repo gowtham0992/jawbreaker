@@ -270,6 +270,8 @@ def render_save_status(message: str = "") -> str:
 def model_status_label() -> str:
     model_id = os.getenv("JAWBREAKER_TRANSFORMERS_MODEL_ID", DEFAULT_TRANSFORMERS_MODEL_ID)
     adapter_id = default_adapter_id(model_id)
+    if model_id == "openbmb/MiniCPM5-1B" and adapter_id == "build-small-hackathon/jawbreaker-minicpm5-1b-lora-v4":
+        return "MiniCPM5-1B + Jawbreaker LoRA v4"
     if adapter_id:
         return adapter_id.rsplit("/", 1)[-1].replace("jawbreaker-", "").upper()
     return model_id.rsplit("/", 1)[-1].upper()
@@ -1127,6 +1129,7 @@ def paper_shield_html() -> str:
         </div>
       </div>
       <div class="status" aria-label="Runtime status">
+        <span>{model_label}</span>
         <span><span id="modelState">READY</span></span>
       </div>
     </header>

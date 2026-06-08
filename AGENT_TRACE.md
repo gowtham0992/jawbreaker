@@ -43,10 +43,31 @@ Codex helped:
 
 Current decisions:
 
-- Deployed model: `openbmb/MiniCPM4.1-8B`.
+- Deployed model: `openbmb/MiniCPM5-1B`.
+- Deployed adapter: `build-small-hackathon/jawbreaker-minicpm5-1b-lora-v4`.
 - Deployed backend: Transformers on ZeroGPU.
 - Local/eval model path: llama-cpp-python remains available for GGUF models.
-- Fine-tuning: scaffolded, but deployment is gated on eval improvement.
+- Fine-tuning: completed through a Modal-trained MiniCPM5-1B LoRA adapter.
 - Primary badges: Off-Brand, Sharing is Caring, Field Notes.
-- Defensible badges: Off the Grid and Llama Champion, documented carefully.
-- Sponsor target: OpenBMB, because MiniCPM is now central to the app.
+- Defensible badges: Off the Grid and Tiny Titan, documented carefully.
+- Sponsor target: OpenBMB, because MiniCPM is central to the app.
+
+## 2026-06-07
+
+Codex helped:
+
+- run and compare MiniCPM5-1B LoRA evals against earlier 8B adapter evidence
+- promote `build-small-hackathon/jawbreaker-minicpm5-1b-lora-v4` as the final deployed adapter
+- commit 320-case and 394-case hard guarded eval reports
+- update README, setup, eval, training, and honest-submission evidence
+- refine the custom Gradio Server UI for readability, elderly-friendly wording, copy-to-trusted-person behavior, and final model disclosure
+
+Final model evidence:
+
+- 394-case hard guarded eval: `379/394` risk accuracy (`96.19%`)
+- `0` dangerous-as-safe
+- `0` dangerous-as-needs-check
+- `0` suspicious-as-safe
+- `0` unsafe action violations
+- `0` invalid predictions
+- `0` model errors
