@@ -32,19 +32,19 @@ The generated set is for scale and regression pressure. The 100-case hand-curate
 
 ## Current Runtime Decision
 
-The deployed Space uses `openbmb/MiniCPM4.1-8B` through Transformers on ZeroGPU with the published adapter `build-small-hackathon/jawbreaker-minicpm-lora-v3`.
+The deployed Space uses `openbmb/MiniCPM5-1B` through Transformers on ZeroGPU with the published adapter `build-small-hackathon/jawbreaker-minicpm5-1b-lora-v4`.
 
 The GGUF / `llama-cpp-python` path remains available for local eval and badge evidence, but it is not the primary live demo path. The live app also uses a deterministic heuristic guard so an obvious high-risk scam is not rendered as safe if the small model under-calls the risk.
 
-If MiniCPM Space latency is unacceptable during final demo testing, `Qwen/Qwen3-0.6B` remains the fallback via `JAWBREAKER_TRANSFORMERS_MODEL_ID`, but the current judged model path is MiniCPM LoRA v3.
+If MiniCPM Space latency is unacceptable during final demo testing, `Qwen/Qwen3-0.6B` remains the fallback via `JAWBREAKER_TRANSFORMERS_MODEL_ID`, but the current judged model path is MiniCPM5-1B LoRA v4.
 
 ## Current Results
 
-MiniCPM LoRA v3:
+MiniCPM5-1B LoRA v4:
 
-- Adapter: `build-small-hackathon/jawbreaker-minicpm-lora-v3`
-- 100-case product eval: `90/100` risk accuracy, `0` dangerous undercalls, `0` invalid predictions, `0` model errors
-- 215-case hard eval: `210/215` risk accuracy (`97.7%`), `0` dangerous-as-safe, `0` dangerous-as-needs-check, `0` safe-as-dangerous-or-suspicious, `0` unsafe action violations, `0` invalid predictions, `0` model errors
+- Adapter: `build-small-hackathon/jawbreaker-minicpm5-1b-lora-v4`
+- 394-case hard guarded eval: `379/394` risk accuracy (`96.19%`), `0` dangerous-as-safe, `0` dangerous-as-needs-check, `0` suspicious-as-safe, `0` unsafe action violations, `0` invalid predictions, `0` model errors
+- 320-case hard guarded eval: `310/320` risk accuracy (`96.88%`), `0` dangerous-as-safe, `0` dangerous-as-needs-check, `0` suspicious-as-safe, `0` unsafe action violations, `0` invalid predictions, `0` model errors
 
 ## Running Backends
 
@@ -59,21 +59,21 @@ OpenBMB MiniCPM through Transformers:
 ```bash
 python3 eval/run_eval.py \
   --backend transformers \
-  --model-id openbmb/MiniCPM4.1-8B \
+  --model-id openbmb/MiniCPM5-1B \
   --trust-remote-code \
   --dataset eval/generated_eval.jsonl
 ```
 
-Published v3 adapter through Transformers:
+Published v4 adapter through Transformers:
 
 ```bash
 python3 eval/run_eval.py \
   --backend transformers \
-  --model-id openbmb/MiniCPM4.1-8B \
-  --adapter-id build-small-hackathon/jawbreaker-minicpm-lora-v3 \
+  --model-id openbmb/MiniCPM5-1B \
+  --adapter-id build-small-hackathon/jawbreaker-minicpm5-1b-lora-v4 \
   --trust-remote-code \
   --attn-implementation eager \
-  --dataset eval/scam_eval.jsonl
+  --dataset eval/hard_v5_eval.jsonl
 ```
 
 Saved prediction replay:

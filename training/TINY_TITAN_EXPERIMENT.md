@@ -1,10 +1,9 @@
 # MiniCPM5-1B Tiny Titan Experiment
 
-This is a side quest, not the production path.
+This experiment became the production path.
 
-The shipped Jawbreaker app stays on `openbmb/MiniCPM4.1-8B` with
-`build-small-hackathon/jawbreaker-minicpm-lora-v3` unless the 1B model clears
-the same safety bar.
+The shipped Jawbreaker app now uses `openbmb/MiniCPM5-1B` with
+`build-small-hackathon/jawbreaker-minicpm5-1b-lora-v4`.
 
 ## Why Try It
 
@@ -23,7 +22,18 @@ Promote the 1B path only if it has:
 - acceptable live Space latency
 - no obvious regression on legitimate/safe examples
 
-If any dangerous scam is undercalled, keep the 8B LoRA as the submission model.
+The v4 adapter cleared this bar on the completed 394-case hard guarded eval:
+
+- `394` cases
+- `96.19%` risk accuracy
+- `96.19%` scam type accuracy
+- `96.55%` mean tactic recall
+- `0` dangerous-as-safe
+- `0` dangerous-as-needs-check
+- `0` suspicious-as-safe
+- `0` unsafe action violations
+- `0` invalid predictions
+- `0` model errors
 
 ## Step 1: Base Model Smoke Eval
 
@@ -98,8 +108,7 @@ Only if both evals clear the decision rule:
 2. Update README with a Tiny Titan claim.
 3. Set the Space variables:
    - `JAWBREAKER_TRANSFORMERS_MODEL_ID=openbmb/MiniCPM5-1B`
-   - `JAWBREAKER_ADAPTER_ID=build-small-hackathon/jawbreaker-minicpm5-1b-lora-v1`
+   - `JAWBREAKER_ADAPTER_ID=build-small-hackathon/jawbreaker-minicpm5-1b-lora-v4`
 4. Smoke test desktop and mobile.
 
-If the 1B path is close but not safer than 8B, keep it as future work and ship
-the current 8B LoRA.
+The completed hard394 eval is committed under `eval/reports/` as final evidence.

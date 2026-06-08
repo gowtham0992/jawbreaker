@@ -37,8 +37,8 @@ EXAMPLES = [
     "Your verification code is 482913. Do not share this code with anyone. We will never ask for it by phone.",
 ]
 
-DEFAULT_TRANSFORMERS_MODEL_ID = "openbmb/MiniCPM4.1-8B"
-DEFAULT_ADAPTER_ID = "build-small-hackathon/jawbreaker-minicpm-lora-v3"
+DEFAULT_TRANSFORMERS_MODEL_ID = "openbmb/MiniCPM5-1B"
+DEFAULT_ADAPTER_ID = "build-small-hackathon/jawbreaker-minicpm5-1b-lora-v4"
 DEFAULT_TRANSFORMERS_MAX_TOKENS = 512
 LOGO_PATH = Path("jawbreaker_logo.png")
 
@@ -1592,7 +1592,7 @@ def build_app() -> gr.Blocks:
               <div class="status-tags">
                 <span>[ SECURE_ENV: ACTIVE ]</span>
                 <span>[ STATUS: READY ]</span>
-                <span>[ MODEL: MINICPM_LORA_V3 ]</span>
+                <span>[ MODEL: MINICPM5_1B_LORA_V4 ]</span>
                 <span>[ BUILT_FOR: BUILD_SMALL_HACKATHON ]</span>
               </div>
             </header>
