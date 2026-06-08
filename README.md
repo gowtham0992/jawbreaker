@@ -19,6 +19,8 @@ tags:
 - tiny-titan
 - well-tuned
 - off-brand
+- best-demo
+- bonus-quest-champion
 - sharing-is-caring
 - field-notes
 - modal
@@ -147,6 +149,7 @@ Training/eval artifacts:
 | Tiny Titan | Targeted | The deployed model is `openbmb/MiniCPM5-1B`, well under the 4B badge threshold. |
 | Off Brand | Targeted | Custom Gradio UI beyond the stock component look. |
 | Best Demo | Pending | Demo video and social post still need to be recorded, published, and linked before final submission. |
+| Bonus Quest Champion | Stretch target | Jawbreaker stacks multiple bonus criteria: Well-Tuned, Off Brand, Tiny Titan, Sharing is Caring, Field Notes, and Best Demo once the video/social links are added. |
 | Judges' Wildcard | Automatic | Every submission is considered. |
 
 Not claiming:
@@ -154,7 +157,7 @@ Not claiming:
 - Best Agent: Jawbreaker is not a multi-step agentic app.
 - NVIDIA Nemotron Quest: no NeMoTron model is used.
 - llama.cpp as live runtime: local/eval tooling supports GGUF experiments, but the judge-facing Space uses Transformers on ZeroGPU.
-- Bonus Quest Champion: not claimed unless a specific bonus quest name and completion receipt are added before submission.
+- Off the Grid: Jawbreaker uses no external LLM API, but the public demo runs on Hugging Face ZeroGPU, so this is framed as local-first rather than claimed as a live fully local runtime.
 
 ## Safety Boundary
 
