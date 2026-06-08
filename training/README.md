@@ -145,7 +145,9 @@ Use the fine-tuned adapter only if it beats the base model on:
 
 If the adapter improves JSON but hurts safety, do not deploy it.
 
-Current decision: ship `build-small-hackathon/jawbreaker-minicpm-lora-v3`.
+Current decision: ship `build-small-hackathon/jawbreaker-minicpm5-1b-lora-v4`
+on `openbmb/MiniCPM5-1B`.
 
-- 100-case product eval: `90/100` risk accuracy, no dangerous undercalls, no invalid predictions, no model errors.
-- 215-case hard eval: `210/215` risk accuracy, no dangerous undercalls, no safe dangerous/suspicious false alarms, no unsafe action violations, no invalid predictions, no model errors.
+- 394-case hard guarded eval: `379/394` risk accuracy (`96.19%`), no dangerous undercalls, no suspicious-as-safe misses, no unsafe action violations, no invalid predictions, no model errors.
+- 320-case hard guarded eval: `310/320` risk accuracy (`96.88%`), no dangerous undercalls, no suspicious-as-safe misses, no unsafe action violations, no invalid predictions, no model errors.
+- Earlier 8B v3 evals remain useful as comparison evidence, but the 1B v4 adapter is the final deployed model.

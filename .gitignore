@@ -17,4 +17,7 @@ build/
 training/output/
 eval/predictions/
 eval/reports/
+!eval/reports/
+!eval/reports/jawbreaker-minicpm5-1b-lora-v4-hard320-guarded.json
+!eval/reports/jawbreaker-minicpm5-1b-lora-v4-hard394-guarded.json
 .DS_Store

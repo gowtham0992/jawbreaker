@@ -29,7 +29,7 @@ Jawbreaker should compete hard without gaming the hackathon.
 - `eval/scam_eval.jsonl` is the hand-curated eval set and should not be used as training data.
 - `training/data/test.jsonl` and `eval/generated_eval.jsonl` are holdout data and should not be used for LoRA training.
 - A LoRA adapter should only be deployed if it improves valid JSON and safety metrics without increasing dangerous false negatives.
-- The current deploy candidate is `build-small-hackathon/jawbreaker-minicpm-lora-v3`, which reached `210/215` risk accuracy on the hard eval with zero dangerous undercalls, zero invalid predictions, and zero model errors.
+- The current deploy candidate is `build-small-hackathon/jawbreaker-minicpm5-1b-lora-v4`, which reached `379/394` risk accuracy on the hard guarded eval with zero dangerous undercalls, zero suspicious-as-safe misses, zero invalid predictions, zero model errors, and zero unsafe action violations.
 - If synthetic training mostly teaches format-following, say that. Do not describe it as learning from real scam victims.
 - If Modal is used, include the Modal command, training output, and whether an adapter was actually published.
 

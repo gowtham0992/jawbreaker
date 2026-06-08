@@ -41,17 +41,17 @@ Jawbreaker is deliberately narrow. It does not try to be a general assistant or 
 
 ## Model Runtime
 
-The deployed Space uses `openbmb/MiniCPM4.1-8B` through Hugging Face Transformers on ZeroGPU with the published Jawbreaker LoRA adapter:
+The deployed Space uses `openbmb/MiniCPM5-1B` through Hugging Face Transformers on ZeroGPU with the published Jawbreaker LoRA adapter:
 
-- Adapter: `build-small-hackathon/jawbreaker-minicpm-lora-v3`
+- Adapter: `build-small-hackathon/jawbreaker-minicpm5-1b-lora-v4`
 - Training: PEFT/LoRA on Modal A100
 - Runtime: ZeroGPU in the Hugging Face Space
 
 Why this model:
 
 - It makes OpenBMB MiniCPM central to the app, matching the hackathon sponsor track.
-- It is still well below the 32B parameter limit and fits the "small model" constraint honestly.
-- MiniCPM4.1 is built for efficient end-side inference, which fits Jawbreaker's local-first safety premise.
+- It is a 1B model, which fits the Tiny Titan spirit while staying useful on a narrow task.
+- The 1B v4 adapter beat the earlier 8B v3 adapter on the hard guarded evals.
 - It avoids external commercial model APIs.
 - It can produce the structured JSON that Jawbreaker validates before rendering.
 
@@ -67,8 +67,8 @@ Safety architecture:
 
 Current eval results:
 
-- 100-case product eval, raw v3: `90/100` risk accuracy, `0` invalid predictions, `0` model errors, `0` dangerous undercalls.
-- 215-case hard eval, raw v3: `210/215` risk accuracy (`97.7%`), `0` dangerous-as-safe, `0` dangerous-as-needs-check, `0` safe-as-dangerous-or-suspicious, `0` unsafe action violations, `0` invalid predictions, `0` model errors.
+- 394-case hard guarded eval, 1B v4: `379/394` risk accuracy (`96.19%`), `0` dangerous-as-safe, `0` dangerous-as-needs-check, `0` suspicious-as-safe, `0` unsafe action violations, `0` invalid predictions, `0` model errors.
+- 320-case hard guarded eval, 1B v4: `310/320` risk accuracy (`96.88%`), `0` dangerous-as-safe, `0` dangerous-as-needs-check, `0` suspicious-as-safe, `0` unsafe action violations, `0` invalid predictions, `0` model errors.
 
 Training/eval artifacts:
 
@@ -76,10 +76,13 @@ Training/eval artifacts:
 - `eval/field_examples.jsonl`: sanitized real-world examples from a friend, with names and phone numbers removed.
 - `training/generate_jawbreaker_data.py`: deterministic generator for larger train/dev/test splits.
 - `training/generate_v3_data.py`: contrastive hard-case generator used for the v3 LoRA pass.
+- `training/generate_v4_data.py`, `generate_v5_data.py`, `generate_v6_data.py`: later calibration generators used to stress-test false positives and trusted-route boundaries.
 - `training/data/train.jsonl`, `dev.jsonl`, `test.jsonl`: generated SFT records for Jawbreaker JSON behavior.
 - `training/data/train_v3.jsonl`, `dev_v3.jsonl`, `test_v3.jsonl`: v3 contrastive training split.
 - `eval/generated_eval.jsonl`: generated holdout eval set.
 - `eval/hard_v2_eval.jsonl`: hard eval set used to compare v2 and v3 adapters.
+- `eval/hard_v4_eval.jsonl`, `hard_v5_eval.jsonl`, `hard_v6_eval.jsonl`: expanded hard evals used during 1B calibration.
+- `eval/reports/jawbreaker-minicpm5-1b-lora-v4-hard394-guarded.json`: main final model evidence.
 - `training/train_lora.py`: PEFT/LoRA script for publishing Jawbreaker MiniCPM adapters.
 - `training/modal_train.py`: Modal A100 training launcher.
 - `training/modal_eval.py`: Modal A100 eval launcher.
@@ -90,7 +93,8 @@ Training/eval artifacts:
 - Off the Grid: local model inference, no cloud APIs for scam analysis.
 - Llama Champion: local/eval tooling supports the llama.cpp runtime.
 - Off-Brand: custom Gradio UI beyond the default look.
-- Well-Tuned: targeted; the v3 MiniCPM LoRA adapter is trained, published, and evaluated.
+- Tiny Titan: targeted; the deployed model is `openbmb/MiniCPM5-1B`.
+- Well-Tuned: targeted; the MiniCPM5-1B v4 LoRA adapter is trained, published, and evaluated.
 - Sharing is Caring: Codex/agent trace published in this repo.
 - Field Notes: build report published before submission.
 
