@@ -9,6 +9,7 @@
 - [x] Public GitHub repo linked in Space README
 - [x] Repo includes Codex-attributed feature commits
 - [x] README frontmatter includes track and target badge tags
+- [x] MIT license file included
 
 ## Backyard AI Evidence
 
