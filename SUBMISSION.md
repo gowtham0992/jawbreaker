@@ -25,6 +25,7 @@
 - [x] Sanitized dataset page published on Hugging Face
 - [x] Hugging Face collection links Space, model, dataset, and reports
 - [x] Runtime decision documented
+- [x] Local-first vs ZeroGPU demo boundary documented
 - [x] Local inference path documented
 - [x] Fine-tuned MiniCPM LoRA adapter published and evaluated
 - [x] Modal training/eval evidence documented
@@ -46,6 +47,7 @@
 - [x] Agent trace exists
 - [x] README includes file-level Codex contribution summary
 - [x] Meaningful feature commits include Codex co-author trailer
+- [x] UI warns users to redact sensitive private data before pasting
 
 ## Final Manual Tasks
 
