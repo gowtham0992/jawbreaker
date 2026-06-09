@@ -160,3 +160,45 @@ def test_v7_training_data_is_sanitized_and_separate_from_fresh_eval() -> None:
         "safe_everyday_family_v7",
         "needs_check_official_route_v7",
     } <= {row["category"] for row in hard_rows}
+
+
+def test_v8_training_data_is_sanitized_and_separate_from_fresh_eval() -> None:
+    split_paths = {
+        "train": Path("training/data/train_v8.jsonl"),
+        "dev": Path("training/data/dev_v8.jsonl"),
+        "test": Path("training/data/test_v8.jsonl"),
+    }
+    expected_counts = {"train": 2488, "dev": 572, "test": 632}
+    fresh_eval_inputs = {
+        json.loads(line)["input"]
+        for line in Path("eval/fresh_2026_scam_eval.jsonl").read_text(encoding="utf-8").splitlines()
+        if line.strip()
+    }
+
+    for split, path in split_paths.items():
+        rows = [json.loads(line) for line in path.read_text(encoding="utf-8").splitlines() if line.strip()]
+        assert len(rows) == expected_counts[split]
+        assert not ({row["input"] for row in rows} & fresh_eval_inputs)
+
+        for row in rows:
+            assert {"id", "messages", "input", "prediction"} <= set(row)
+            assert row["prediction"]["risk_level"] in RISK_LEVELS
+            assert ".example" in row["input"] or "http" not in row["input"].lower()
+            assert "+1" not in row["input"]
+            assert "@" not in row["input"]
+
+    hard_rows = [
+        json.loads(line)
+        for line in Path("eval/hard_v8_eval.jsonl").read_text(encoding="utf-8").splitlines()
+        if line.strip()
+    ]
+    assert len(hard_rows) == expected_counts["test"]
+    assert {
+        "wrong_number_investment_danger_v8",
+        "wrong_number_social_no_money_v8",
+        "safe_family_logistics_v8",
+        "safe_school_pickup_v8",
+        "safe_pharmacy_clinic_v8",
+        "school_clinic_payment_link_danger_v8",
+        "official_route_needs_check_v8",
+    } <= {row["category"] for row in hard_rows}

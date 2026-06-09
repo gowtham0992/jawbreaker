@@ -115,6 +115,44 @@ modal run training/modal_eval.py \
   --apply-safety-guard
 ```
 
+## v8 Failure-Driven Eval
+
+`hard_v8_eval.jsonl` is generated from `training/generate_v8_data.py`. It extends v7 with a narrow failure-driven calibration set:
+
+- wrong-number crypto / gold / trading grooming labeled `dangerous`
+- wrong-number social messages without money or investment asks labeled `suspicious`
+- normal family dinner, school pickup, pharmacy, and clinic logistics labeled `safe`
+- school, clinic, and pharmacy payment-link variants labeled `dangerous`
+- official-route service notices labeled `needs_check`
+
+Generate it with:
+
+```bash
+python3 training/generate_v8_data.py
+```
+
+Modal eval command for a candidate v8 adapter:
+
+```bash
+modal run training/modal_eval.py \
+  --dataset eval/hard_v8_eval.jsonl \
+  --model-id openbmb/MiniCPM5-1B \
+  --adapter-id build-small-hackathon/jawbreaker-minicpm5-1b-lora-v8 \
+  --output-prefix jawbreaker-minicpm5-1b-lora-v8-hard632-guarded \
+  --apply-safety-guard
+```
+
+Promotion starts with the fresh held-out eval, not the generated v8 eval:
+
+```bash
+modal run training/modal_eval.py \
+  --dataset eval/fresh_2026_scam_eval.jsonl \
+  --model-id openbmb/MiniCPM5-1B \
+  --adapter-id build-small-hackathon/jawbreaker-minicpm5-1b-lora-v8 \
+  --output-prefix jawbreaker-minicpm5-1b-lora-v8-fresh2026-guarded \
+  --apply-safety-guard
+```
+
 ## Current Runtime Decision
 
 The deployed Space uses `openbmb/MiniCPM5-1B` through Transformers on ZeroGPU with the published adapter `build-small-hackathon/jawbreaker-minicpm5-1b-lora-v4`.

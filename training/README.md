@@ -192,3 +192,53 @@ modal run training/modal_train.py \
 ```
 
 Do not replace v4 unless v7 improves fresh-pattern accuracy without introducing dangerous undercalls, invalid JSON, or a higher safe false-positive rate.
+
+## v8 Failure-Driven Calibration Experiment
+
+`training/generate_v8_data.py` is a narrower follow-up to v7. It targets the two v7 fresh-eval failure modes:
+
+- wrong-number crypto / gold / trading grooming was sometimes softened to `needs_check`
+- ordinary family, school, and pharmacy logistics were sometimes over-called
+
+The v8 data keeps the older hard anchors, adds contrastive wrong-number examples, and does not train on exact `fresh_2026_scam_eval.jsonl` rows.
+
+Generate the v8 data:
+
+```bash
+python3 training/generate_v8_data.py
+```
+
+Current generated sizes:
+
+- `training/data/train_v8.jsonl`: 2,488 SFT rows
+- `training/data/dev_v8.jsonl`: 572 SFT rows
+- `eval/hard_v8_eval.jsonl`: 632 held-out hard cases
+
+Train the candidate adapter on Modal:
+
+```bash
+modal run training/modal_train.py \
+  --model-id openbmb/MiniCPM5-1B \
+  --train-file training/data/train_v8.jsonl \
+  --dev-file training/data/dev_v8.jsonl \
+  --output-name jawbreaker-minicpm5-1b-lora-v8 \
+  --epochs 1.5 \
+  --learning-rate 4e-5 \
+  --warmup-ratio 0.05 \
+  --weight-decay 0.01 \
+  --lr-scheduler-type cosine \
+  --max-length 768 \
+  --batch-size 1 \
+  --grad-accum 16 \
+  --lora-r 32 \
+  --lora-alpha 64 \
+  --lora-dropout 0.05 \
+  --push-to-hub \
+  --hub-model-id build-small-hackathon/jawbreaker-minicpm5-1b-lora-v8
+```
+
+Promotion rule:
+
+1. Fresh 2026 held-out eval must have `dangerous_as_safe=0`, `dangerous_as_needs_check=0`, `invalid_predictions=0`, and `unsafe_action_violations=0`.
+2. Hard v8 eval must keep zero dangerous undercalls and valid JSON.
+3. Safe false positives must not materially worsen versus v4/v7.
