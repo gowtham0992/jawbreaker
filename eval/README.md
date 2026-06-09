@@ -30,6 +30,91 @@ python3 eval/run_eval.py --dataset eval/generated_eval.jsonl --backend heuristic
 
 The generated set is for scale and regression pressure. The 100-case hand-curated set remains the product compass.
 
+## Fresh 2026 Pattern Eval
+
+`fresh_2026_scam_eval.jsonl` is a separate held-out eval enrichment set, not training data.
+
+It contains 100 synthetic/sanitized cases modeled after current public scam patterns:
+
+- fake toll / parking / DMV smishing
+- package delivery phishing
+- bank, PayPal, and crypto callback phishing
+- WhatsApp / Telegram task-job scams
+- wrong-number crypto investment grooming
+- MFA / verification-code theft
+- government, tax, benefit, and Medicare impersonation
+- marketplace overpayment and off-platform payment scams
+- tech-support and remote-access scams
+- legitimate-but-verify notices and safe benign messages
+
+Risk mix:
+
+- 72 dangerous
+- 16 needs_check
+- 12 safe
+
+Use this set to strengthen the eval story after the model is already selected:
+
+```bash
+python3 eval/run_eval.py \
+  --backend transformers \
+  --model-id openbmb/MiniCPM5-1B \
+  --adapter-id build-small-hackathon/jawbreaker-minicpm5-1b-lora-v4 \
+  --trust-remote-code \
+  --attn-implementation eager \
+  --apply-safety-guard \
+  --dataset eval/fresh_2026_scam_eval.jsonl \
+  --predictions-out eval/predictions/jawbreaker-minicpm5-1b-lora-v4-fresh2026.predictions.jsonl \
+  --json-out eval/reports/jawbreaker-minicpm5-1b-lora-v4-fresh2026.json
+```
+
+Modal:
+
+```bash
+modal run training/modal_eval.py \
+  --dataset eval/fresh_2026_scam_eval.jsonl \
+  --model-id openbmb/MiniCPM5-1B \
+  --adapter-id build-small-hackathon/jawbreaker-minicpm5-1b-lora-v4 \
+  --output-prefix jawbreaker-minicpm5-1b-lora-v4-fresh2026 \
+  --apply-safety-guard
+```
+
+The first v4 run on this set found no dangerous undercalls and no invalid JSON, but it did expose calibration gaps:
+
+- wrong-number crypto and marketplace scams were sometimes marked `suspicious` instead of `dangerous`
+- a few safe family/school messages were over-called
+
+Those findings feed the separate v7 calibration generator. The fresh eval rows themselves remain held out.
+
+## v7 Calibration Eval
+
+`hard_v7_eval.jsonl` is generated from `training/generate_v7_data.py`. It expands the hard eval with fresh-pattern calibration cases while preserving older anchors:
+
+- wrong-number crypto grooming
+- marketplace overpayment, courier-fee, and code-theft scams
+- task-job and prepaid workbench scams
+- MFA / verification-code theft
+- toll, tax, parking, benefit, and government impersonation
+- safe family/school/clinic hard negatives
+- official-route `needs_check` notices
+
+Generate it with:
+
+```bash
+python3 training/generate_v7_data.py
+```
+
+Modal eval command for a candidate v7 adapter:
+
+```bash
+modal run training/modal_eval.py \
+  --dataset eval/hard_v7_eval.jsonl \
+  --model-id openbmb/MiniCPM5-1B \
+  --adapter-id build-small-hackathon/jawbreaker-minicpm5-1b-lora-v7 \
+  --output-prefix jawbreaker-minicpm5-1b-lora-v7-hard558-guarded \
+  --apply-safety-guard
+```
+
 ## Current Runtime Decision
 
 The deployed Space uses `openbmb/MiniCPM5-1B` through Transformers on ZeroGPU with the published adapter `build-small-hackathon/jawbreaker-minicpm5-1b-lora-v4`.

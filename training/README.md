@@ -151,3 +151,44 @@ on `openbmb/MiniCPM5-1B`.
 - 394-case hard guarded eval: `379/394` risk accuracy (`96.19%`), no dangerous undercalls, no suspicious-as-safe misses, no unsafe action violations, no invalid predictions, no model errors.
 - 320-case hard guarded eval: `310/320` risk accuracy (`96.88%`), no dangerous undercalls, no suspicious-as-safe misses, no unsafe action violations, no invalid predictions, no model errors.
 - Earlier 8B v3 evals remain useful as comparison evidence, but the 1B v4 adapter is the final deployed model.
+
+## v7 Calibration Experiment
+
+`training/generate_v7_data.py` is a candidate follow-up, not the production adapter yet. It uses sanitized public-pattern examples and hand-written hard negatives to address the fresh 2026 eval gaps without training on the fresh held-out eval rows.
+
+Generate the v7 data:
+
+```bash
+python3 training/generate_v7_data.py
+```
+
+Current generated sizes:
+
+- `training/data/train_v7.jsonl`: 2,192 SFT rows
+- `training/data/dev_v7.jsonl`: 498 SFT rows
+- `eval/hard_v7_eval.jsonl`: 558 held-out hard cases
+
+Train the candidate adapter on Modal:
+
+```bash
+modal run training/modal_train.py \
+  --model-id openbmb/MiniCPM5-1B \
+  --train-file training/data/train_v7.jsonl \
+  --dev-file training/data/dev_v7.jsonl \
+  --output-name jawbreaker-minicpm5-1b-lora-v7 \
+  --epochs 2 \
+  --learning-rate 5e-5 \
+  --warmup-ratio 0.05 \
+  --weight-decay 0.01 \
+  --lr-scheduler-type cosine \
+  --max-length 768 \
+  --batch-size 1 \
+  --grad-accum 16 \
+  --lora-r 32 \
+  --lora-alpha 64 \
+  --lora-dropout 0.05 \
+  --push-to-hub \
+  --hub-model-id build-small-hackathon/jawbreaker-minicpm5-1b-lora-v7
+```
+
+Do not replace v4 unless v7 improves fresh-pattern accuracy without introducing dangerous undercalls, invalid JSON, or a higher safe false-positive rate.
