@@ -3,6 +3,7 @@ title: Jawbreaker
 emoji: 🍬
 colorFrom: yellow
 colorTo: red
+pinned: true
 sdk: gradio
 sdk_version: 6.16.0
 python_version: 3.12
