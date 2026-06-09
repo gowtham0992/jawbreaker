@@ -225,6 +225,7 @@ class ScamAnalysis:
             "meant to text",
             "meant to reach",
             "saved the wrong",
+            "thought this was",
             "typed one digit wrong",
         ]
         investment_terms = [
@@ -235,7 +236,9 @@ class ScamAnalysis:
             "trading group",
             "trading app",
             "gold futures",
+            "gold strategy",
             "currency signal",
+            "coin signal",
             "crypto",
             "coin group",
             "wallet",
@@ -247,9 +250,13 @@ class ScamAnalysis:
             "low-risk",
             "daily returns",
             "one spot just opened",
+            "reserve you a spot",
             "window closes",
             "fund the account",
             "small balance",
+            "small deposit",
+            "app link",
+            "open the app",
         ]
         if any(token in text for token in wrong_contact_terms):
             if any(token in text for token in investment_terms):

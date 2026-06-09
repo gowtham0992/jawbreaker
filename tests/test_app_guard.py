@@ -112,6 +112,27 @@ def test_guard_promotes_wrong_number_investment_undercall() -> None:
     assert should_use_heuristic_guard(model, heuristic, validation_errors=[], message=message)
 
 
+def test_guard_promotes_indirect_wrong_number_investment_language() -> None:
+    message = "I thought this was Lena. My aunt teaches a gold strategy and can reserve you a spot if you open the app."
+    model = ScamAnalysis(
+        risk_level="suspicious",
+        scam_type="unknown_contact",
+        summary="This has warning signs.",
+        tactics=["relationship building"],
+        scam_dna={
+            "Impersonates": "unknown sender",
+            "Pressure": "friendly contact",
+            "Ask": "open app",
+            "Risk": "uncertain legitimacy",
+        },
+    )
+    heuristic = ScamAnalysis.from_heuristics(message)
+
+    assert heuristic.risk_level == "dangerous"
+    assert heuristic.scam_type == "investment_scam"
+    assert should_use_heuristic_guard(model, heuristic, validation_errors=[], message=message)
+
+
 def test_guard_keeps_plain_wrong_number_social_contact_suspicious() -> None:
     message = "Wrong number, but thanks for being kind."
     model = ScamAnalysis(

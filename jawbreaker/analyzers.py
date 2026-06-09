@@ -222,7 +222,17 @@ def has_high_confidence_danger_signal(message: str, heuristic: ScamAnalysis) -> 
         )
 
     if scam_type == "investment_scam":
-        return any(token in text for token in ["wrong number", "wrong chat", "wrong contact", "meant to reach"]) and any(
+        return any(
+            token in text
+            for token in [
+                "wrong number",
+                "wrong chat",
+                "wrong contact",
+                "wrong recipient",
+                "meant to reach",
+                "thought this was",
+            ]
+        ) and any(
             token in text
             for token in [
                 "investment",
@@ -231,11 +241,17 @@ def has_high_confidence_danger_signal(message: str, heuristic: ScamAnalysis) -> 
                 "wallet",
                 "exchange",
                 "gold futures",
+                "gold strategy",
                 "currency signal",
+                "coin signal",
                 "guaranteed returns",
                 "low-risk",
                 "one spot just opened",
+                "reserve you a spot",
                 "window closes",
+                "small deposit",
+                "app link",
+                "open the app",
             ]
         )
 
