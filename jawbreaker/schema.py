@@ -215,6 +215,54 @@ class ScamAnalysis:
             scam_type = "romance_scam"
             tactics.extend(["emotional manipulation", "payment pressure"])
 
+        wrong_contact_terms = [
+            "wrong number",
+            "wrong chat",
+            "wrong contact",
+            "wrong person",
+            "wrong recipient",
+            "texted the wrong",
+            "meant to text",
+            "meant to reach",
+            "saved the wrong",
+            "typed one digit wrong",
+        ]
+        investment_terms = [
+            "investment",
+            "investment pool",
+            "investment group",
+            "trading",
+            "trading group",
+            "trading app",
+            "gold futures",
+            "currency signal",
+            "crypto",
+            "coin group",
+            "wallet",
+            "exchange app",
+            "exchange account",
+            "token round",
+            "private exchange",
+            "guaranteed returns",
+            "low-risk",
+            "daily returns",
+            "one spot just opened",
+            "window closes",
+            "fund the account",
+            "small balance",
+        ]
+        if any(token in text for token in wrong_contact_terms):
+            if any(token in text for token in investment_terms):
+                risk_level = "dangerous"
+                scam_type = "investment_scam"
+                tactics.extend(["wrong number", "relationship building", "investment bait"])
+                if any(token in text for token in ["wallet", "exchange", "fund the account", "small balance"]):
+                    tactics.append("wallet request")
+            elif risk_level == "safe":
+                risk_level = "suspicious"
+                scam_type = "unknown_contact"
+                tactics.extend(["wrong number", "relationship building"])
+
         if any(
             token in text
             for token in [
@@ -328,6 +376,8 @@ def _guess_impersonation(text: str) -> str:
         return "Tech support"
     if "recruiter" in text or "hiring" in text or "you are hired" in text or "tiktok shop" in text:
         return "Employer or recruiter"
+    if any(token in text for token in ["trading", "investment", "crypto", "wallet", "exchange app"]):
+        return "Friendly stranger or investment contact"
     if "prize" in text or "lottery" in text or "grant" in text:
         return "Prize or grant office"
     return "Unknown sender"
@@ -356,6 +406,8 @@ def _guess_ask(text: str, scam_type: str) -> str:
         return "Pay or share details to claim prize"
     if scam_type == "job_scam":
         return "Pay or move money for job"
+    if scam_type == "investment_scam":
+        return "Join an investment or trading group"
     if scam_type == "callback_phishing":
         return "Call a number from the message"
     if "http://" in text or "https://" in text:

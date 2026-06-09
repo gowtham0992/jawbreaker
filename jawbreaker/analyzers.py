@@ -221,6 +221,24 @@ def has_high_confidence_danger_signal(message: str, heuristic: ScamAnalysis) -> 
             ]
         )
 
+    if scam_type == "investment_scam":
+        return any(token in text for token in ["wrong number", "wrong chat", "wrong contact", "meant to reach"]) and any(
+            token in text
+            for token in [
+                "investment",
+                "trading",
+                "crypto",
+                "wallet",
+                "exchange",
+                "gold futures",
+                "currency signal",
+                "guaranteed returns",
+                "low-risk",
+                "one spot just opened",
+                "window closes",
+            ]
+        )
+
     if scam_type == "credential_theft":
         if any(
             token in text
@@ -294,6 +312,11 @@ def has_moderate_confidence_warning_signal(message: str, heuristic: ScamAnalysis
         return any(
             token in text
             for token in [
+                "wrong number",
+                "wrong chat",
+                "wrong person",
+                "wrong contact",
+                "wrong recipient",
                 "http://",
                 "https://",
                 "call this",
@@ -310,6 +333,73 @@ def has_moderate_confidence_warning_signal(message: str, heuristic: ScamAnalysis
             ]
         )
     return heuristic.risk_level == "needs_check"
+
+
+def has_high_confidence_benign_signal(message: str, heuristic: ScamAnalysis) -> bool:
+    if heuristic.risk_level != "safe":
+        return False
+
+    text = message.lower()
+    risky_tokens = [
+        "http://",
+        "https://",
+        "reply",
+        "call this",
+        "call the number",
+        "verification code",
+        "one-time code",
+        "password",
+        "pin",
+        "card number",
+        "bank login",
+        "send money",
+        "send funds",
+        "wire",
+        "gift card",
+        "crypto",
+        "wallet",
+        "investment",
+        "trading",
+        "pay at",
+        "pay through",
+        "payment link",
+        "enter card",
+        "card details",
+        "new number",
+        "do not tell",
+        "don't tell",
+        "keep this quiet",
+    ]
+    if any(token in text for token in risky_tokens):
+        return False
+
+    routine_family = any(token in text for token in ["bringing soup", "dinner", "no need to cook", "family dinner"])
+    routine_school = any(
+        token in text
+        for token in [
+            "school reminder",
+            "office reminder",
+            "early pickup",
+            "usual id",
+            "front office",
+            "lunch account notices go home",
+            "backpacks today",
+            "after-school club",
+        ]
+    )
+    routine_health = any(
+        token in text
+        for token in [
+            "prescription is ready",
+            "prescription pickup",
+            "call the store number on your bottle",
+            "usual patient portal",
+            "appointment is confirmed",
+        ]
+    )
+    routine_public = any(token in text for token in ["library book", "weather alert", "trash pickup"])
+
+    return routine_family or routine_school or routine_health or routine_public
 
 
 def should_apply_heuristic_guard(
@@ -331,6 +421,9 @@ def should_apply_heuristic_guard(
         if heuristic.risk_level == "dangerous":
             return has_high_confidence_danger_signal(message, heuristic)
         return has_moderate_confidence_warning_signal(message, heuristic)
+
+    if model_rank > risk_rank["needs_check"] and heuristic.risk_level == "safe":
+        return has_high_confidence_benign_signal(message, heuristic)
 
     if heuristic.risk_level == "safe":
         return False

@@ -91,6 +91,62 @@ def test_guard_does_not_escalate_password_changed_official_app_notice() -> None:
     assert not should_use_heuristic_guard(model, heuristic, validation_errors=[], message=message)
 
 
+def test_guard_promotes_wrong_number_investment_undercall() -> None:
+    message = "Wrong chat. You are polite, so I can invite you to a quiet investment group before the window closes."
+    model = ScamAnalysis(
+        risk_level="needs_check",
+        scam_type="unknown_contact",
+        summary="This should be checked.",
+        tactics=["wrong number"],
+        scam_dna={
+            "Impersonates": "unknown sender",
+            "Pressure": "friendly contact",
+            "Ask": "continue chatting",
+            "Risk": "uncertain legitimacy",
+        },
+    )
+    heuristic = ScamAnalysis.from_heuristics(message)
+
+    assert heuristic.risk_level == "dangerous"
+    assert heuristic.scam_type == "investment_scam"
+    assert should_use_heuristic_guard(model, heuristic, validation_errors=[], message=message)
+
+
+def test_guard_keeps_plain_wrong_number_social_contact_suspicious() -> None:
+    message = "Wrong number, but thanks for being kind."
+    model = ScamAnalysis(
+        risk_level="safe",
+        scam_type="none",
+        summary="No scam pattern found.",
+        tactics=[],
+        scam_dna={"Impersonates": "", "Pressure": "", "Ask": "", "Risk": ""},
+    )
+    heuristic = ScamAnalysis.from_heuristics(message)
+
+    assert heuristic.risk_level == "suspicious"
+    assert should_use_heuristic_guard(model, heuristic, validation_errors=[], message=message)
+
+
+def test_guard_demotes_routine_school_notice_false_alarm() -> None:
+    message = "Office reminder: lunch account notices go home in backpacks today."
+    model = ScamAnalysis(
+        risk_level="suspicious",
+        scam_type="unknown",
+        summary="This might need checking.",
+        tactics=["urgency"],
+        scam_dna={
+            "Impersonates": "school office",
+            "Pressure": "today",
+            "Ask": "read notice",
+            "Risk": "uncertain legitimacy",
+        },
+    )
+    heuristic = ScamAnalysis.from_heuristics(message)
+
+    assert heuristic.risk_level == "safe"
+    assert should_use_heuristic_guard(model, heuristic, validation_errors=[], message=message)
+
+
 def test_eval_guard_keeps_official_route_notice_calibrated() -> None:
     from eval.run_eval import apply_safety_guard
 
