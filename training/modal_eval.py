@@ -31,7 +31,7 @@ volume = modal.Volume.from_name("jawbreaker-training", create_if_missing=True)
 
 @app.function(
     gpu="A100",
-    timeout=90 * 60,
+    timeout=3 * 60 * 60,
     volumes={REMOTE_OUTPUT: volume},
 )
 def run_eval(
