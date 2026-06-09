@@ -167,14 +167,59 @@ def has_high_confidence_danger_signal(message: str, heuristic: ScamAnalysis) -> 
 
     high_confidence_types = {
         "callback_phishing",
-        "family_impersonation",
-        "job_scam",
         "payment_request",
         "prize_scam",
         "tech_support",
     }
     if scam_type in high_confidence_types:
         return True
+
+    if scam_type == "family_impersonation":
+        has_identity_shift = any(
+            token in text
+            for token in [
+                "new number",
+                "changed numbers",
+                "number only",
+                "phone broke",
+                "temporary phone",
+                "lost my phone",
+            ]
+        )
+        has_secrecy = any(token in text for token in ["don't tell", "dont tell", "do not tell", "keep this quiet"])
+        has_sensitive_ask = any(
+            token in text
+            for token in [
+                "wire",
+                "gift card",
+                "send money",
+                "send funds",
+                "can you send",
+                "rent",
+                "hospital bill",
+                "bail",
+                "emergency",
+            ]
+        )
+        return has_identity_shift or has_secrecy or has_sensitive_ask
+
+    if scam_type == "job_scam":
+        return any(
+            token in text
+            for token in [
+                "telegram",
+                "whatsapp",
+                "training starts",
+                "pay is instant",
+                "per day",
+                "payment is made immediately",
+                "deposit",
+                "onboarding fee",
+                "training fee",
+                "equipment shipment",
+                "payroll setup",
+            ]
+        )
 
     if scam_type == "credential_theft":
         if any(
@@ -243,6 +288,30 @@ def has_high_confidence_danger_signal(message: str, heuristic: ScamAnalysis) -> 
     )
 
 
+def has_moderate_confidence_warning_signal(message: str, heuristic: ScamAnalysis) -> bool:
+    text = message.lower()
+    if heuristic.risk_level == "suspicious":
+        return any(
+            token in text
+            for token in [
+                "http://",
+                "https://",
+                "call this",
+                "call the number",
+                "reply yes",
+                "reply no",
+                "held package",
+                "unpaid",
+                "verify now",
+                "confirm your",
+                "account",
+                "payment",
+                "fee",
+            ]
+        )
+    return heuristic.risk_level == "needs_check"
+
+
 def should_apply_heuristic_guard(
     message: str,
     model_analysis: ScamAnalysis,
@@ -261,7 +330,7 @@ def should_apply_heuristic_guard(
             return False
         if heuristic.risk_level == "dangerous":
             return has_high_confidence_danger_signal(message, heuristic)
-        return True
+        return has_moderate_confidence_warning_signal(message, heuristic)
 
     if heuristic.risk_level == "safe":
         return False

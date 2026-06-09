@@ -66,7 +66,7 @@ class ScamAnalysis:
             scam_type = "credential_theft"
             tactics.extend(["credential request", "fake authority"])
 
-        if any(token in text for token in ["urgent", "immediately", "today", "24 hours", "act now", "held"]):
+        if any(token in text for token in ["urgent", "immediately", "24 hours", "act now", "held"]):
             if risk_level == "safe":
                 risk_level = "suspicious"
             tactics.append("urgency")
@@ -111,28 +111,34 @@ class ScamAnalysis:
             scam_type = "payment_request"
             tactics.append("payment pressure")
 
-        if any(
-            token in text
-            for token in [
-                "grandma",
-                "grandpa",
-                "auntie",
-                "niece",
-                "nephew",
-                "your daughter",
-                "new number",
-                "changed numbers",
-                "number only",
-                "phone broke",
-                "temporary phone",
-                "don't tell",
-                "dont tell",
-                "do not tell",
-            ]
-        ):
+        family_terms = ["grandma", "grandpa", "auntie", "niece", "nephew", "your daughter"]
+        number_change_terms = ["new number", "changed numbers", "number only", "phone broke", "temporary phone"]
+        secrecy_terms = ["don't tell", "dont tell", "do not tell", "keep this quiet", "keep it quiet"]
+        family_pressure_terms = [
+            "wire",
+            "gift card",
+            "send money",
+            "send funds",
+            "rent",
+            "hospital bill",
+            "bail",
+            "emergency",
+            "lost my phone",
+            "need you to",
+            "can you send",
+        ]
+        family_context = any(token in text for token in family_terms)
+        number_change = any(token in text for token in number_change_terms)
+        secrecy = any(token in text for token in secrecy_terms)
+        family_pressure = any(token in text for token in family_pressure_terms)
+        if number_change or secrecy or (family_context and family_pressure):
             risk_level = "dangerous"
             scam_type = "family_impersonation"
-            tactics.extend(["impersonation", "secrecy"])
+            tactics.append("impersonation")
+            if secrecy:
+                tactics.append("secrecy")
+            if family_pressure:
+                tactics.append("payment pressure")
 
         if any(
             token in text
