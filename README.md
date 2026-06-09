@@ -10,9 +10,11 @@ app_file: app.py
 license: mit
 short_description: Private scam defense for someone you love.
 tags:
+- gradio
 - build-small-hackathon
 - backyard-ai
 - openbmb
+- minicpm
 - minicpm5
 - tiny-titan
 - well-tuned
@@ -25,6 +27,7 @@ tags:
 - codex
 - local-first
 - scam-defense
+- zerogpu
 models:
 - openbmb/MiniCPM5-1B
 - build-small-hackathon/jawbreaker-minicpm5-1b-lora-v4

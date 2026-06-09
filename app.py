@@ -1448,6 +1448,1622 @@ def paper_shield_html() -> str:
 </html>"""
 
 
+def kitchen_table_html() -> str:
+    examples_json = json.dumps(EXAMPLES).replace("</", "<\\/")
+    logo_uri = logo_data_uri()
+    model_label = escape(model_status_label())
+    backend_label = escape(backend_status_label())
+    template = """<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Jawbreaker</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --cream: #f5ead8;
+      --cream-2: #fff7e8;
+      --paper: #fffdf6;
+      --paper-warm: #fff2d3;
+      --ink: #16120d;
+      --muted: #6b5a49;
+      --line: #24160e;
+      --wood-dark: #6f4527;
+      --wood: #b6763f;
+      --wood-light: #d8a062;
+      --linen: #f8ecd4;
+      --linen-red: rgba(188, 57, 49, .16);
+      --tape: rgba(255, 233, 156, .82);
+      --yellow: #f5c400;
+      --red: #d94b48;
+      --red-soft: #ffe0dd;
+      --green: #23794d;
+      --green-soft: #dcf6e8;
+      --amber: #bd7412;
+      --amber-soft: #fff0c8;
+      --blue: #2559d9;
+      --blue-soft: #e2ecff;
+      --plum: #58304f;
+      --shadow: 8px 8px 0 rgba(36, 22, 14, .95);
+      --soft-shadow: 0 20px 60px rgba(36, 22, 14, .18);
+      --font-display: Georgia, "Times New Roman", Times, serif;
+      --font-body: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      --font-label: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+    }
+
+    * { box-sizing: border-box; }
+
+    html {
+      min-height: 100%;
+      overflow-x: clip;
+      background: var(--cream);
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      overflow-x: clip;
+      color: var(--ink);
+      font-family: var(--font-body);
+      background:
+        radial-gradient(circle at 14% 10%, rgba(245, 196, 0, .22), transparent 23rem),
+        radial-gradient(circle at 86% 4%, rgba(217, 75, 72, .13), transparent 19rem),
+        linear-gradient(90deg, rgba(36,22,14,.04) 1px, transparent 1px),
+        var(--cream);
+      background-size: auto, auto, 34px 34px, auto;
+    }
+
+    button, textarea { font: inherit; }
+    button { cursor: pointer; color: inherit; }
+
+    .table-shell {
+      width: min(1420px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 26px 0 54px;
+    }
+
+    .masthead {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 24px;
+      align-items: center;
+      padding: 0 0 18px;
+      border-bottom: 3px solid var(--line);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      min-width: 0;
+    }
+
+    .brand img {
+      width: 54px;
+      height: 54px;
+      border: 3px solid var(--line);
+      border-radius: 12px;
+      background: var(--paper);
+      box-shadow: 4px 4px 0 var(--line);
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-family: var(--font-display);
+      font-size: clamp(2.25rem, 5vw, 4.35rem);
+      line-height: .82;
+      letter-spacing: 0;
+    }
+
+    .brand p {
+      margin: 8px 0 0;
+      color: var(--muted);
+      font-size: clamp(1rem, 1.4vw, 1.25rem);
+      line-height: 1.22;
+    }
+
+    .tech-badges {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 8px;
+      max-width: 520px;
+      font-family: var(--font-label);
+      font-size: .72rem;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+
+    .tech-badges span {
+      display: inline-flex;
+      align-items: center;
+      min-height: 28px;
+      padding: 6px 10px;
+      border: 2px solid var(--line);
+      border-radius: 999px;
+      background: var(--paper);
+    }
+
+    .hero-copy {
+      display: grid;
+      grid-template-columns: minmax(0, .9fr) minmax(280px, .72fr);
+      gap: clamp(22px, 4vw, 64px);
+      align-items: end;
+      padding: 26px 0 28px;
+    }
+
+    .hero-copy h2 {
+      margin: 0;
+      max-width: 13ch;
+      font-family: var(--font-display);
+      font-size: clamp(2.35rem, 6vw, 5.35rem);
+      line-height: .86;
+      letter-spacing: 0;
+    }
+
+    .hero-copy p {
+      margin: 0;
+      color: var(--muted);
+      font-size: clamp(1rem, 1.35vw, 1.25rem);
+      line-height: 1.45;
+    }
+
+    .notice-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .notice {
+      width: fit-content;
+      max-width: 100%;
+      padding: 8px 11px;
+      border: 2px solid var(--line);
+      border-radius: 999px;
+      background: var(--paper);
+      color: var(--muted);
+      font-family: var(--font-label);
+      font-size: .72rem;
+      font-weight: 900;
+      line-height: 1.25;
+    }
+
+    .family-rule {
+      position: relative;
+      margin-top: 18px;
+      max-width: 620px;
+      border: 2px solid var(--line);
+      border-radius: 12px;
+      background: var(--paper);
+      padding: 14px 16px 14px 54px;
+      box-shadow: 5px 5px 0 rgba(36,22,14,.88);
+      transform: rotate(.6deg);
+    }
+
+    .family-rule::before {
+      content: "";
+      position: absolute;
+      left: 16px;
+      top: 17px;
+      width: 24px;
+      height: 24px;
+      border: 2px solid var(--line);
+      border-radius: 50%;
+      background:
+        radial-gradient(circle at center, var(--red) 0 36%, transparent 37%),
+        var(--yellow);
+    }
+
+    .family-rule strong {
+      display: block;
+      margin-bottom: 3px;
+      font-family: var(--font-label);
+      font-size: .72rem;
+      text-transform: uppercase;
+    }
+
+    .family-rule span {
+      color: var(--muted);
+      line-height: 1.35;
+    }
+
+    .tabletop {
+      position: relative;
+      display: grid;
+      grid-template-columns: minmax(340px, 430px) minmax(0, 1fr);
+      gap: clamp(28px, 4vw, 56px);
+      align-items: start;
+      padding: clamp(18px, 2.5vw, 34px);
+      border: 3px solid var(--line);
+      border-radius: 18px;
+      background:
+        linear-gradient(90deg, var(--linen-red) 0 10px, transparent 10px 34px),
+        linear-gradient(0deg, var(--linen-red) 0 10px, transparent 10px 34px),
+        radial-gradient(ellipse at 17% 16%, rgba(255,255,255,.22), transparent 10rem),
+        repeating-linear-gradient(88deg, rgba(255,255,255,.12) 0 3px, transparent 3px 17px),
+        linear-gradient(115deg, var(--wood-light), var(--wood) 44%, var(--wood-dark));
+      background-size: 68px 68px, 68px 68px, auto, auto, auto;
+      box-shadow: var(--soft-shadow);
+      overflow: hidden;
+      isolation: isolate;
+    }
+
+    .tabletop::before {
+      content: "";
+      position: absolute;
+      inset: 18px auto auto 46%;
+      width: 150px;
+      height: 150px;
+      border: 10px solid rgba(80, 43, 24, .18);
+      border-radius: 50%;
+      transform: rotate(-14deg);
+      pointer-events: none;
+    }
+
+    .kitchen-prop {
+      position: absolute;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .recipe-box {
+      right: clamp(18px, 3vw, 56px);
+      top: clamp(18px, 3vw, 42px);
+      width: 178px;
+      height: 88px;
+      border: 3px solid var(--line);
+      border-radius: 10px;
+      background: #c84b38;
+      box-shadow: 6px 6px 0 rgba(36,22,14,.95);
+      transform: rotate(4deg);
+      opacity: .92;
+    }
+
+    .recipe-box::before,
+    .recipe-box::after {
+      content: "";
+      position: absolute;
+      left: 16px;
+      right: 16px;
+      height: 28px;
+      border: 2px solid var(--line);
+      border-bottom: 0;
+      border-radius: 8px 8px 0 0;
+      background: var(--paper);
+    }
+
+    .recipe-box::before { top: -24px; transform: rotate(-3deg); }
+    .recipe-box::after { top: -14px; transform: rotate(3deg); }
+
+    .tea-cup {
+      right: clamp(22px, 4vw, 82px);
+      bottom: clamp(22px, 4vw, 72px);
+      width: 118px;
+      height: 118px;
+      border: 4px solid var(--line);
+      border-radius: 50%;
+      background:
+        radial-gradient(circle at center, #6f3825 0 28%, #f4ead7 29% 46%, transparent 47%),
+        var(--paper);
+      box-shadow: 7px 7px 0 rgba(36,22,14,.9);
+      transform: rotate(-8deg);
+      opacity: .95;
+    }
+
+    .tea-cup::after {
+      content: "";
+      position: absolute;
+      right: -26px;
+      top: 34px;
+      width: 36px;
+      height: 46px;
+      border: 4px solid var(--line);
+      border-left: 0;
+      border-radius: 0 999px 999px 0;
+      background: transparent;
+    }
+
+    .spoon {
+      left: 48%;
+      bottom: 20px;
+      width: 18px;
+      height: 190px;
+      border: 3px solid var(--line);
+      border-radius: 999px;
+      background: linear-gradient(#f7f1df, #bfb5a2);
+      box-shadow: 4px 4px 0 rgba(36,22,14,.85);
+      transform: rotate(58deg);
+      opacity: .52;
+    }
+
+    .quilt-runner {
+      left: -42px;
+      top: 18%;
+      width: 180px;
+      height: 70%;
+      border: 3px solid rgba(36,22,14,.62);
+      border-radius: 999px;
+      background:
+        linear-gradient(45deg, rgba(255,255,255,.22) 25%, transparent 25% 50%, rgba(255,255,255,.22) 50% 75%, transparent 75%),
+        linear-gradient(135deg, rgba(217,75,72,.25), rgba(245,196,0,.22));
+      background-size: 34px 34px, auto;
+      transform: rotate(8deg);
+      opacity: .62;
+    }
+
+    .tabletop::after {
+      content: "";
+      position: absolute;
+      right: 46px;
+      bottom: 34px;
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      border: 18px solid rgba(255,255,255,.26);
+      background: rgba(255,255,255,.14);
+      box-shadow: 0 0 0 3px rgba(36,22,14,.2);
+      pointer-events: none;
+    }
+
+    .left-stack,
+    .right-stack {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      gap: 18px;
+    }
+
+    .clipboard {
+      border: 3px solid var(--line);
+      border-radius: 14px;
+      background: #f2d18d;
+      box-shadow: var(--shadow);
+      padding: 16px;
+      transform: rotate(-1.2deg);
+    }
+
+    .clip {
+      width: 92px;
+      height: 26px;
+      margin: -4px auto 12px;
+      border: 3px solid var(--line);
+      border-radius: 0 0 14px 14px;
+      background: linear-gradient(#c48a36, #8c5b25);
+      box-shadow: inset 0 3px 0 rgba(255,255,255,.28);
+    }
+
+    .pause-note {
+      width: fit-content;
+      max-width: 100%;
+      margin: 0 auto 14px;
+      padding: 9px 13px;
+      border: 2px solid var(--line);
+      border-radius: 4px;
+      background: var(--tape);
+      font-family: var(--font-label);
+      font-size: .72rem;
+      font-weight: 950;
+      text-transform: uppercase;
+      transform: rotate(1.8deg);
+      box-shadow: 3px 3px 0 rgba(36,22,14,.72);
+    }
+
+    .paper-card {
+      position: relative;
+      border: 2.5px solid var(--line);
+      border-radius: 10px;
+      background:
+        linear-gradient(var(--paper) 31px, rgba(36,22,14,.07) 32px),
+        var(--paper);
+      background-size: 100% 32px;
+      padding: 20px;
+    }
+
+    .paper-card::after {
+      content: "";
+      position: absolute;
+      right: 18px;
+      top: -11px;
+      width: 72px;
+      height: 23px;
+      border: 2px solid rgba(36,22,14,.22);
+      background: var(--tape);
+      transform: rotate(3deg);
+    }
+
+    .paper-card h3,
+    .memo h3,
+    .history-card h3 {
+      margin: 0 0 12px;
+      font-family: var(--font-label);
+      font-size: .82rem;
+      font-weight: 950;
+      text-transform: uppercase;
+      letter-spacing: .02em;
+    }
+
+    .privacy-note {
+      margin: 0 0 14px;
+      color: var(--muted);
+      font-family: var(--font-label);
+      font-size: .72rem;
+      font-weight: 850;
+      line-height: 1.35;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 246px;
+      resize: vertical;
+      border: 2px solid var(--line);
+      border-radius: 8px;
+      background:
+        linear-gradient(var(--paper) 31px, rgba(36,22,14,.08) 32px),
+        var(--paper);
+      background-size: 100% 32px;
+      padding: 16px;
+      color: var(--ink);
+      font-size: 1.02rem;
+      line-height: 1.55;
+      outline: 3px solid transparent;
+      outline-offset: 2px;
+    }
+
+    textarea:focus-visible {
+      outline-color: rgba(245,196,0,.88);
+      box-shadow: 0 0 0 5px rgba(245,196,0,.22);
+    }
+
+    .check-button {
+      position: relative;
+      width: 100%;
+      min-height: 64px;
+      margin-top: 18px;
+      border: 3px solid var(--line);
+      border-radius: 999px;
+      background: var(--yellow);
+      color: var(--ink);
+      font-family: var(--font-label);
+      font-size: 1rem;
+      font-weight: 950;
+      text-transform: uppercase;
+      box-shadow: 0 7px 0 var(--line);
+      transition: transform .16s ease, box-shadow .16s ease, opacity .16s ease;
+    }
+
+    .check-button::after {
+      content: "";
+      position: absolute;
+      inset: 9px 14px auto auto;
+      width: 42px;
+      height: 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.35);
+    }
+
+    .check-button:active {
+      transform: translateY(5px);
+      box-shadow: 0 2px 0 var(--line);
+    }
+
+    .check-button[disabled] {
+      opacity: .62;
+      cursor: wait;
+    }
+
+    .check-button:focus-visible,
+    .sample:focus-visible,
+    .copy-button:focus-visible {
+      outline: 3px solid var(--blue);
+      outline-offset: 3px;
+    }
+
+    .samples {
+      display: grid;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .sample-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 18px 0 -8px;
+      color: var(--muted);
+      font-family: var(--font-label);
+      font-size: .72rem;
+      font-weight: 950;
+      text-transform: uppercase;
+    }
+
+    .sample-label::before {
+      content: "";
+      width: 16px;
+      height: 16px;
+      border: 2px solid var(--line);
+      border-radius: 4px;
+      background: var(--yellow);
+      transform: rotate(-8deg);
+    }
+
+    .sample {
+      border: 2px solid var(--line);
+      border-radius: 999px;
+      background: var(--paper);
+      padding: 10px 14px;
+      text-align: left;
+      font-size: .92rem;
+      line-height: 1.25;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      box-shadow: 3px 3px 0 rgba(36,22,14,.9);
+    }
+
+    .history-card {
+      border: 3px solid var(--line);
+      border-radius: 14px;
+      background: var(--paper);
+      box-shadow: 5px 5px 0 var(--line);
+      padding: 18px;
+      transform: rotate(.8deg);
+    }
+
+    .trusted-card {
+      border: 3px solid var(--line);
+      border-radius: 14px;
+      background:
+        linear-gradient(90deg, rgba(37,89,217,.13) 0 8px, transparent 8px 20px),
+        var(--blue-soft);
+      box-shadow: 5px 5px 0 var(--line);
+      padding: 17px;
+      transform: rotate(-.8deg);
+    }
+
+    .trusted-card h3 {
+      margin: 0 0 8px;
+      font-family: var(--font-display);
+      font-size: 1.35rem;
+      line-height: 1;
+    }
+
+    .trusted-card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: .94rem;
+      line-height: 1.4;
+    }
+
+    .history-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .history-empty {
+      color: var(--muted);
+      font-size: .92rem;
+    }
+
+    .history-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 12px;
+      align-items: start;
+      border: 2px solid var(--line);
+      border-radius: 8px;
+      background: var(--red-soft);
+      padding: 12px;
+      font-size: .82rem;
+      line-height: 1.3;
+    }
+
+    .history-row.safe { background: var(--green-soft); }
+    .history-row.suspicious,
+    .history-row.needs_check { background: var(--amber-soft); }
+
+    .history-badge {
+      border: 2px solid var(--line);
+      border-radius: 999px;
+      padding: 5px 8px;
+      background: var(--red);
+      color: #fff;
+      font-family: var(--font-label);
+      font-size: .62rem;
+      font-weight: 950;
+      text-transform: uppercase;
+    }
+
+    .history-badge.safe { background: var(--green); }
+    .history-badge.suspicious,
+    .history-badge.needs_check { background: var(--amber); }
+
+    .memo,
+    .result-card {
+      position: relative;
+      border: 3px solid var(--line);
+      border-radius: 16px;
+      background: var(--paper);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .memo {
+      transform: rotate(.6deg);
+    }
+
+    .memo::before,
+    .result-card::before,
+    .safe-action::before {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: -13px;
+      width: 86px;
+      height: 25px;
+      border: 2px solid rgba(36,22,14,.3);
+      background: var(--tape);
+      transform: translateX(-50%) rotate(-2deg);
+      z-index: 2;
+    }
+
+    .memo-header,
+    .result-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      min-height: 48px;
+      padding: 12px 18px;
+      border-bottom: 3px solid var(--line);
+      background: var(--paper-warm);
+      font-family: var(--font-label);
+      font-weight: 950;
+      font-size: .82rem;
+      text-transform: uppercase;
+    }
+
+    .memo-body,
+    .result-body {
+      padding: clamp(20px, 3vw, 34px);
+    }
+
+    .standby {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 260px;
+      gap: clamp(20px, 3vw, 42px);
+      align-items: center;
+      min-height: 430px;
+    }
+
+    .standby h3 {
+      margin: 0 0 12px;
+      font-family: var(--font-display);
+      font-size: clamp(2.2rem, 4vw, 4rem);
+      line-height: .9;
+      letter-spacing: 0;
+    }
+
+    .standby p {
+      max-width: 44rem;
+      margin: 0;
+      color: var(--muted);
+      font-size: 1.05rem;
+      line-height: 1.55;
+    }
+
+    .standby-steps {
+      display: grid;
+      gap: 12px;
+      margin: 24px 0 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .standby-steps li {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr);
+      gap: 12px;
+      align-items: start;
+      max-width: 46rem;
+      font-size: 1rem;
+      line-height: 1.35;
+    }
+
+    .standby-steps strong {
+      display: inline-grid;
+      place-items: center;
+      width: 1.7rem;
+      height: 1.7rem;
+      border: 2px solid var(--line);
+      border-radius: 999px;
+      background: var(--yellow);
+      font-family: var(--font-label);
+      font-size: .86rem;
+    }
+
+    .coaster-stack {
+      display: grid;
+      gap: 14px;
+    }
+
+    .coaster {
+      min-height: 104px;
+      display: grid;
+      align-content: center;
+      gap: 7px;
+      border: 3px solid var(--line);
+      border-radius: 12px;
+      background: var(--cream-2);
+      padding: 16px;
+      box-shadow: 4px 4px 0 var(--line);
+    }
+
+    .coaster strong {
+      font-family: var(--font-label);
+      font-size: .76rem;
+      text-transform: uppercase;
+    }
+
+    .coaster span {
+      color: var(--muted);
+      line-height: 1.35;
+    }
+
+    .fridge-note {
+      position: relative;
+      border: 3px solid var(--line);
+      border-radius: 18px;
+      background:
+        linear-gradient(var(--paper) 31px, rgba(36,22,14,.08) 32px),
+        var(--paper);
+      background-size: 100% 32px;
+      padding: 18px;
+      box-shadow: 5px 5px 0 var(--line);
+      transform: rotate(1.8deg);
+    }
+
+    .fridge-note::before {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: -16px;
+      width: 30px;
+      height: 30px;
+      border: 3px solid var(--line);
+      border-radius: 50%;
+      background: var(--red);
+      transform: translateX(-50%);
+      box-shadow: inset 0 0 0 6px rgba(255,255,255,.28);
+    }
+
+    .fridge-note h4 {
+      margin: 10px 0 10px;
+      font-family: var(--font-display);
+      font-size: 1.6rem;
+      line-height: .95;
+    }
+
+    .fridge-note ul {
+      display: grid;
+      gap: 9px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      color: var(--muted);
+      line-height: 1.28;
+    }
+
+    .fridge-note li::before {
+      content: "STOP";
+      display: inline-block;
+      margin-right: 8px;
+      border: 2px solid var(--line);
+      border-radius: 999px;
+      background: var(--red);
+      color: #fff;
+      padding: 2px 5px;
+      font-family: var(--font-label);
+      font-size: .58rem;
+      font-weight: 950;
+    }
+
+    .loading .result-body {
+      min-height: 410px;
+      display: grid;
+      align-content: center;
+      gap: 20px;
+      background:
+        radial-gradient(circle at 80% 20%, rgba(245,196,0,.16), transparent 16rem),
+        var(--paper);
+    }
+
+    .reader-light {
+      height: 22px;
+      border: 3px solid var(--line);
+      border-radius: 999px;
+      background:
+        linear-gradient(90deg, var(--yellow) var(--progress, 12%), transparent 0),
+        repeating-linear-gradient(90deg, rgba(36,22,14,.16) 0 8px, transparent 8px 16px),
+        var(--paper);
+      box-shadow: 5px 5px 0 var(--line);
+    }
+
+    .scan-note {
+      border: 3px solid var(--line);
+      border-radius: 14px;
+      background: var(--cream-2);
+      padding: 22px;
+      transform: rotate(-.7deg);
+      box-shadow: 5px 5px 0 var(--line);
+    }
+
+    .scan-note::before {
+      content: "";
+      display: block;
+      width: 64px;
+      height: 64px;
+      margin: 0 auto 14px;
+      border: 3px solid var(--line);
+      border-radius: 50%;
+      background:
+        radial-gradient(circle at center, var(--red) 0 25%, transparent 26%),
+        radial-gradient(circle at center, transparent 0 42%, var(--yellow) 43% 60%, transparent 61%),
+        var(--paper);
+      animation: carefulPulse 1.2s ease-in-out infinite alternate;
+    }
+
+    @keyframes carefulPulse {
+      from { transform: scale(.95) rotate(-2deg); }
+      to { transform: scale(1.05) rotate(2deg); }
+    }
+
+    .scan-note h3 {
+      margin: 0 0 14px;
+      font-family: var(--font-display);
+      font-size: clamp(1.8rem, 3vw, 2.8rem);
+      line-height: .95;
+    }
+
+    .scan-lines {
+      display: grid;
+      gap: 10px;
+      margin: 18px 0 0;
+      padding: 0;
+      list-style: none;
+      font-family: var(--font-label);
+      font-weight: 900;
+      color: var(--muted);
+    }
+
+    .scan-lines li.active {
+      color: var(--ink);
+    }
+
+    .result-grid {
+      display: grid;
+      grid-template-columns: minmax(255px, .62fr) minmax(0, 1fr);
+      gap: 18px;
+      align-items: stretch;
+    }
+
+    .decision-strip {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 4px;
+    }
+
+    .decision-light {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 7px 10px;
+      border: 2px solid var(--line);
+      border-radius: 999px;
+      background: var(--paper);
+      color: var(--muted);
+      font-family: var(--font-label);
+      font-size: .66rem;
+      font-weight: 950;
+      text-transform: uppercase;
+    }
+
+    .decision-light::before {
+      content: "";
+      width: 10px;
+      height: 10px;
+      border: 2px solid var(--line);
+      border-radius: 50%;
+      background: #d7c7a6;
+    }
+
+    .decision-light.on.dangerous::before { background: var(--red); }
+    .decision-light.on.needs_check::before,
+    .decision-light.on.suspicious::before { background: var(--amber); }
+    .decision-light.on.safe::before { background: var(--green); }
+
+    .verdict-panel {
+      position: relative;
+      min-height: 285px;
+      display: grid;
+      align-content: center;
+      justify-items: center;
+      gap: 18px;
+      border: 3px solid var(--line);
+      border-radius: 14px;
+      background: var(--red-soft);
+      padding: 26px;
+      text-align: center;
+    }
+
+    .verdict-panel::before {
+      content: "";
+      position: absolute;
+      left: -3px;
+      top: 24px;
+      bottom: 24px;
+      width: 16px;
+      border: 3px solid var(--line);
+      border-left: 0;
+      border-radius: 0 999px 999px 0;
+      background: var(--red);
+    }
+
+    .verdict-panel.safe::before { background: var(--green); }
+    .verdict-panel.suspicious::before,
+    .verdict-panel.needs_check::before { background: var(--amber); }
+
+    .verdict-panel.safe { background: var(--green-soft); }
+    .verdict-panel.suspicious,
+    .verdict-panel.needs_check { background: var(--amber-soft); }
+
+    .rubber-stamp {
+      width: min(180px, 52vw);
+      aspect-ratio: 1;
+      display: grid;
+      place-items: center;
+      border: 7px double currentColor;
+      border-radius: 999px;
+      color: var(--red);
+      font-family: var(--font-label);
+      font-weight: 950;
+      font-size: clamp(.84rem, 1.4vw, 1.15rem);
+      text-align: center;
+      text-transform: uppercase;
+      transform: rotate(-11deg);
+      animation: stampIn .34s cubic-bezier(.2, .95, .3, 1.2);
+    }
+
+    .safe .rubber-stamp { color: var(--green); }
+    .suspicious .rubber-stamp,
+    .needs_check .rubber-stamp { color: var(--amber); }
+
+    @keyframes stampIn {
+      0% { transform: scale(1.55) rotate(-11deg); opacity: 0; filter: blur(3px); }
+      70% { transform: scale(.92) rotate(-11deg); opacity: 1; filter: blur(0); }
+      100% { transform: scale(1) rotate(-11deg); }
+    }
+
+    .verdict-panel h3 {
+      margin: 0;
+      font-family: var(--font-display);
+      font-size: clamp(1.75rem, 3vw, 3rem);
+      line-height: .94;
+    }
+
+    .verdict-panel p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.45;
+    }
+
+    .dna-board {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .dna-card {
+      min-height: 122px;
+      border: 3px solid var(--line);
+      border-radius: 12px;
+      background:
+        linear-gradient(135deg, var(--paper) 0 78%, #eedbb7 79%),
+        var(--paper);
+      padding: 14px;
+      box-shadow: 3px 3px 0 var(--line);
+    }
+
+    .dna-card small {
+      display: block;
+      margin-bottom: 12px;
+      font-family: var(--font-label);
+      font-size: .68rem;
+      font-weight: 950;
+      text-transform: uppercase;
+    }
+
+    .dna-card strong {
+      display: block;
+      font-family: var(--font-display);
+      font-size: clamp(1rem, 1.5vw, 1.35rem);
+      line-height: 1.05;
+      overflow-wrap: anywhere;
+    }
+
+    .tactic-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 14px;
+    }
+
+    .dna-caption {
+      margin: 0 0 12px;
+      font-family: var(--font-label);
+      font-size: .72rem;
+      font-weight: 950;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .tag {
+      border: 2px solid var(--line);
+      border-radius: 999px;
+      background: var(--red);
+      color: #fff;
+      padding: 6px 9px;
+      font-family: var(--font-label);
+      font-size: .68rem;
+      font-weight: 950;
+      text-transform: uppercase;
+    }
+
+    .safe-action {
+      position: relative;
+      margin-top: 18px;
+      border: 3px solid var(--line);
+      border-radius: 16px;
+      background: var(--green-soft);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .safe-action::after {
+      content: "";
+      position: absolute;
+      right: 18px;
+      top: 56px;
+      width: 90px;
+      height: 90px;
+      border: 3px solid rgba(36,22,14,.18);
+      border-radius: 50%;
+      background:
+        radial-gradient(circle at center, rgba(35,121,77,.3) 0 30%, transparent 31%),
+        transparent;
+      transform: rotate(12deg);
+      pointer-events: none;
+    }
+
+    .safe-action-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 12px 18px;
+      border-bottom: 3px solid var(--line);
+      background: var(--paper-warm);
+      font-family: var(--font-label);
+      font-size: .82rem;
+      font-weight: 950;
+      text-transform: uppercase;
+    }
+
+    .safe-action-body {
+      padding: clamp(18px, 3vw, 28px);
+    }
+
+    .safe-action-body h3 {
+      margin: 0 0 12px;
+      font-family: var(--font-label);
+      font-size: .78rem;
+      text-transform: uppercase;
+    }
+
+    .safe-action-body .action-text {
+      margin: 0 0 20px;
+      font-family: var(--font-display);
+      font-size: clamp(1.3rem, 2.4vw, 2.35rem);
+      font-weight: 850;
+      line-height: 1.02;
+    }
+
+    .copy-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 170px;
+      gap: 14px;
+      align-items: stretch;
+    }
+
+    .copy-note {
+      max-height: 170px;
+      overflow: auto;
+      white-space: pre-wrap;
+      border: 3px solid var(--line);
+      border-radius: 10px;
+      background: var(--paper);
+      padding: 14px;
+      font-size: .88rem;
+      line-height: 1.4;
+    }
+
+    .copy-button {
+      border: 3px solid var(--line);
+      border-radius: 10px;
+      background: var(--paper);
+      font-family: var(--font-label);
+      font-size: .86rem;
+      font-weight: 950;
+      text-transform: uppercase;
+      box-shadow: 5px 5px 0 var(--line);
+      transition: transform .16s ease, box-shadow .16s ease;
+    }
+
+    .copy-button::before {
+      content: "Shareable note";
+      display: block;
+      margin-bottom: 8px;
+      color: var(--muted);
+      font-size: .62rem;
+      font-weight: 950;
+    }
+
+    .copy-button:active {
+      transform: translateY(4px);
+      box-shadow: 1px 1px 0 var(--line);
+    }
+
+    .footer-strip {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 8px 12px;
+      margin-top: 26px;
+      color: rgba(255,255,255,.92);
+      font-family: var(--font-label);
+      font-size: .78rem;
+      font-weight: 850;
+      text-align: center;
+      text-shadow: 0 1px 0 rgba(0,0,0,.35);
+    }
+
+    .footer-strip strong { color: #fff; }
+
+    .error {
+      border: 3px solid var(--line);
+      border-radius: 12px;
+      background: var(--red-soft);
+      padding: 16px;
+      font-weight: 850;
+    }
+
+    @media (max-width: 1120px) {
+      .masthead,
+      .hero-copy,
+      .tabletop,
+      .standby,
+      .result-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .tech-badges {
+        justify-content: flex-start;
+      }
+    }
+
+    @media (max-width: 720px) {
+      .table-shell {
+        width: min(100% - 20px, 620px);
+        padding-top: 16px;
+      }
+
+      .brand img {
+        width: 44px;
+        height: 44px;
+      }
+
+      .hero-copy h2 {
+        max-width: none;
+        font-size: clamp(2.25rem, 13vw, 3.65rem);
+      }
+
+      .tabletop {
+        padding: 14px;
+        border-radius: 14px;
+      }
+
+      .clipboard,
+      .history-card,
+      .memo,
+      .trusted-card,
+      .fridge-note {
+        transform: none;
+      }
+
+      .kitchen-prop {
+        display: none;
+      }
+
+      .paper-card,
+      .memo-body,
+      .result-body {
+        padding: 16px;
+      }
+
+      textarea {
+        min-height: 190px;
+        font-size: .96rem;
+      }
+
+      .dna-board,
+      .copy-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .copy-button {
+        min-height: 66px;
+      }
+
+      .family-rule {
+        padding-left: 16px;
+      }
+
+      .family-rule::before {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="table-shell">
+    <header class="masthead">
+      <div class="brand">
+        <img src="__LOGO_URI__" alt="" />
+        <div>
+          <h1>Jawbreaker</h1>
+          <p>Private scam defense for someone you love.</p>
+        </div>
+      </div>
+      <div class="tech-badges" aria-label="Build details">
+        <span>__MODEL_LABEL__</span>
+        <span id="modelState">Ready</span>
+      </div>
+    </header>
+
+    <section class="hero-copy" aria-labelledby="heroTitle">
+      <div>
+        <h2 id="heroTitle">Pull up a chair. Let's read it together.</h2>
+      </div>
+      <div>
+        <p>Paste a text, email, or DM that feels off. Jawbreaker turns it into a simple safety note: the risk, the warning signs, and the safest next step before you click, reply, or pay.</p>
+        <div class="family-rule">
+          <strong>The kitchen-table rule</strong>
+          <span>If a message creates panic, asks for money, or sends you to a link, bring it here before you act.</span>
+        </div>
+        <div class="notice-row">
+          <div class="notice">Safety aid only. Always verify through official channels.</div>
+          <div class="notice">First check may take up to 30s while the secure system wakes up.</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="tabletop">
+      <div class="kitchen-prop recipe-box" aria-hidden="true"></div>
+      <div class="kitchen-prop tea-cup" aria-hidden="true"></div>
+      <div class="kitchen-prop spoon" aria-hidden="true"></div>
+      <div class="kitchen-prop quilt-runner" aria-hidden="true"></div>
+      <aside class="left-stack">
+        <form id="scanForm" class="clipboard">
+          <div class="clip" aria-hidden="true"></div>
+          <div class="pause-note">If it asks for money, pause.</div>
+          <div class="paper-card">
+            <h3>Message to check</h3>
+            <p class="privacy-note">For your privacy: remove passwords, account numbers, ID numbers, addresses, and personal codes before pasting.</p>
+            <textarea id="messageInput" placeholder="Paste the message here exactly as you received it."></textarea>
+            <button id="scanButton" class="check-button" type="submit">Check this message</button>
+            <div class="sample-label">Try one from the recipe box</div>
+            <div class="samples" id="samples" aria-label="Sample messages"></div>
+          </div>
+        </form>
+
+        <section class="trusted-card">
+          <h3>Call the number you already trust.</h3>
+          <p>If Jawbreaker says stop or check, do not use the number or link in the message. Open the official app, website, or a saved contact.</p>
+        </section>
+
+        <section class="history-card" aria-live="polite">
+          <h3>Earlier checks</h3>
+          <div class="history-list" id="memoryList"><span class="history-empty">No messages checked yet this session.</span></div>
+        </section>
+      </aside>
+
+      <section class="right-stack" id="result" aria-live="polite"></section>
+
+      <footer class="footer-strip" aria-label="Runtime details">
+        <span>Built for <strong>Build Small Hackathon</strong></span>
+        <span>Powered by <strong id="modelLabel">__MODEL_LABEL__</strong></span>
+        <span><strong>Gradio Server</strong></span>
+        <span><strong>__BACKEND_LABEL__</strong> runtime</span>
+      </footer>
+    </section>
+  </main>
+
+  <script type="application/json" id="examplesData">__EXAMPLES_JSON__</script>
+  <script type="module">
+    import { Client } from "https://cdn.jsdelivr.net/npm/@gradio/client/dist/index.min.js";
+
+    const examples = JSON.parse(document.getElementById("examplesData").textContent);
+    const state = { memory: [] };
+    const clientPromise = Client.connect(window.location.origin);
+    const form = document.getElementById("scanForm");
+    const messageInput = document.getElementById("messageInput");
+    const scanButton = document.getElementById("scanButton");
+    const result = document.getElementById("result");
+    const samples = document.getElementById("samples");
+    const memoryList = document.getElementById("memoryList");
+    const modelLabel = document.getElementById("modelLabel");
+    const modelState = document.getElementById("modelState");
+
+    const labels = {
+      dangerous: { stamp: "Do not click", title: "This looks dangerous", className: "dangerous" },
+      suspicious: { stamp: "Check first", title: "This needs a closer look", className: "suspicious" },
+      needs_check: { stamp: "Check first", title: "Verify before acting", className: "needs_check" },
+      safe: { stamp: "Looks ok", title: "No strong scam pattern", className: "safe" }
+    };
+
+    const dnaLabels = {
+      Impersonates: "Who they pretend to be",
+      Pressure: "How they pressure you",
+      Ask: "What they want",
+      Risk: "What could happen"
+    };
+
+    function escapeHtml(value) {
+      return String(value || "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#39;");
+    }
+
+    function humanize(value) {
+      return String(value || "Unknown").replaceAll("_", " ").replaceAll("-", " ");
+    }
+
+    function elapsedText(value) {
+      const numeric = Number(value);
+      if (!Number.isFinite(numeric) || numeric <= 0) return "checked";
+      return `${numeric.toFixed(numeric >= 10 ? 0 : 1)}s`;
+    }
+
+    function showStandby() {
+      result.innerHTML = `
+        <article class="memo">
+          <div class="memo-header"><span>Kitchen table check</span><span>private safety check</span></div>
+          <div class="memo-body standby">
+            <div>
+              <h3>Paste first. Act after.</h3>
+              <p>Scammers count on panic. This table is the pause: one message, one check, one safe next step you can share with someone you trust.</p>
+              <ol class="standby-steps">
+                <li><strong>1</strong><span>Paste the message exactly as you received it.</span></li>
+                <li><strong>2</strong><span>Read the stamped verdict and warning signs.</span></li>
+                <li><strong>3</strong><span>Copy the plan if you want a trusted person to check it with you.</span></li>
+              </ol>
+            </div>
+            <div class="coaster-stack" aria-label="What Jawbreaker returns">
+              <div class="fridge-note">
+                <h4>Before you tap</h4>
+                <ul>
+                  <li>Do not rush.</li>
+                  <li>Do not send codes.</li>
+                  <li>Do not pay inside a text.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </article>
+      `;
+    }
+
+    function showLoading() {
+      result.innerHTML = `
+        <article class="result-card loading">
+          <div class="result-header"><span>Checking the message</span><span id="progressText">Starting</span></div>
+          <div class="result-body">
+            <div class="scan-note">
+              <h3>Reading this carefully.</h3>
+              <div class="reader-light" id="readerLight" style="--progress: 12%"></div>
+              <ul class="scan-lines">
+                <li class="active">pulling the message closer...</li>
+                <li>checking who they pretend to be...</li>
+                <li>looking for pressure or payment asks...</li>
+                <li>writing the safest next step...</li>
+              </ul>
+            </div>
+          </div>
+        </article>
+      `;
+      let progress = 12;
+      const timer = window.setInterval(() => {
+        progress = Math.min(88, progress + 8);
+        const light = document.getElementById("readerLight");
+        const text = document.getElementById("progressText");
+        const lines = [...document.querySelectorAll(".scan-lines li")];
+        if (!light || !text) {
+          window.clearInterval(timer);
+          return;
+        }
+        light.style.setProperty("--progress", `${progress}%`);
+        text.textContent = progress < 88 ? `${progress}%` : "Almost ready";
+        const activeIndex = Math.min(lines.length - 1, Math.floor(progress / 24));
+        lines.forEach((line, index) => line.classList.toggle("active", index <= activeIndex));
+      }, 700);
+      return timer;
+    }
+
+    function renderMemory(items) {
+      if (!items || !items.length) {
+        memoryList.innerHTML = `<span class="history-empty">No messages checked yet this session.</span>`;
+        return;
+      }
+      memoryList.innerHTML = items.slice(-4).reverse().map((item) => {
+        const risk = item.risk_level || "needs_check";
+        return `
+          <div class="history-row ${escapeHtml(risk)}">
+            <span>${escapeHtml(item.summary)}</span>
+            <strong class="history-badge ${escapeHtml(risk)}">${escapeHtml(humanize(risk))}</strong>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function renderVerdict(payload) {
+      const analysis = payload.analysis || {};
+      const risk = analysis.risk_level || "needs_check";
+      const label = labels[risk] || labels.needs_check;
+      const dna = analysis.scam_dna || {};
+      const tactics = analysis.tactics || [];
+      modelLabel.textContent = payload.model_label || modelLabel.textContent;
+      state.memory = payload.memory || state.memory;
+      renderMemory(state.memory);
+
+      const dnaHtml = ["Impersonates", "Pressure", "Ask", "Risk"].map((key) => `
+        <div class="dna-card">
+          <small>${dnaLabels[key]}</small>
+          <strong>${escapeHtml(humanize(dna[key]))}</strong>
+        </div>
+      `).join("");
+
+      const tacticsHtml = tactics.length
+        ? tactics.map((tag) => `<span class="tag">${escapeHtml(humanize(tag))}</span>`).join("")
+        : `<span class="tag">none found</span>`;
+
+      result.innerHTML = `
+        <article class="result-card">
+          <div class="result-header"><span>Jawbreaker verdict</span><span>${escapeHtml(elapsedText(payload.elapsed_seconds))}</span></div>
+          <div class="result-body">
+            <div class="result-grid">
+              <section class="verdict-panel ${escapeHtml(label.className)}">
+                <div class="decision-strip" aria-label="Safety signal">
+                  <span class="decision-light dangerous ${risk === "dangerous" ? "on" : ""}">Stop</span>
+                  <span class="decision-light needs_check ${risk === "needs_check" || risk === "suspicious" ? "on" : ""}">Check</span>
+                  <span class="decision-light safe ${risk === "safe" ? "on" : ""}">Safe</span>
+                </div>
+                <div class="rubber-stamp">${escapeHtml(label.stamp)}</div>
+                <h3>${escapeHtml(label.title)}</h3>
+                <p>${escapeHtml(analysis.summary)}</p>
+              </section>
+              <section>
+                <p class="dna-caption">Why Jawbreaker thinks so</p>
+                <div class="dna-board">${dnaHtml}</div>
+                <div class="tactic-row">${tacticsHtml}</div>
+              </section>
+            </div>
+          </div>
+        </article>
+
+        <article class="safe-action">
+          <div class="safe-action-header"><span>What to do before you act</span><span>send to someone you trust</span></div>
+          <div class="safe-action-body">
+            <h3>Safest next step</h3>
+            <p class="action-text">${escapeHtml(analysis.safest_action)}</p>
+            <div class="copy-grid">
+              <div class="copy-note">${escapeHtml(payload.copy_plan)}</div>
+              <button class="copy-button" id="copyButton" type="button">Copy plan</button>
+            </div>
+          </div>
+        </article>
+      `;
+
+      document.getElementById("copyButton").addEventListener("click", async () => {
+        await navigator.clipboard.writeText(payload.copy_plan || "");
+        const button = document.getElementById("copyButton");
+        button.textContent = "Copied";
+        button.style.transform = "rotate(-4deg) scale(1.02)";
+        window.setTimeout(() => {
+          button.textContent = "Copy plan";
+          button.style.transform = "";
+        }, 1200);
+      });
+    }
+
+    function showError(error) {
+      result.innerHTML = `
+        <article class="result-card">
+          <div class="result-header"><span>Could not finish</span><span>try again</span></div>
+          <div class="result-body"><div class="error">${escapeHtml(error.message || error)}</div></div>
+        </article>
+      `;
+    }
+
+    examples.forEach((example, index) => {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "sample";
+      button.textContent = example;
+      button.addEventListener("click", () => {
+        messageInput.value = example;
+        if (index === 0) {
+          scanButton.focus();
+        } else {
+          messageInput.focus();
+        }
+      });
+      samples.appendChild(button);
+    });
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const message = messageInput.value.trim();
+      if (!message) {
+        messageInput.focus();
+        return;
+      }
+      scanButton.disabled = true;
+      scanButton.textContent = "Checking";
+      modelState.textContent = "Checking";
+      const timer = showLoading();
+      try {
+        const client = await clientPromise;
+        const response = await client.predict("/analyze", { message, memory: state.memory });
+        window.clearInterval(timer);
+        renderVerdict(response.data?.[0] || response);
+      } catch (error) {
+        window.clearInterval(timer);
+        showError(error);
+      } finally {
+        scanButton.disabled = false;
+        scanButton.textContent = "Check this message";
+        modelState.textContent = "Ready";
+      }
+    });
+
+    showStandby();
+  </script>
+</body>
+</html>"""
+    return (
+        template.replace("__LOGO_URI__", logo_uri)
+        .replace("__MODEL_LABEL__", model_label)
+        .replace("__BACKEND_LABEL__", backend_label)
+        .replace("__EXAMPLES_JSON__", examples_json)
+    )
+
+
 def build_server() -> gr.Server:
     app = gr.Server()
 
@@ -1464,6 +3080,10 @@ def build_server() -> gr.Server:
 
     @app.get("/", response_class=HTMLResponse)
     async def homepage() -> HTMLResponse:
+        return HTMLResponse(kitchen_table_html())
+
+    @app.get("/classic", response_class=HTMLResponse)
+    async def classic_homepage() -> HTMLResponse:
         return HTMLResponse(paper_shield_html())
 
     @app.get("/health")
