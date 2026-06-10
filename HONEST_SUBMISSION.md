@@ -10,7 +10,7 @@ Jawbreaker should compete hard without gaming the hackathon.
 - OpenBMB targeting: MiniCPM is central to the deployed scam analysis path.
 - Codex usage: the GitHub repo has Codex-attributed commits and the build logs document Codex's role.
 - Custom UI: the app uses a custom Gradio interface, not the default demo look.
-- Off the Grid: the app does not call an external LLM API; it loads the open MiniCPM base model and Jawbreaker LoRA adapter directly in the app runtime. The public demo uses Hugging Face ZeroGPU compute, not a hosted model API.
+- Off the Grid: the app does not call an external LLM API; it loads the open MiniCPM base model and Jawbreaker LoRA adapter directly in the app runtime. Hugging Face ZeroGPU is the demo compute layer, not a hosted model API.
 - Eval work: the repo includes hand-curated synthetic/sanitized eval cases plus generated synthetic train/dev/test data.
 - Public data page: sanitized/synthetic eval and training artifacts are published at `build-small-hackathon/jawbreaker-scam-defense-data`.
 - Well-Tuned: a MiniCPM LoRA adapter was trained on Modal, published to Hugging Face, and evaluated before deployment.
@@ -23,7 +23,7 @@ Jawbreaker should compete hard without gaming the hackathon.
 - Do not claim the generated synthetic dataset is real user data.
 - Do not claim benchmark superiority unless we publish the eval command, dataset, and result.
 - Do not claim llama.cpp as the deployed runtime unless the live Space actually uses the llama.cpp path.
-- Do not claim the public Space is a fully offline laptop demo. It is Off the Grid in the no-external-LLM-API sense, while hosted for judging on ZeroGPU.
+- Do not confuse transport with model dependency. The hosted Space is legitimate judge-facing ZeroGPU compute; the Off the Grid claim is about avoiding hosted/external LLM APIs.
 - Do not hide fallback behavior. If MiniCPM fails and Jawbreaker uses deterministic safety fallback, document that as a reliability layer.
 
 ## Training Rules

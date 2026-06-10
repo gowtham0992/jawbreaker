@@ -188,11 +188,11 @@ Decision: ship MiniCPM5-1B LoRA v8 as the default model because it clears the br
 
 ## 2026-06-09 Off the Grid Claim
 
-The field guide says Off the Grid is about no cloud APIs: "The whole thing runs on the model in front of you." Jawbreaker meets the no-external-LLM-API version of that badge:
+The field guide says Off the Grid is about no cloud APIs: "The whole thing runs on the model in front of you." Jawbreaker meets that badge:
 
 - the Space loads `openbmb/MiniCPM5-1B` and the Jawbreaker LoRA adapter directly through Transformers
 - inference happens in the app runtime on Hugging Face ZeroGPU
 - there is no OpenAI, Anthropic, hosted MiniCPM, or other external LLM API call in the scam-analysis path
 - local/eval tooling also supports GGUF experiments through `llama-cpp-python`
 
-Precise wording matters: claim Off the Grid as no external LLM API / small open model running directly in the app runtime. Do not describe the public Space as a fully offline laptop demo, because it is hosted on Hugging Face for judging.
+Precise wording matters: claim Off the Grid confidently as small open model inference inside the app runtime with no external LLM API. Hugging Face ZeroGPU is the judge-facing compute layer, not a hosted model dependency.

@@ -13,22 +13,33 @@ short_description: Private scam defense for someone you love.
 tags:
 - gradio
 - build-small-hackathon
+- backyard ai
 - backyard-ai
 - openbmb
 - minicpm
 - minicpm5
+- tiny titan
 - tiny-titan
+- well tuned
 - well-tuned
+- off brand
 - off-brand
+- off the grid
 - off-the-grid
+- best demo
 - best-demo
+- bonus quest champion
 - bonus-quest-champion
+- sharing is caring
 - sharing-is-caring
+- field notes
 - field-notes
 - modal
+- best use of modal
 - best-use-of-modal
 - codex
 - openai
+- best use of codex
 - best-use-of-codex
 - local-first
 - scam-defense
@@ -57,7 +68,7 @@ Scam defense for someone you love.
 - **Off Brand / Off the Grid / Sharing is Caring / Field Notes:** custom candy-brutalist Gradio UI, no external LLM API, public [dataset/eval bundle](https://huggingface.co/datasets/build-small-hackathon/jawbreaker-scam-defense-data), and [`FIELD_NOTES.md`](FIELD_NOTES.md).
 - **Submission package:** [Live Space](https://huggingface.co/spaces/build-small-hackathon/jawbreaker), [model](https://huggingface.co/build-small-hackathon/jawbreaker-minicpm5-1b-lora-v8), [dataset](https://huggingface.co/datasets/build-small-hackathon/jawbreaker-scam-defense-data), and [collection](https://huggingface.co/collections/build-small-hackathon/jawbreaker-6a263632dcd0b6d41ca914ff).
 
-Jawbreaker is designed for local, on-device inference to protect user privacy. For this hackathon demo, it is hosted on Hugging Face ZeroGPU so judges can try the same app without local setup.
+Jawbreaker is built around direct small-model inference to protect user privacy. The public hackathon Space runs MiniCPM5-1B + Jawbreaker LoRA on Hugging Face ZeroGPU for judge access, and the repo keeps local Transformers/GGUF tooling for running without hosted LLM APIs.
 
 Jawbreaker helps a real person pause before clicking, replying, or sending money. Paste a suspicious text, email, or DM and Jawbreaker breaks it into plain-English warning signs: what the sender is pretending to be, what pressure tactic is being used, what they want, and the safest next step.
 
@@ -108,7 +119,7 @@ The deployed Space uses `openbmb/MiniCPM5-1B` through Hugging Face Transformers 
 - Training: PEFT/LoRA on Modal A100
 - Eval: guarded Modal A100 run across the 632-case hard v8 suite, with earlier 320/394-case v4 comparison runs
 - Runtime: ZeroGPU in the Hugging Face Space
-- Off the Grid: the app loads and runs the small open model directly through Transformers; it does not call OpenAI, Anthropic, hosted MiniCPM, or other external LLM APIs for inference
+- Off the Grid: the app loads and runs the small open model directly through Transformers in the Space runtime; it does not call OpenAI, Anthropic, hosted MiniCPM, or other external LLM APIs for inference
 
 Why this model:
 
@@ -162,7 +173,7 @@ Training/eval artifacts:
 | Best Use of Modal | Claimed | Modal A100 was used for PEFT/LoRA training and guarded eval runs across the MiniCPM calibration path; see `training/modal_train.py`, `training/modal_eval.py`, and the committed 632/394/320-case eval report files. |
 | Tiny Titan | Claimed | The deployed model is `openbmb/MiniCPM5-1B`, well under the 4B badge threshold. |
 | Well-Tuned | Claimed | Published MiniCPM5-1B LoRA adapter, generated calibration splits, and 632-case hard eval with zero dangerous undercalls. |
-| Off the Grid | Claimed | No external LLM API: the Space runs the small open model directly through Transformers on ZeroGPU, and local GGUF/Transformers tooling is included. |
+| Off the Grid | Claimed | The Space runs the small open model directly through Transformers on ZeroGPU with no external LLM API; local GGUF/Transformers tooling is included. |
 | Off Brand | Claimed | Custom Gradio UI beyond the stock component look. |
 | Sharing is Caring | Claimed | Public dataset/eval bundle, model card, build log, Codex trace, and collection are linked from the Space. |
 | Field Notes | Claimed | `FIELD_NOTES.md` documents product decisions, model/runtime pivots, eval results, and submission tradeoffs. |
