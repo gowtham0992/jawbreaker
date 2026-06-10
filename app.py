@@ -2725,6 +2725,322 @@ def kitchen_table_html() -> str:
         display: none;
       }
     }
+
+    @media (max-width: 520px) {
+      body {
+        background:
+          radial-gradient(circle at 12% 2%, rgba(245, 196, 0, .2), transparent 14rem),
+          var(--cream);
+      }
+
+      .table-shell {
+        width: calc(100% - 14px);
+        padding: 10px 0 28px;
+      }
+
+      .masthead {
+        gap: 12px;
+        padding-bottom: 12px;
+      }
+
+      .brand {
+        align-items: flex-start;
+        gap: 10px;
+      }
+
+      .brand img {
+        width: 40px;
+        height: 40px;
+        border-width: 2px;
+        border-radius: 10px;
+        box-shadow: 3px 3px 0 var(--line);
+        flex: 0 0 auto;
+      }
+
+      .brand h1 {
+        font-size: clamp(2.25rem, 12vw, 3rem);
+        line-height: .86;
+      }
+
+      .brand p {
+        margin-top: 6px;
+        font-size: .95rem;
+      }
+
+      .tech-badges {
+        width: 100%;
+        gap: 7px;
+        font-size: .64rem;
+      }
+
+      .tech-badges span {
+        min-height: 30px;
+        max-width: 100%;
+        justify-content: center;
+        text-align: center;
+        white-space: normal;
+        line-height: 1.15;
+      }
+
+      .hero-copy {
+        gap: 14px;
+        padding: 18px 0 18px;
+      }
+
+      .hero-copy h2 {
+        font-size: clamp(2.05rem, 11vw, 3.15rem);
+        line-height: .9;
+      }
+
+      .hero-copy p {
+        font-size: .98rem;
+        line-height: 1.38;
+      }
+
+      .family-rule {
+        margin-top: 14px;
+        padding: 13px 14px;
+        border-radius: 10px;
+        transform: none;
+        box-shadow: 4px 4px 0 rgba(36,22,14,.88);
+      }
+
+      .notice-row {
+        display: grid;
+        gap: 8px;
+      }
+
+      .notice {
+        width: 100%;
+        border-radius: 12px;
+        font-size: .66rem;
+      }
+
+      .tabletop {
+        padding: 10px;
+        border-width: 2px;
+        border-radius: 13px;
+        gap: 18px;
+      }
+
+      .clipboard,
+      .history-card,
+      .trusted-card,
+      .memo,
+      .result-card,
+      .safe-action {
+        border-width: 2px;
+        border-radius: 12px;
+        box-shadow: 4px 4px 0 var(--line);
+      }
+
+      .clipboard {
+        padding: 10px;
+      }
+
+      .clip,
+      .pause-note,
+      .paper-card::after,
+      .memo::before,
+      .result-card::before,
+      .safe-action::before,
+      .safe-action::after {
+        display: none;
+      }
+
+      .paper-card,
+      .memo-body,
+      .result-body,
+      .safe-action-body {
+        padding: 14px;
+      }
+
+      .paper-card h3,
+      .memo h3,
+      .history-card h3 {
+        font-size: .76rem;
+      }
+
+      .privacy-note {
+        font-size: .68rem;
+      }
+
+      textarea {
+        min-height: 178px;
+        padding: 13px;
+        font-size: 1rem;
+        line-height: 1.45;
+      }
+
+      .check-button {
+        min-height: 58px;
+        font-size: .9rem;
+      }
+
+      .check-button::after {
+        width: 30px;
+      }
+
+      .sample {
+        min-height: 44px;
+        padding: 10px 12px;
+        font-size: .86rem;
+      }
+
+      .trusted-card,
+      .history-card {
+        padding: 14px;
+      }
+
+      .trusted-card h3 {
+        font-size: 1.18rem;
+      }
+
+      .trusted-card p,
+      .history-empty {
+        font-size: .88rem;
+      }
+
+      .memo-header,
+      .result-header,
+      .safe-action-header {
+        min-height: 42px;
+        padding: 10px 12px;
+        gap: 10px;
+        font-size: .68rem;
+        line-height: 1.15;
+      }
+
+      .standby {
+        min-height: 0;
+      }
+
+      .standby h3 {
+        font-size: clamp(2.1rem, 11vw, 3rem);
+      }
+
+      .standby p,
+      .standby-steps li {
+        font-size: .95rem;
+      }
+
+      .fridge-note {
+        padding: 14px;
+      }
+
+      .loading .result-body {
+        min-height: 260px;
+      }
+
+      .scan-note {
+        padding: 16px;
+        transform: none;
+        box-shadow: 4px 4px 0 var(--line);
+      }
+
+      .scan-note::before {
+        width: 48px;
+        height: 48px;
+      }
+
+      .scan-note h3 {
+        font-size: clamp(1.8rem, 9vw, 2.45rem);
+      }
+
+      .scan-lines {
+        font-size: .78rem;
+        line-height: 1.35;
+      }
+
+      .result-grid {
+        gap: 14px;
+      }
+
+      .verdict-panel {
+        min-height: 0;
+        padding: 18px 14px;
+        gap: 13px;
+      }
+
+      .verdict-panel::before {
+        width: 10px;
+        top: 18px;
+        bottom: 18px;
+      }
+
+      .rubber-stamp {
+        width: min(140px, 44vw);
+        border-width: 5px;
+      }
+
+      .verdict-panel h3 {
+        font-size: clamp(1.75rem, 9vw, 2.55rem);
+      }
+
+      .verdict-panel p,
+      .copy-note {
+        font-size: .9rem;
+      }
+
+      .decision-strip {
+        gap: 6px;
+      }
+
+      .decision-light {
+        padding: 6px 8px;
+        font-size: .58rem;
+      }
+
+      .dna-board {
+        gap: 10px;
+      }
+
+      .dna-card {
+        min-height: 0;
+        padding: 12px;
+        border-width: 2px;
+        box-shadow: 2px 2px 0 var(--line);
+      }
+
+      .dna-card small,
+      .dna-caption,
+      .tag {
+        font-size: .62rem;
+      }
+
+      .dna-card strong {
+        font-size: clamp(1rem, 5vw, 1.32rem);
+      }
+
+      .safe-action-body .action-text {
+        font-size: clamp(1.45rem, 8vw, 2rem);
+        line-height: 1.03;
+      }
+
+      .copy-note {
+        max-height: 210px;
+      }
+
+      .copy-button {
+        min-height: 58px;
+      }
+
+      .history-row {
+        grid-template-columns: 1fr;
+        gap: 8px;
+        font-size: .78rem;
+      }
+
+      .history-badge {
+        width: fit-content;
+      }
+
+      .footer-strip {
+        margin-top: 18px;
+        color: rgba(255,255,255,.96);
+        font-size: .66rem;
+      }
+    }
   </style>
 </head>
 <body>
