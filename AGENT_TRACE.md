@@ -44,12 +44,12 @@ Codex helped:
 Current decisions:
 
 - Deployed model: `openbmb/MiniCPM5-1B`.
-- Deployed adapter: `build-small-hackathon/jawbreaker-minicpm5-1b-lora-v4`.
+- Deployed adapter: `build-small-hackathon/jawbreaker-minicpm5-1b-lora-v8`.
 - Deployed backend: Transformers on ZeroGPU.
 - Local/eval model path: llama-cpp-python remains available for GGUF models.
 - Fine-tuning: completed through a Modal-trained MiniCPM5-1B LoRA adapter.
 - Primary badges: Off-Brand, Sharing is Caring, Field Notes.
-- Defensible badges: Off the Grid and Tiny Titan, documented carefully.
+- Defensible badges: Tiny Titan and Well-Tuned, documented carefully.
 - Sponsor target: OpenBMB, because MiniCPM is central to the app.
 
 ## 2026-06-07
@@ -57,7 +57,7 @@ Current decisions:
 Codex helped:
 
 - run and compare MiniCPM5-1B LoRA evals against earlier 8B adapter evidence
-- promote `build-small-hackathon/jawbreaker-minicpm5-1b-lora-v4` as the final deployed adapter
+- promote `build-small-hackathon/jawbreaker-minicpm5-1b-lora-v4` as the first strong 1B deployed adapter candidate
 - commit 320-case and 394-case hard guarded eval reports
 - update README, setup, eval, training, and honest-submission evidence
 - refine the custom Gradio Server UI for readability, elderly-friendly wording, copy-to-trusted-person behavior, and final model disclosure
@@ -71,3 +71,33 @@ Final model evidence:
 - `0` unsafe action violations
 - `0` invalid predictions
 - `0` model errors
+
+## 2026-06-09 / 2026-06-10
+
+Codex helped:
+
+- add fresh public-pattern calibration data for wrong-number crypto/trading, marketplace money movement, task/job scams, MFA-code theft, toll/tax/benefit notices, and safe family/logistics contrasts
+- train and evaluate the MiniCPM5-1B LoRA v8 path on Modal
+- diagnose preemption during a long Modal eval and preserve the final successful run as public evidence
+- tighten the deterministic safety guard for wrong-number investment grooming without over-promoting ordinary family/school logistics
+- add regression tests for guard behavior
+- promote `build-small-hackathon/jawbreaker-minicpm5-1b-lora-v8` as the final deployed adapter
+- update the Space README, model card, dataset card, collection notes, and final submission evidence so v8 is consistently framed as final
+- add `CODEX_JUDGE_EVIDENCE.md` to map Codex-attributed commits to files, final metrics, and public artifacts
+
+Final v8 model evidence:
+
+- 632-case hard guarded eval: `579/632` risk accuracy (`91.61%`)
+- `0` dangerous-as-safe
+- `0` dangerous-as-needs-check
+- `0` safe-as-dangerous-or-suspicious
+- `0` unsafe action violations
+- `0` invalid predictions
+- `0` model errors
+
+Public final artifacts:
+
+- Space: https://huggingface.co/spaces/build-small-hackathon/jawbreaker
+- Model: https://huggingface.co/build-small-hackathon/jawbreaker-minicpm5-1b-lora-v8
+- Dataset/eval bundle: https://huggingface.co/datasets/build-small-hackathon/jawbreaker-scam-defense-data
+- Collection: https://huggingface.co/collections/build-small-hackathon/jawbreaker-6a263632dcd0b6d41ca914ff

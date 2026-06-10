@@ -67,9 +67,9 @@ Measured results:
 
 ## MiniCPM5-1B LoRA v4
 
-Codex helped turn the Tiny Titan experiment into the final model path.
+Codex helped turn the Tiny Titan experiment into the first strong MiniCPM5-1B production candidate.
 
-The final deployed path is:
+The v4 path was:
 
 - Base model: `openbmb/MiniCPM5-1B`
 - Adapter: `build-small-hackathon/jawbreaker-minicpm5-1b-lora-v4`
@@ -90,3 +90,43 @@ The completed hard guarded eval evidence:
 - `0` model errors
 
 Codex also helped add the committed eval reports under `eval/reports/`, update the Space and GitHub code defaults, and keep the Hugging Face Space history separate from GitHub history through cherry-picked Space sync commits.
+
+## MiniCPM5-1B LoRA v8
+
+Codex helped extend the 1B path after fresh scam-pattern evals exposed two failure modes:
+
+- wrong-number crypto / gold / trading grooming could be softened below `dangerous`
+- ordinary family, school, pharmacy, and logistics messages could be over-called
+
+The v8 path added:
+
+- `training/generate_v7_data.py` and `training/generate_v8_data.py` for fresh public-pattern and failure-driven calibration
+- `training/data/train_v8.jsonl`, `dev_v8.jsonl`, and `test_v8.jsonl`
+- `eval/hard_v8_eval.jsonl`
+- safety-guard calibration for wrong-number investment grooming
+- regression tests in `tests/test_app_guard.py`
+- the final report `eval/reports/jawbreaker-minicpm5-1b-lora-v8-hard632-safetyguard-v4.json`
+- `MODEL_CARD_MINICPM5_LORA_V8.md`
+- `CODEX_JUDGE_EVIDENCE.md`
+
+The final deployed path is:
+
+- Base model: `openbmb/MiniCPM5-1B`
+- Adapter: `build-small-hackathon/jawbreaker-minicpm5-1b-lora-v8`
+- Runtime: Transformers on ZeroGPU
+- Training and eval: Modal A100
+
+The completed hard guarded eval evidence:
+
+- 632 cases
+- `91.61%` risk accuracy
+- `88.77%` scam type accuracy
+- `90.69%` mean tactic recall
+- `0` dangerous-as-safe
+- `0` dangerous-as-needs-check
+- `0` safe-as-dangerous-or-suspicious
+- `0` unsafe action violations
+- `0` invalid predictions
+- `0` model errors
+
+Codex also helped update the Space README, model card, dataset card, collection notes, and public documentation so v8 is presented as the final judged model and v4 is retained as comparison evidence.
