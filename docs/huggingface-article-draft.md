@@ -4,7 +4,7 @@
 >
 > Status: working draft. Add demo video and final social links before publishing.
 
-![Jawbreaker logo](../jawbreaker_logo.png)
+![Jawbreaker logo](https://huggingface.co/spaces/build-small-hackathon/jawbreaker/resolve/main/jawbreaker_logo.png)
 
 ## Short Version
 
