@@ -178,19 +178,19 @@ Training/eval artifacts:
 
 | Prize / Badge | Status | Evidence |
 | --- | --- | --- |
-| Backyard AI | Claimed | Practical scam-defense app for someone close, with a focused safety workflow. |
-| Best MiniCPM Build | Claimed | `openbmb/MiniCPM5-1B` is the core runtime model, with a published Jawbreaker LoRA adapter. |
-| OpenAI / Best Use of Codex | Claimed | Public GitHub repo includes Codex-attributed commits plus `CODEX_JUDGE_EVIDENCE.md`, `AGENT_TRACE.md`, and `CODEX_BUILD_LOG.md`. |
-| Best Use of Modal | Claimed | Modal A100 was used for PEFT/LoRA training and guarded eval runs across the MiniCPM calibration path; see `training/modal_train.py`, `training/modal_eval.py`, and the committed 632/394/320-case eval report files. |
+| Backyard AI | Submitted | Practical scam-defense app for someone close, with a focused safety workflow. |
+| Best MiniCPM Build | Submitted | `openbmb/MiniCPM5-1B` is the core runtime model, with a published Jawbreaker LoRA adapter. |
+| OpenAI / Best Use of Codex | Submitted | Public GitHub repo includes Codex-attributed commits plus `CODEX_JUDGE_EVIDENCE.md`, `AGENT_TRACE.md`, and `CODEX_BUILD_LOG.md`. |
+| Best Use of Modal | Submitted | Modal A100 was used for PEFT/LoRA training and guarded eval runs across the MiniCPM calibration path; see `training/modal_train.py`, `training/modal_eval.py`, and the committed 632/394/320-case eval report files. |
 | Community Choice | Eligible | Public Space, collection, model, and dataset are live; outcome depends on community voting and engagement. |
-| Tiny Titan | Claimed | The deployed model is `openbmb/MiniCPM5-1B`, well under the 4B badge threshold. |
-| Well-Tuned | Claimed | Published MiniCPM5-1B LoRA adapter, generated calibration splits, and 632-case hard eval with zero dangerous undercalls. |
-| Off the Grid | Claimed | The Space runs the small open model directly through Transformers on ZeroGPU with no external LLM API; local GGUF/Transformers tooling is included. |
-| Off Brand | Claimed | Custom Gradio UI beyond the stock component look. |
-| Sharing is Caring | Claimed | Public dataset/eval bundle, model card, build log, Codex trace, and collection are linked from the Space. |
-| Field Notes | Claimed | `FIELD_NOTES.md` documents product decisions, model/runtime pivots, eval results, and submission tradeoffs. |
+| Tiny Titan | Submitted | The deployed model is `openbmb/MiniCPM5-1B`, well under the 4B badge threshold. |
+| Well-Tuned | Submitted | Published MiniCPM5-1B LoRA adapter, generated calibration splits, and 632-case hard eval with zero dangerous undercalls. |
+| Off the Grid | Submitted | The Space runs the small open model directly through Transformers on ZeroGPU with no external LLM API; local GGUF/Transformers tooling is included. |
+| Off Brand | Submitted | Custom Gradio UI beyond the stock component look. |
+| Sharing is Caring | Submitted | Public dataset/eval bundle, model card, build log, Codex trace, and collection are linked from the Space. |
+| Field Notes | Submitted | `FIELD_NOTES.md` documents product decisions, model/runtime pivots, eval results, and submission tradeoffs. |
 | Best Demo | Pending | Demo video and social post still need to be recorded, published, and linked before final submission. |
-| Bonus Quest Champion | Claimed | Jawbreaker stacks Well-Tuned, Off Brand, Off the Grid, Tiny Titan, Sharing is Caring, and Field Notes; Best Demo will strengthen this once the video/social links are added. |
+| Bonus Quest Champion | Submitted | Jawbreaker stacks Well-Tuned, Off Brand, Off the Grid, Tiny Titan, Sharing is Caring, and Field Notes; Best Demo will strengthen this once the video/social links are added. |
 | Judges' Wildcard | Automatic | Every submission is considered. |
 
 Bonus badge evidence:
