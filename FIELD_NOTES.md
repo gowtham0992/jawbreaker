@@ -140,19 +140,59 @@ Why this replaced the earlier 8B v3 adapter:
 - It had `0` dangerous-as-safe, `0` dangerous-as-needs-check, `0` suspicious-as-safe, `0` unsafe action violations, `0` invalid predictions, and `0` model errors.
 - It beat the 8B v3 adapter on the hard guarded evals while being much smaller.
 
-The 470-case eval attempt timed out around case 341, so it is not used as final evidence. The committed final evidence is the completed 320-case and 394-case guarded reports under `eval/reports/`.
+The 470-case eval attempt timed out around case 341, so it is not used as final evidence. The committed evidence from this phase is the completed 320-case and 394-case guarded reports under `eval/reports/`.
 
-Decision: ship MiniCPM5-1B LoRA v4 as the default model, keep the deterministic guard as product safety defense-in-depth, and document the 8B path as comparison/history rather than the live model.
+Decision at this point: ship MiniCPM5-1B LoRA v4 as the default model, keep the deterministic guard as product safety defense-in-depth, and document the 8B path as comparison/history rather than the live model. This was later superseded by the v8 calibration path.
 
 ## 2026-06-07 Hub Packaging
 
 Published the public review artifacts:
 
-- Final model card: `build-small-hackathon/jawbreaker-minicpm5-1b-lora-v4`
+- First strong 1B model card: `build-small-hackathon/jawbreaker-minicpm5-1b-lora-v4`
 - Public dataset/eval bundle: `build-small-hackathon/jawbreaker-scam-defense-data`
 - Live app: `build-small-hackathon/jawbreaker`
 - Hub collection: `build-small-hackathon/jawbreaker-6a263632dcd0b6d41ca914ff`
 
 The dataset bundle includes synthetic/sanitized training and eval JSONL files plus the completed 320-case and 394-case guarded eval reports. It does not include raw private chats, Discord logs, emails, phone numbers, timestamps, or personal message metadata.
 
-The collection links the live Space, final MiniCPM5-1B LoRA v4 adapter, and public dataset/eval bundle so judges can inspect the full submission package from one Hub page.
+The collection linked the live Space, MiniCPM5-1B LoRA v4 adapter, and public dataset/eval bundle so judges could inspect the full submission package from one Hub page. The collection was later updated to place the v8 adapter first.
+
+## 2026-06-09 MiniCPM5-1B LoRA v8
+
+Fresh public-pattern evals exposed a harder boundary than the v4 suite:
+
+- wrong-number crypto, gold, and trading grooming could look conversational before the investment ask
+- some benign family, school, pharmacy, and logistics messages were easy to over-call if the guard was too aggressive
+
+The v8 calibration path added fresh synthetic/sanitized data for those patterns and re-ran the larger hard suite on Modal.
+
+Final judged model path:
+
+- Base: `openbmb/MiniCPM5-1B`
+- Adapter: `build-small-hackathon/jawbreaker-minicpm5-1b-lora-v8`
+- Runtime: Hugging Face Transformers on ZeroGPU
+- Training/eval infrastructure: Modal A100
+
+Final guarded eval evidence:
+
+- 632 cases
+- `579/632` risk accuracy (`91.61%`)
+- `0` dangerous-as-safe
+- `0` dangerous-as-needs-check
+- `0` safe-as-dangerous-or-suspicious
+- `0` unsafe action violations
+- `0` invalid predictions
+- `0` model errors
+
+Decision: ship MiniCPM5-1B LoRA v8 as the default model because it clears the broader safety gate and preserves the Tiny Titan/OpenBMB story.
+
+## 2026-06-09 Off the Grid Claim
+
+The field guide says Off the Grid is about no cloud APIs: "The whole thing runs on the model in front of you." Jawbreaker meets the no-external-LLM-API version of that badge:
+
+- the Space loads `openbmb/MiniCPM5-1B` and the Jawbreaker LoRA adapter directly through Transformers
+- inference happens in the app runtime on Hugging Face ZeroGPU
+- there is no OpenAI, Anthropic, hosted MiniCPM, or other external LLM API call in the scam-analysis path
+- local/eval tooling also supports GGUF experiments through `llama-cpp-python`
+
+Precise wording matters: claim Off the Grid as no external LLM API / small open model running directly in the app runtime. Do not describe the public Space as a fully offline laptop demo, because it is hosted on Hugging Face for judging.

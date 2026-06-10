@@ -20,12 +20,16 @@ tags:
 - tiny-titan
 - well-tuned
 - off-brand
+- off-the-grid
 - best-demo
 - bonus-quest-champion
 - sharing-is-caring
 - field-notes
 - modal
+- best-use-of-modal
 - codex
+- openai
+- best-use-of-codex
 - local-first
 - scam-defense
 - zerogpu
@@ -50,7 +54,7 @@ Scam defense for someone you love.
 - **Best MiniCPM Build / Tiny Titan / Well-Tuned:** `openbmb/MiniCPM5-1B` + [Jawbreaker LoRA v8](https://huggingface.co/build-small-hackathon/jawbreaker-minicpm5-1b-lora-v8), evaluated on a 632-case hard suite with **0 dangerous undercalls** and **0 safe overcalls**.
 - **Best Use of Modal:** Modal A100 was used for LoRA training and guarded eval runs; see [`training/modal_train.py`](training/modal_train.py), [`training/modal_eval.py`](training/modal_eval.py), the [`632-case v8 report`](eval/reports/jawbreaker-minicpm5-1b-lora-v8-hard632-safetyguard-v4.json), plus the earlier [`394-case v4 report`](eval/reports/jawbreaker-minicpm5-1b-lora-v4-hard394-guarded.json).
 - **OpenAI / Best Use of Codex:** Codex-attributed commits plus [`CODEX_JUDGE_EVIDENCE.md`](CODEX_JUDGE_EVIDENCE.md), [`AGENT_TRACE.md`](AGENT_TRACE.md), and [`CODEX_BUILD_LOG.md`](CODEX_BUILD_LOG.md), with file-level contribution notes below.
-- **Off Brand / Sharing is Caring / Field Notes:** custom candy-brutalist Gradio UI, public [dataset/eval bundle](https://huggingface.co/datasets/build-small-hackathon/jawbreaker-scam-defense-data), and [`FIELD_NOTES.md`](FIELD_NOTES.md).
+- **Off Brand / Off the Grid / Sharing is Caring / Field Notes:** custom candy-brutalist Gradio UI, no external LLM API, public [dataset/eval bundle](https://huggingface.co/datasets/build-small-hackathon/jawbreaker-scam-defense-data), and [`FIELD_NOTES.md`](FIELD_NOTES.md).
 - **Submission package:** [Live Space](https://huggingface.co/spaces/build-small-hackathon/jawbreaker), [model](https://huggingface.co/build-small-hackathon/jawbreaker-minicpm5-1b-lora-v8), [dataset](https://huggingface.co/datasets/build-small-hackathon/jawbreaker-scam-defense-data), and [collection](https://huggingface.co/collections/build-small-hackathon/jawbreaker-6a263632dcd0b6d41ca914ff).
 
 Jawbreaker is designed for local, on-device inference to protect user privacy. For this hackathon demo, it is hosted on Hugging Face ZeroGPU so judges can try the same app without local setup.
@@ -104,6 +108,7 @@ The deployed Space uses `openbmb/MiniCPM5-1B` through Hugging Face Transformers 
 - Training: PEFT/LoRA on Modal A100
 - Eval: guarded Modal A100 run across the 632-case hard v8 suite, with earlier 320/394-case v4 comparison runs
 - Runtime: ZeroGPU in the Hugging Face Space
+- Off the Grid: the app loads and runs the small open model directly through Transformers; it does not call OpenAI, Anthropic, hosted MiniCPM, or other external LLM APIs for inference
 
 Why this model:
 
@@ -151,20 +156,25 @@ Training/eval artifacts:
 
 | Prize / Badge | Status | Evidence |
 | --- | --- | --- |
-| Backyard AI | Targeted | Practical scam-defense app for someone close, with a focused safety workflow. |
-| Best MiniCPM Build | Targeted | `openbmb/MiniCPM5-1B` is the core runtime model, with a published Jawbreaker LoRA adapter. |
-| OpenAI / Best Use of Codex | Targeted | Public GitHub repo includes Codex-attributed commits plus `CODEX_JUDGE_EVIDENCE.md`, `AGENT_TRACE.md`, and `CODEX_BUILD_LOG.md`. |
-| Best Use of Modal | Targeted | Modal A100 was used for PEFT/LoRA training and guarded eval runs across the MiniCPM calibration path; see `training/modal_train.py`, `training/modal_eval.py`, and the committed 632/394/320-case eval report files. |
-| Tiny Titan | Targeted | The deployed model is `openbmb/MiniCPM5-1B`, well under the 4B badge threshold. |
-| Off Brand | Targeted | Custom Gradio UI beyond the stock component look. |
+| Backyard AI | Claimed | Practical scam-defense app for someone close, with a focused safety workflow. |
+| Best MiniCPM Build | Claimed | `openbmb/MiniCPM5-1B` is the core runtime model, with a published Jawbreaker LoRA adapter. |
+| OpenAI / Best Use of Codex | Claimed | Public GitHub repo includes Codex-attributed commits plus `CODEX_JUDGE_EVIDENCE.md`, `AGENT_TRACE.md`, and `CODEX_BUILD_LOG.md`. |
+| Best Use of Modal | Claimed | Modal A100 was used for PEFT/LoRA training and guarded eval runs across the MiniCPM calibration path; see `training/modal_train.py`, `training/modal_eval.py`, and the committed 632/394/320-case eval report files. |
+| Tiny Titan | Claimed | The deployed model is `openbmb/MiniCPM5-1B`, well under the 4B badge threshold. |
+| Well-Tuned | Claimed | Published MiniCPM5-1B LoRA adapter, generated calibration splits, and 632-case hard eval with zero dangerous undercalls. |
+| Off the Grid | Claimed | No external LLM API: the Space runs the small open model directly through Transformers on ZeroGPU, and local GGUF/Transformers tooling is included. |
+| Off Brand | Claimed | Custom Gradio UI beyond the stock component look. |
+| Sharing is Caring | Claimed | Public dataset/eval bundle, model card, build log, Codex trace, and collection are linked from the Space. |
+| Field Notes | Claimed | `FIELD_NOTES.md` documents product decisions, model/runtime pivots, eval results, and submission tradeoffs. |
 | Best Demo | Pending | Demo video and social post still need to be recorded, published, and linked before final submission. |
-| Bonus Quest Champion | Stretch target | Jawbreaker stacks multiple bonus criteria: Well-Tuned, Off Brand, Tiny Titan, Sharing is Caring, Field Notes, and Best Demo once the video/social links are added. |
+| Bonus Quest Champion | Claimed | Jawbreaker stacks Well-Tuned, Off Brand, Off the Grid, Tiny Titan, Sharing is Caring, and Field Notes; Best Demo will strengthen this once the video/social links are added. |
 | Judges' Wildcard | Automatic | Every submission is considered. |
 
 Bonus badge evidence:
 
 - **Well-Tuned:** published MiniCPM5-1B LoRA adapter with guarded 632-case, 394-case, and 320-case eval reports.
 - **Off Brand:** custom `gr.Server` app shell instead of stock Gradio component layout.
+- **Off the Grid:** no external LLM API; inference uses the small open MiniCPM model and Jawbreaker LoRA loaded in the app runtime.
 - **Tiny Titan:** 1B runtime model with a narrow, safety-critical task.
 - **Sharing is Caring:** public dataset/eval bundle plus `AGENT_TRACE.md` and `CODEX_BUILD_LOG.md`.
 - **Field Notes:** `FIELD_NOTES.md` documents model/runtime pivots, eval decisions, and submission tradeoffs.
@@ -175,7 +185,6 @@ Not claiming:
 - Best Agent: Jawbreaker is not a multi-step agentic app.
 - NVIDIA Nemotron Quest: no NeMoTron model is used.
 - llama.cpp as live runtime: local/eval tooling supports GGUF experiments, but the judge-facing Space uses Transformers on ZeroGPU.
-- Off the Grid: Jawbreaker uses no external LLM API, but the public demo runs on Hugging Face ZeroGPU, so this is framed as local-first rather than claimed as a live fully local runtime.
 
 ## Safety Boundary
 

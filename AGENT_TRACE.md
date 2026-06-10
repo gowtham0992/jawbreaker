@@ -48,8 +48,8 @@ Current decisions:
 - Deployed backend: Transformers on ZeroGPU.
 - Local/eval model path: llama-cpp-python remains available for GGUF models.
 - Fine-tuning: completed through a Modal-trained MiniCPM5-1B LoRA adapter.
-- Primary badges: Off-Brand, Sharing is Caring, Field Notes.
-- Defensible badges: Tiny Titan and Well-Tuned, documented carefully.
+- Claimed bonus badges: Off Brand, Off the Grid, Sharing is Caring, Field Notes, Tiny Titan, and Well-Tuned.
+- Pending bonus badge: Best Demo, once the demo video and social post are linked.
 - Sponsor target: OpenBMB, because MiniCPM is central to the app.
 
 ## 2026-06-07
