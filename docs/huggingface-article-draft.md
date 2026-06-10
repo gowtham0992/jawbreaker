@@ -30,6 +30,8 @@ Collection: https://huggingface.co/collections/build-small-hackathon/jawbreaker-
 
 GitHub: https://github.com/gowtham0992/jawbreaker
 
+Community evidence thread: https://huggingface.co/spaces/build-small-hackathon/jawbreaker/discussions/1
+
 ## Why We Built It
 
 Most scam-defense tools explain scams after the fact. Jawbreaker is built for the moment before someone acts.
@@ -222,5 +224,6 @@ The first two should produce scam warnings. The dentist appointment should show 
 - Dataset/eval bundle: https://huggingface.co/datasets/build-small-hackathon/jawbreaker-scam-defense-data
 - Collection: https://huggingface.co/collections/build-small-hackathon/jawbreaker-6a263632dcd0b6d41ca914ff
 - GitHub: https://github.com/gowtham0992/jawbreaker
+- Community evidence thread: https://huggingface.co/spaces/build-small-hackathon/jawbreaker/discussions/1
 - Build notes: https://github.com/gowtham0992/jawbreaker/blob/main/FIELD_NOTES.md
 - Codex evidence: https://github.com/gowtham0992/jawbreaker/blob/main/CODEX_JUDGE_EVIDENCE.md

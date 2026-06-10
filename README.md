@@ -91,6 +91,7 @@ The motivating user is a friend's grandmother who had already been affected by s
 - Final model adapter: https://huggingface.co/build-small-hackathon/jawbreaker-minicpm5-1b-lora-v8
 - Public dataset/eval bundle: https://huggingface.co/datasets/build-small-hackathon/jawbreaker-scam-defense-data
 - Hugging Face collection: https://huggingface.co/collections/build-small-hackathon/jawbreaker-6a263632dcd0b6d41ca914ff
+- Community evidence thread: https://huggingface.co/spaces/build-small-hackathon/jawbreaker/discussions/1
 - Article draft: [`docs/huggingface-article-draft.md`](docs/huggingface-article-draft.md)
 
 Submission checklist:
