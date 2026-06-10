@@ -28,6 +28,8 @@ tags:
 - off-the-grid
 - best demo
 - best-demo
+- community choice
+- community-choice
 - bonus quest champion
 - bonus-quest-champion
 - sharing is caring
@@ -87,6 +89,15 @@ The problem is specific: scam messages now arrive as urgent, personal, plausible
 - Final model adapter: https://huggingface.co/build-small-hackathon/jawbreaker-minicpm5-1b-lora-v8
 - Public dataset/eval bundle: https://huggingface.co/datasets/build-small-hackathon/jawbreaker-scam-defense-data
 - Hugging Face collection: https://huggingface.co/collections/build-small-hackathon/jawbreaker-6a263632dcd0b6d41ca914ff
+
+Submission checklist:
+
+- **REQ-01 / Stay under 32B:** complete. The live model is `openbmb/MiniCPM5-1B`.
+- **REQ-02 / Ship a Gradio app:** complete. Jawbreaker is a public Gradio Space in `build-small-hackathon`.
+- **REQ-03 / Record a demo:** pending. Demo video link will be added before final submission.
+- **REQ-04 / Post it:** pending. Social post link will be added before final submission.
+- **REQ-05 / Mind the GPU limit:** complete. This is one ZeroGPU Space, below the limit.
+- **REQ-06 / Tag your README:** complete. Frontmatter includes the main track, sponsor tracks, and claimed bonus badges.
 
 ## Built With OpenAI Codex
 
@@ -171,6 +182,7 @@ Training/eval artifacts:
 | Best MiniCPM Build | Claimed | `openbmb/MiniCPM5-1B` is the core runtime model, with a published Jawbreaker LoRA adapter. |
 | OpenAI / Best Use of Codex | Claimed | Public GitHub repo includes Codex-attributed commits plus `CODEX_JUDGE_EVIDENCE.md`, `AGENT_TRACE.md`, and `CODEX_BUILD_LOG.md`. |
 | Best Use of Modal | Claimed | Modal A100 was used for PEFT/LoRA training and guarded eval runs across the MiniCPM calibration path; see `training/modal_train.py`, `training/modal_eval.py`, and the committed 632/394/320-case eval report files. |
+| Community Choice | Eligible | Public Space, collection, model, and dataset are live; outcome depends on community voting and engagement. |
 | Tiny Titan | Claimed | The deployed model is `openbmb/MiniCPM5-1B`, well under the 4B badge threshold. |
 | Well-Tuned | Claimed | Published MiniCPM5-1B LoRA adapter, generated calibration splits, and 632-case hard eval with zero dangerous undercalls. |
 | Off the Grid | Claimed | The Space runs the small open model directly through Transformers on ZeroGPU with no external LLM API; local GGUF/Transformers tooling is included. |
@@ -193,9 +205,10 @@ Bonus badge evidence:
 
 Not claiming:
 
+- Thousand Token Wood main track: Jawbreaker is entered as Backyard AI.
 - Best Agent: Jawbreaker is not a multi-step agentic app.
 - NVIDIA Nemotron Quest: no NeMoTron model is used.
-- llama.cpp as live runtime: local/eval tooling supports GGUF experiments, but the judge-facing Space uses Transformers on ZeroGPU.
+- Llama Champion / llama.cpp as live runtime: local/eval tooling supports GGUF experiments, but the judge-facing Space uses Transformers on ZeroGPU.
 
 ## Safety Boundary
 
