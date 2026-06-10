@@ -59,13 +59,13 @@ Use this set to strengthen the eval story after the model is already selected:
 python3 eval/run_eval.py \
   --backend transformers \
   --model-id openbmb/MiniCPM5-1B \
-  --adapter-id build-small-hackathon/jawbreaker-minicpm5-1b-lora-v4 \
+  --adapter-id build-small-hackathon/jawbreaker-minicpm5-1b-lora-v8 \
   --trust-remote-code \
   --attn-implementation eager \
   --apply-safety-guard \
   --dataset eval/fresh_2026_scam_eval.jsonl \
-  --predictions-out eval/predictions/jawbreaker-minicpm5-1b-lora-v4-fresh2026.predictions.jsonl \
-  --json-out eval/reports/jawbreaker-minicpm5-1b-lora-v4-fresh2026.json
+  --predictions-out eval/predictions/jawbreaker-minicpm5-1b-lora-v8-fresh2026.predictions.jsonl \
+  --json-out eval/reports/jawbreaker-minicpm5-1b-lora-v8-fresh2026.json
 ```
 
 Modal:
@@ -74,12 +74,12 @@ Modal:
 modal run training/modal_eval.py \
   --dataset eval/fresh_2026_scam_eval.jsonl \
   --model-id openbmb/MiniCPM5-1B \
-  --adapter-id build-small-hackathon/jawbreaker-minicpm5-1b-lora-v4 \
-  --output-prefix jawbreaker-minicpm5-1b-lora-v4-fresh2026 \
+  --adapter-id build-small-hackathon/jawbreaker-minicpm5-1b-lora-v8 \
+  --output-prefix jawbreaker-minicpm5-1b-lora-v8-fresh2026 \
   --apply-safety-guard
 ```
 
-The first v4 run on this set found no dangerous undercalls and no invalid JSON, but it did expose calibration gaps:
+The first v4 run on this set found no dangerous undercalls and no invalid JSON, but it did expose calibration gaps that later v7/v8 work targeted:
 
 - wrong-number crypto and marketplace scams were sometimes marked `suspicious` instead of `dangerous`
 - a few safe family/school messages were over-called
@@ -155,15 +155,20 @@ modal run training/modal_eval.py \
 
 ## Current Runtime Decision
 
-The deployed Space uses `openbmb/MiniCPM5-1B` through Transformers on ZeroGPU with the published adapter `build-small-hackathon/jawbreaker-minicpm5-1b-lora-v4`.
+The deployed Space uses `openbmb/MiniCPM5-1B` through Transformers on ZeroGPU with the published adapter `build-small-hackathon/jawbreaker-minicpm5-1b-lora-v8`.
 
 The GGUF / `llama-cpp-python` path remains available for local eval and badge evidence, but it is not the primary live demo path. The live app also uses a deterministic heuristic guard so an obvious high-risk scam is not rendered as safe if the small model under-calls the risk.
 
-If MiniCPM Space latency is unacceptable during final demo testing, `Qwen/Qwen3-0.6B` remains the fallback via `JAWBREAKER_TRANSFORMERS_MODEL_ID`, but the current judged model path is MiniCPM5-1B LoRA v4.
+If MiniCPM Space latency is unacceptable during final demo testing, `Qwen/Qwen3-0.6B` remains the fallback via `JAWBREAKER_TRANSFORMERS_MODEL_ID`, but the current judged model path is MiniCPM5-1B LoRA v8.
 
 ## Current Results
 
-MiniCPM5-1B LoRA v4:
+MiniCPM5-1B LoRA v8:
+
+- Adapter: `build-small-hackathon/jawbreaker-minicpm5-1b-lora-v8`
+- 632-case hard guarded eval: `579/632` risk accuracy (`91.61%`), `0` dangerous-as-safe, `0` dangerous-as-needs-check, `0` safe-as-dangerous-or-suspicious, `0` unsafe action violations, `0` invalid predictions, `0` model errors
+
+Earlier comparison evidence, MiniCPM5-1B LoRA v4:
 
 - Adapter: `build-small-hackathon/jawbreaker-minicpm5-1b-lora-v4`
 - 394-case hard guarded eval: `379/394` risk accuracy (`96.19%`), `0` dangerous-as-safe, `0` dangerous-as-needs-check, `0` suspicious-as-safe, `0` unsafe action violations, `0` invalid predictions, `0` model errors
@@ -187,16 +192,17 @@ python3 eval/run_eval.py \
   --dataset eval/generated_eval.jsonl
 ```
 
-Published v4 adapter through Transformers:
+Published final v8 adapter through Transformers:
 
 ```bash
 python3 eval/run_eval.py \
   --backend transformers \
   --model-id openbmb/MiniCPM5-1B \
-  --adapter-id build-small-hackathon/jawbreaker-minicpm5-1b-lora-v4 \
+  --adapter-id build-small-hackathon/jawbreaker-minicpm5-1b-lora-v8 \
   --trust-remote-code \
   --attn-implementation eager \
-  --dataset eval/hard_v5_eval.jsonl
+  --dataset eval/hard_v8_eval.jsonl \
+  --apply-safety-guard
 ```
 
 Saved prediction replay:

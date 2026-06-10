@@ -38,7 +38,7 @@ EXAMPLES = [
 ]
 
 DEFAULT_TRANSFORMERS_MODEL_ID = "openbmb/MiniCPM5-1B"
-DEFAULT_ADAPTER_ID = "build-small-hackathon/jawbreaker-minicpm5-1b-lora-v4"
+DEFAULT_ADAPTER_ID = "build-small-hackathon/jawbreaker-minicpm5-1b-lora-v8"
 DEFAULT_TRANSFORMERS_MAX_TOKENS = 512
 LOGO_PATH = Path("jawbreaker_logo.png")
 
@@ -270,8 +270,8 @@ def render_save_status(message: str = "") -> str:
 def model_status_label() -> str:
     model_id = os.getenv("JAWBREAKER_TRANSFORMERS_MODEL_ID", DEFAULT_TRANSFORMERS_MODEL_ID)
     adapter_id = default_adapter_id(model_id)
-    if model_id == "openbmb/MiniCPM5-1B" and adapter_id == "build-small-hackathon/jawbreaker-minicpm5-1b-lora-v4":
-        return "MiniCPM5-1B + Jawbreaker LoRA v4"
+    if model_id == "openbmb/MiniCPM5-1B" and adapter_id == "build-small-hackathon/jawbreaker-minicpm5-1b-lora-v8":
+        return "MiniCPM5-1B + Jawbreaker LoRA v8"
     if adapter_id:
         return adapter_id.rsplit("/", 1)[-1].replace("jawbreaker-", "").upper()
     return model_id.rsplit("/", 1)[-1].upper()
@@ -3242,7 +3242,7 @@ def build_app() -> gr.Blocks:
               <div class="status-tags">
                 <span>[ SECURE_ENV: ACTIVE ]</span>
                 <span>[ STATUS: READY ]</span>
-                <span>[ MODEL: MINICPM5_1B_LORA_V4 ]</span>
+                <span>[ MODEL: MINICPM5_1B_LORA_V8 ]</span>
                 <span>[ BUILT_FOR: BUILD_SMALL_HACKATHON ]</span>
               </div>
             </header>

@@ -3,7 +3,7 @@
 This experiment became the production path.
 
 The shipped Jawbreaker app now uses `openbmb/MiniCPM5-1B` with
-`build-small-hackathon/jawbreaker-minicpm5-1b-lora-v4`.
+`build-small-hackathon/jawbreaker-minicpm5-1b-lora-v8`.
 
 ## Why Try It
 
@@ -22,15 +22,15 @@ Promote the 1B path only if it has:
 - acceptable live Space latency
 - no obvious regression on legitimate/safe examples
 
-The v4 adapter cleared this bar on the completed 394-case hard guarded eval:
+The v8 adapter cleared this bar on the completed 632-case hard guarded eval:
 
-- `394` cases
-- `96.19%` risk accuracy
-- `96.19%` scam type accuracy
-- `96.55%` mean tactic recall
+- `632` cases
+- `91.61%` risk accuracy
+- `88.77%` scam type accuracy
+- `90.69%` mean tactic recall
 - `0` dangerous-as-safe
 - `0` dangerous-as-needs-check
-- `0` suspicious-as-safe
+- `0` safe-as-dangerous-or-suspicious
 - `0` unsafe action violations
 - `0` invalid predictions
 - `0` model errors
@@ -108,7 +108,7 @@ Only if both evals clear the decision rule:
 2. Update README with a Tiny Titan claim.
 3. Set the Space variables:
    - `JAWBREAKER_TRANSFORMERS_MODEL_ID=openbmb/MiniCPM5-1B`
-   - `JAWBREAKER_ADAPTER_ID=build-small-hackathon/jawbreaker-minicpm5-1b-lora-v4`
+   - `JAWBREAKER_ADAPTER_ID=build-small-hackathon/jawbreaker-minicpm5-1b-lora-v8`
 4. Smoke test desktop and mobile.
 
-The completed hard394 eval is committed under `eval/reports/` as final evidence.
+The completed hard632 v8 eval is committed under `eval/reports/` as final evidence. The earlier hard394 and hard320 v4 reports remain comparison evidence.

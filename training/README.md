@@ -145,12 +145,12 @@ Use the fine-tuned adapter only if it beats the base model on:
 
 If the adapter improves JSON but hurts safety, do not deploy it.
 
-Current decision: ship `build-small-hackathon/jawbreaker-minicpm5-1b-lora-v4`
+Current decision: ship `build-small-hackathon/jawbreaker-minicpm5-1b-lora-v8`
 on `openbmb/MiniCPM5-1B`.
 
-- 394-case hard guarded eval: `379/394` risk accuracy (`96.19%`), no dangerous undercalls, no suspicious-as-safe misses, no unsafe action violations, no invalid predictions, no model errors.
-- 320-case hard guarded eval: `310/320` risk accuracy (`96.88%`), no dangerous undercalls, no suspicious-as-safe misses, no unsafe action violations, no invalid predictions, no model errors.
-- Earlier 8B v3 evals remain useful as comparison evidence, but the 1B v4 adapter is the final deployed model.
+- 632-case hard guarded eval: `579/632` risk accuracy (`91.61%`), no dangerous undercalls, no safe-as-dangerous-or-suspicious misses, no unsafe action violations, no invalid predictions, no model errors.
+- Earlier 1B v4 evals remain useful as comparison evidence: 394-case hard guarded eval at `379/394` risk accuracy (`96.19%`) and 320-case hard guarded eval at `310/320` risk accuracy (`96.88%`), both with no dangerous undercalls.
+- Earlier 8B v3 evals remain useful as comparison evidence, but the 1B v8 adapter is the final deployed model.
 
 ## v7 Calibration Experiment
 
@@ -242,3 +242,8 @@ Promotion rule:
 1. Fresh 2026 held-out eval must have `dangerous_as_safe=0`, `dangerous_as_needs_check=0`, `invalid_predictions=0`, and `unsafe_action_violations=0`.
 2. Hard v8 eval must keep zero dangerous undercalls and valid JSON.
 3. Safe false positives must not materially worsen versus v4/v7.
+
+Promotion result:
+
+- Fresh 2026 guarded eval after guard calibration: `92/100` risk accuracy, `0` dangerous-as-safe, `0` dangerous-as-needs-check, `0` safe-as-dangerous-or-suspicious, `0` unsafe action violations, `0` invalid predictions, `0` model errors.
+- Hard v8 guarded eval after guard calibration: `579/632` risk accuracy (`91.61%`), `0` dangerous-as-safe, `0` dangerous-as-needs-check, `0` safe-as-dangerous-or-suspicious, `0` unsafe action violations, `0` invalid predictions, `0` model errors.

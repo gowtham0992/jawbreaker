@@ -31,7 +31,7 @@ tags:
 - zerogpu
 models:
 - openbmb/MiniCPM5-1B
-- build-small-hackathon/jawbreaker-minicpm5-1b-lora-v4
+- build-small-hackathon/jawbreaker-minicpm5-1b-lora-v8
 datasets:
 - build-small-hackathon/jawbreaker-scam-defense-data
 ---
@@ -47,11 +47,11 @@ Scam defense for someone you love.
 ## TL;DR for Judges
 
 - **Backyard AI:** a practical scam-defense safety card for non-technical people and their families.
-- **Best MiniCPM Build / Tiny Titan / Well-Tuned:** `openbmb/MiniCPM5-1B` + [Jawbreaker LoRA v4](https://huggingface.co/build-small-hackathon/jawbreaker-minicpm5-1b-lora-v4), evaluated on a 394-case hard suite with **0 dangerous-as-safe failures**.
-- **Best Use of Modal:** Modal A100 was used for LoRA training and guarded eval runs; see [`training/modal_train.py`](training/modal_train.py), [`training/modal_eval.py`](training/modal_eval.py), the [`394-case report`](eval/reports/jawbreaker-minicpm5-1b-lora-v4-hard394-guarded.json), and the [`320-case report`](eval/reports/jawbreaker-minicpm5-1b-lora-v4-hard320-guarded.json).
+- **Best MiniCPM Build / Tiny Titan / Well-Tuned:** `openbmb/MiniCPM5-1B` + [Jawbreaker LoRA v8](https://huggingface.co/build-small-hackathon/jawbreaker-minicpm5-1b-lora-v8), evaluated on a 632-case hard suite with **0 dangerous undercalls** and **0 safe overcalls**.
+- **Best Use of Modal:** Modal A100 was used for LoRA training and guarded eval runs; see [`training/modal_train.py`](training/modal_train.py), [`training/modal_eval.py`](training/modal_eval.py), the [`632-case v8 report`](eval/reports/jawbreaker-minicpm5-1b-lora-v8-hard632-safetyguard-v4.json), plus the earlier [`394-case v4 report`](eval/reports/jawbreaker-minicpm5-1b-lora-v4-hard394-guarded.json).
 - **Best Use of Codex:** Codex-attributed commits plus [`AGENT_TRACE.md`](AGENT_TRACE.md) and [`CODEX_BUILD_LOG.md`](CODEX_BUILD_LOG.md), with file-level contribution notes below.
 - **Off Brand / Sharing is Caring / Field Notes:** custom candy-brutalist Gradio UI, public [dataset/eval bundle](https://huggingface.co/datasets/build-small-hackathon/jawbreaker-scam-defense-data), and [`FIELD_NOTES.md`](FIELD_NOTES.md).
-- **Submission package:** [Live Space](https://huggingface.co/spaces/build-small-hackathon/jawbreaker), [model](https://huggingface.co/build-small-hackathon/jawbreaker-minicpm5-1b-lora-v4), [dataset](https://huggingface.co/datasets/build-small-hackathon/jawbreaker-scam-defense-data), and [collection](https://huggingface.co/collections/build-small-hackathon/jawbreaker-6a263632dcd0b6d41ca914ff).
+- **Submission package:** [Live Space](https://huggingface.co/spaces/build-small-hackathon/jawbreaker), [model](https://huggingface.co/build-small-hackathon/jawbreaker-minicpm5-1b-lora-v8), [dataset](https://huggingface.co/datasets/build-small-hackathon/jawbreaker-scam-defense-data), and [collection](https://huggingface.co/collections/build-small-hackathon/jawbreaker-6a263632dcd0b6d41ca914ff).
 
 Jawbreaker is designed for local, on-device inference to protect user privacy. For this hackathon demo, it is hosted on Hugging Face ZeroGPU so judges can try the same app without local setup.
 
@@ -69,7 +69,7 @@ The problem is specific: scam messages now arrive as urgent, personal, plausible
 - Social post: To be added before submission
 - Public GitHub repo: https://github.com/gowtham0992/jawbreaker
 - Live Space: https://huggingface.co/spaces/build-small-hackathon/jawbreaker
-- Final model adapter: https://huggingface.co/build-small-hackathon/jawbreaker-minicpm5-1b-lora-v4
+- Final model adapter: https://huggingface.co/build-small-hackathon/jawbreaker-minicpm5-1b-lora-v8
 - Public dataset/eval bundle: https://huggingface.co/datasets/build-small-hackathon/jawbreaker-scam-defense-data
 - Hugging Face collection: https://huggingface.co/collections/build-small-hackathon/jawbreaker-6a263632dcd0b6d41ca914ff
 
@@ -99,16 +99,16 @@ Jawbreaker is deliberately narrow. It does not try to be a general assistant or 
 
 The deployed Space uses `openbmb/MiniCPM5-1B` through Hugging Face Transformers on ZeroGPU with the published Jawbreaker LoRA adapter:
 
-- Adapter: `build-small-hackathon/jawbreaker-minicpm5-1b-lora-v4`
+- Adapter: `build-small-hackathon/jawbreaker-minicpm5-1b-lora-v8`
 - Training: PEFT/LoRA on Modal A100
-- Eval: guarded Modal A100 runs across 320-case and 394-case hard suites
+- Eval: guarded Modal A100 run across the 632-case hard v8 suite, with earlier 320/394-case v4 comparison runs
 - Runtime: ZeroGPU in the Hugging Face Space
 
 Why this model:
 
 - It makes OpenBMB MiniCPM central to the app, matching the hackathon sponsor track.
 - It is a 1B model, which fits the Tiny Titan spirit while staying useful on a narrow task.
-- The 1B v4 adapter beat the earlier 8B v3 adapter on the hard guarded evals.
+- The 1B v8 adapter keeps the Tiny Titan/OpenBMB path while clearing the broader 632-case safety gate.
 - It avoids external commercial model APIs.
 - It can produce the structured JSON that Jawbreaker validates before rendering.
 
@@ -124,23 +124,23 @@ Safety architecture:
 
 Current eval results:
 
-- 394-case hard guarded eval, 1B v4: `379/394` risk accuracy (`96.19%`), **`0` dangerous-as-safe**, `0` dangerous-as-needs-check, `0` suspicious-as-safe, `0` unsafe action violations, `0` invalid predictions, `0` model errors.
-- 320-case hard guarded eval, 1B v4: `310/320` risk accuracy (`96.88%`), `0` dangerous-as-safe, `0` dangerous-as-needs-check, `0` suspicious-as-safe, `0` unsafe action violations, `0` invalid predictions, `0` model errors.
+- 632-case hard guarded eval, 1B v8: `579/632` risk accuracy (`91.61%`), **`0` dangerous-as-safe**, `0` dangerous-as-needs-check, `0` safe-as-dangerous-or-suspicious, `0` unsafe action violations, `0` invalid predictions, `0` model errors.
+- Earlier comparison evidence, 1B v4: 394-case hard guarded eval at `379/394` risk accuracy (`96.19%`) and 320-case hard guarded eval at `310/320` risk accuracy (`96.88%`), both with no dangerous undercalls.
 
 Training/eval artifacts:
 
-- Hugging Face dataset: `build-small-hackathon/jawbreaker-scam-defense-data` publishes the sanitized/synthetic evals, generated training splits, and final v4 reports.
+- Hugging Face dataset: `build-small-hackathon/jawbreaker-scam-defense-data` publishes the sanitized/synthetic evals, generated training splits, and final reports.
 - `eval/scam_eval.jsonl`: 100 hand-curated synthetic/sanitized eval cases.
 - `eval/field_examples.jsonl`: sanitized real-world examples from a friend, with names and phone numbers removed.
 - `training/generate_jawbreaker_data.py`: deterministic generator for larger train/dev/test splits.
 - `training/generate_v3_data.py`: contrastive hard-case generator used for the v3 LoRA pass.
-- `training/generate_v4_data.py`, `generate_v5_data.py`, `generate_v6_data.py`: later calibration generators used to stress-test false positives and trusted-route boundaries.
+- `training/generate_v4_data.py`, `generate_v5_data.py`, `generate_v6_data.py`, `generate_v7_data.py`, `generate_v8_data.py`: later calibration generators used to stress-test false positives, trusted-route boundaries, fresh public scam patterns, and wrong-number investment grooming.
 - `training/data/train.jsonl`, `dev.jsonl`, `test.jsonl`: generated SFT records for Jawbreaker JSON behavior.
 - `training/data/train_v3.jsonl`, `dev_v3.jsonl`, `test_v3.jsonl`: v3 contrastive training split.
 - `eval/generated_eval.jsonl`: generated holdout eval set.
 - `eval/hard_v2_eval.jsonl`: hard eval set used to compare v2 and v3 adapters.
-- `eval/hard_v4_eval.jsonl`, `hard_v5_eval.jsonl`, `hard_v6_eval.jsonl`: expanded hard evals used during 1B calibration.
-- `eval/reports/jawbreaker-minicpm5-1b-lora-v4-hard394-guarded.json`: main final model evidence.
+- `eval/hard_v4_eval.jsonl`, `hard_v5_eval.jsonl`, `hard_v6_eval.jsonl`, `hard_v7_eval.jsonl`, `hard_v8_eval.jsonl`: expanded hard evals used during 1B calibration.
+- `eval/reports/jawbreaker-minicpm5-1b-lora-v8-hard632-safetyguard-v4.json`: main final model evidence.
 - `training/train_lora.py`: PEFT/LoRA script for publishing Jawbreaker MiniCPM adapters.
 - `training/modal_train.py`: Modal A100 training launcher used for the MiniCPM LoRA passes.
 - `training/modal_eval.py`: Modal A100 eval launcher used for guarded hard-suite scoring.
@@ -153,7 +153,7 @@ Training/eval artifacts:
 | Backyard AI | Targeted | Practical scam-defense app for someone close, with a focused safety workflow. |
 | Best MiniCPM Build | Targeted | `openbmb/MiniCPM5-1B` is the core runtime model, with a published Jawbreaker LoRA adapter. |
 | Best Use of Codex | Targeted | Public GitHub repo includes Codex-attributed commits plus `AGENT_TRACE.md` and `CODEX_BUILD_LOG.md`. |
-| Best Use of Modal | Targeted | Modal A100 was used for PEFT/LoRA training and guarded eval runs across the MiniCPM calibration path; see `training/modal_train.py`, `training/modal_eval.py`, and the committed 394/320-case eval report files. |
+| Best Use of Modal | Targeted | Modal A100 was used for PEFT/LoRA training and guarded eval runs across the MiniCPM calibration path; see `training/modal_train.py`, `training/modal_eval.py`, and the committed 632/394/320-case eval report files. |
 | Tiny Titan | Targeted | The deployed model is `openbmb/MiniCPM5-1B`, well under the 4B badge threshold. |
 | Off Brand | Targeted | Custom Gradio UI beyond the stock component look. |
 | Best Demo | Pending | Demo video and social post still need to be recorded, published, and linked before final submission. |
@@ -162,7 +162,7 @@ Training/eval artifacts:
 
 Bonus badge evidence:
 
-- **Well-Tuned:** published MiniCPM5-1B LoRA adapter with guarded 394-case and 320-case eval reports.
+- **Well-Tuned:** published MiniCPM5-1B LoRA adapter with guarded 632-case, 394-case, and 320-case eval reports.
 - **Off Brand:** custom `gr.Server` app shell instead of stock Gradio component layout.
 - **Tiny Titan:** 1B runtime model with a narrow, safety-critical task.
 - **Sharing is Caring:** public dataset/eval bundle plus `AGENT_TRACE.md` and `CODEX_BUILD_LOG.md`.
