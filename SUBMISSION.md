@@ -13,8 +13,8 @@
 
 ## Backyard AI Evidence
 
-- [ ] Real user identified
-- [ ] Real suspicious message collected with private details removed
+- [x] Real user identified: friend's grandmother, private identity omitted
+- [x] Real suspicious message pattern collected with private details removed
 - [ ] User quote or reaction collected
 - [ ] Demo script shows the real-user story
 
@@ -55,6 +55,7 @@
 - [x] Publish sanitized dataset/eval artifact page.
 - [x] Create/update Hugging Face collection for the full submission package.
 - [ ] Choose one real or realistic sanitized scam message for the primary demo.
+- [x] Draft Hugging Face article / community story.
 - [ ] Record 60-90 second demo video.
 - [ ] Add demo video link to README.
 - [ ] Draft and publish social post.

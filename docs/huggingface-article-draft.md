@@ -34,6 +34,8 @@ GitHub: https://github.com/gowtham0992/jawbreaker
 
 Most scam-defense tools explain scams after the fact. Jawbreaker is built for the moment before someone acts.
 
+The motivating user is a friend's grandmother who had already been affected by scam messages. We are keeping names, phone numbers, timestamps, and private message details out of the public writeup, but that story shaped the product. Jawbreaker is built for the family moment where someone asks: "Should I click this, reply to this, call this number, or ask someone I trust first?"
+
 That moment is small but high stakes:
 
 - a package fee link
@@ -43,6 +45,8 @@ That moment is small but high stakes:
 - a verification code someone asks you to share
 
 The product goal is not to be a general assistant. It is to help someone pause, understand the message, and choose one safe next step.
+
+That is why the app does not say "spam" and stop. It explains the warning signs and gives a plain next step that a non-technical person can act on.
 
 Jawbreaker is intentionally narrow:
 

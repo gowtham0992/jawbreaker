@@ -196,3 +196,17 @@ The field guide says Off the Grid is about no cloud APIs: "The whole thing runs 
 - local/eval tooling also supports GGUF experiments through `llama-cpp-python`
 
 Precise wording matters: claim Off the Grid confidently as small open model inference inside the app runtime with no external LLM API. Hugging Face ZeroGPU is the judge-facing compute layer, not a hosted model dependency.
+
+## 2026-06-09 Backyard AI Story
+
+The motivating user story is a friend's grandmother who had already been affected by scam messages. Public docs should keep this privacy-preserving:
+
+- no names
+- no phone numbers
+- no timestamps
+- no raw private chat metadata
+- no claim of broad user validation without a direct quote or recorded reaction
+
+This is enough to make the Backyard AI framing concrete: Jawbreaker is for a real family safety workflow, not a generic spam-classification benchmark. The public story should say that the product was shaped around helping someone like her pause before replying, clicking, calling, or paying.
+
+If we later get a quote or demo permission, add it to the article and demo script. Until then, keep the claim as motivation and intended use, not measured user validation.

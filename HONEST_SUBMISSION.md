@@ -5,6 +5,7 @@ Jawbreaker should compete hard without gaming the hackathon.
 ## What We Can Claim
 
 - Backyard AI: Jawbreaker is built for a real, specific safety problem: helping someone pause before clicking, replying, or sending money.
+- Real user story: the motivating user is a friend's grandmother who had already been affected by scam messages; public docs omit identity and private message details.
 - Small-model constraint: the deployed model is under 32B parameters.
 - Gradio Space: the app runs as a Gradio app under the hackathon organization.
 - OpenBMB targeting: MiniCPM is central to the deployed scam analysis path.
@@ -20,6 +21,7 @@ Jawbreaker should compete hard without gaming the hackathon.
 ## What We Should Not Claim Unless Completed
 
 - Do not claim real-world user validation until the target person has actually tried the app.
+- Do not turn the grandmother story into a measured outcome claim unless we have a quote, permission, or concrete post-use feedback.
 - Do not claim the generated synthetic dataset is real user data.
 - Do not claim benchmark superiority unless we publish the eval command, dataset, and result.
 - Do not claim llama.cpp as the deployed runtime unless the live Space actually uses the llama.cpp path.

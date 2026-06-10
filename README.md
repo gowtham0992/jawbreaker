@@ -76,6 +76,8 @@ Jawbreaker helps a real person pause before clicking, replying, or sending money
 
 The problem is specific: scam messages now arrive as urgent, personal, plausible requests. A package fee, a bank callback, a fake recruiter, or a "new phone number" from a family member can pressure someone into clicking or paying before they ask for help. Jawbreaker turns that moment into a small safety workflow: paste the message, get a clear verdict, see the warning signs, and copy a short plan to someone you trust.
 
+The motivating user is a friend's grandmother who had already been affected by scam messages. Private details are intentionally omitted, but that family context shaped the product: this is not a generic spam classifier for security experts; it is a calm safety check for someone who needs to know whether to reply, click, call, or ask for help.
+
 ## Hackathon
 
 - Event: Hugging Face Build Small Hackathon
@@ -89,6 +91,7 @@ The problem is specific: scam messages now arrive as urgent, personal, plausible
 - Final model adapter: https://huggingface.co/build-small-hackathon/jawbreaker-minicpm5-1b-lora-v8
 - Public dataset/eval bundle: https://huggingface.co/datasets/build-small-hackathon/jawbreaker-scam-defense-data
 - Hugging Face collection: https://huggingface.co/collections/build-small-hackathon/jawbreaker-6a263632dcd0b6d41ca914ff
+- Article draft: [`docs/huggingface-article-draft.md`](docs/huggingface-article-draft.md)
 
 Submission checklist:
 
@@ -189,6 +192,7 @@ Training/eval artifacts:
 | Off Brand | Submitted | Custom Gradio UI beyond the stock component look. |
 | Sharing is Caring | Submitted | Public dataset/eval bundle, model card, build log, Codex trace, and collection are linked from the Space. |
 | Field Notes | Submitted | `FIELD_NOTES.md` documents product decisions, model/runtime pivots, eval results, and submission tradeoffs. |
+| Article / Story | Drafted | `docs/huggingface-article-draft.md` is ready to publish through Hugging Face Articles. |
 | Best Demo | Pending | Demo video and social post still need to be recorded, published, and linked before final submission. |
 | Bonus Quest Champion | Submitted | Jawbreaker stacks Well-Tuned, Off Brand, Off the Grid, Tiny Titan, Sharing is Caring, and Field Notes; Best Demo will strengthen this once the video/social links are added. |
 | Judges' Wildcard | Automatic | Every submission is considered. |
