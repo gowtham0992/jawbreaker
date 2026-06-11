@@ -154,10 +154,20 @@ Safety architecture:
 - The UI always recommends verification through official channels or a known phone number, never the suspicious link or number.
 - Session memory is local to the current Gradio session and helps show repeated scam patterns.
 
-Current eval results:
+## Model Selection Evidence
 
-- 632-case hard guarded eval, 1B v8: `579/632` risk accuracy (`91.61%`), **`0` dangerous-as-safe**, `0` dangerous-as-needs-check, `0` safe-as-dangerous-or-suspicious, `0` unsafe action violations, `0` invalid predictions, `0` model errors.
-- Earlier comparison evidence, 1B v4: 394-case hard guarded eval at `379/394` risk accuracy (`96.19%`) and 320-case hard guarded eval at `310/320` risk accuracy (`96.88%`), both with no dangerous undercalls.
+![Risk accuracy comparison for Jawbreaker model candidates](docs/model-selection-chart.svg)
+
+| Candidate | Size | Eval set | Risk accuracy | Dangerous -> safe | Dangerous -> needs check | Safe -> dangerous/suspicious | Invalid JSON | Unsafe actions | Why not final |
+| --- | ---: | --- | ---: | ---: | ---: | ---: | ---: | ---: | --- |
+| Heuristic guard | none | 215 hard cases | 84.7% | 0 | 0 | 0 | 0 | 0 | Guard layer only, not model-led. |
+| MiniCPM4.1 LoRA v3 | 8B | 215 hard cases | 97.7% | 0 | 0 | 0 | 0 | 0 | Strong, but not Tiny Titan. |
+| MiniCPM5 LoRA v4 | 1B | 394 hard cases | 96.2% | 0 | 0 | 3 | 0 | 0 | Strong, narrower eval and a few safe-message overcalls. |
+| MiniCPM5 LoRA v8 | 1B | 632 hard cases | 91.6% | 0 | 0 | 0 | 0 | 0 | **Final: broadest safety gate.** |
+
+Jawbreaker ships the 1B v8 adapter not because it has the prettiest accuracy number, but because it cleared the broadest completed hard safety gate with zero dangerous undercalls, zero safe-message overcalls, zero unsafe actions, zero invalid JSON, and zero model errors.
+
+`Qwen/Qwen3-0.6B` was an early ZeroGPU runtime prototype and remains a documented fallback path, but it is not included in the numeric comparison because the final committed reports are for the heuristic guard and MiniCPM LoRA candidates above. The judged path is MiniCPM5-1B + Jawbreaker LoRA v8.
 
 Training/eval artifacts:
 
