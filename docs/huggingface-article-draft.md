@@ -2,7 +2,7 @@
 
 > Draft for Hugging Face Articles / community post.
 >
-> Status: working draft. Add demo video and final social links before publishing.
+> Status: working draft. Demo video is published; add final social links before publishing.
 
 ![Jawbreaker logo](https://huggingface.co/spaces/build-small-hackathon/jawbreaker/resolve/main/jawbreaker_logo.png)
 
@@ -21,6 +21,8 @@ Paste a suspicious text, email, or DM. Jawbreaker turns it into a simple safety 
 - a copyable note to send to someone you trust
 
 Live app: https://huggingface.co/spaces/build-small-hackathon/jawbreaker
+
+Demo video: https://youtu.be/oh0GRKYXvGM
 
 Model: https://huggingface.co/build-small-hackathon/jawbreaker-minicpm5-1b-lora-v8
 

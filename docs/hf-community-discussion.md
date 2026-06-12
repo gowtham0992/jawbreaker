@@ -7,6 +7,7 @@ It is built for the moment before someone clicks a suspicious link, replies to a
 ## Main Links
 
 - Live Space: https://huggingface.co/spaces/build-small-hackathon/jawbreaker
+- Demo video: https://youtu.be/oh0GRKYXvGM
 - Final model adapter: https://huggingface.co/build-small-hackathon/jawbreaker-minicpm5-1b-lora-v8
 - Dataset/eval bundle: https://huggingface.co/datasets/build-small-hackathon/jawbreaker-scam-defense-data
 - Collection: https://huggingface.co/collections/build-small-hackathon/jawbreaker-6a263632dcd0b6d41ca914ff
@@ -62,7 +63,7 @@ Headline metrics:
 
 ## Remaining Public Story Work
 
-- Demo video: pending
+- Demo video: published
 - Social post: pending
 - Hugging Face Article: drafted, pending publication through the Articles UI
 

@@ -4,7 +4,7 @@
 
 - [x] Gradio Space created under `build-small-hackathon`
 - [x] Space made public before June 15, 2026
-- [ ] Demo video linked in Space README
+- [x] Demo video linked in Space README: https://youtu.be/oh0GRKYXvGM
 - [ ] Social post linked in Space README
 - [x] Public GitHub repo linked in Space README
 - [x] Repo includes Codex-attributed feature commits
@@ -16,7 +16,7 @@
 - [x] Real user identified: friend's grandmother, private identity omitted
 - [x] Real suspicious message pattern collected with private details removed
 - [ ] User quote or reaction collected
-- [ ] Demo script shows the real-user story
+- [x] Demo script shows the real-user story
 
 ## Technical Evidence
 
@@ -37,7 +37,7 @@
 - [x] Well-Tuned
 - [x] Sharing is Caring
 - [x] Field Notes
-- [ ] Best Demo evidence finalized
+- [ ] Best Demo evidence finalized after social post is linked
 
 ## Codex Track Evidence
 
@@ -51,13 +51,13 @@
 
 ## Final Manual Tasks
 
-- [ ] Set Space variables to MiniCPM5-1B + Jawbreaker LoRA v4.
+- [x] Set Space variables to MiniCPM5-1B + Jawbreaker LoRA v8.
 - [x] Publish sanitized dataset/eval artifact page.
 - [x] Create/update Hugging Face collection for the full submission package.
-- [ ] Choose one real or realistic sanitized scam message for the primary demo.
+- [x] Choose one real or realistic sanitized scam message for the primary demo.
 - [x] Draft Hugging Face article / community story.
-- [ ] Record 60-90 second demo video.
-- [ ] Add demo video link to README.
+- [x] Record demo video.
+- [x] Add demo video link to README.
 - [ ] Draft and publish social post.
 - [ ] Add social post link to README.
 - [x] Make the Hugging Face Space public.
