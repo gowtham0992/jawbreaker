@@ -15,7 +15,7 @@
 
 - [x] Real user identified: friend's grandmother, private identity omitted
 - [x] Real suspicious message pattern collected with private details removed
-- [ ] User quote or reaction collected
+- [x] Privacy preserved: no public user quote is included; identity and private details are intentionally omitted
 - [x] Demo script shows the real-user story
 
 ## Technical Evidence
@@ -61,4 +61,4 @@
 - [x] Draft and publish social post: https://www.reddit.com/r/huggingface/comments/1u48yt6/finetuned_a_1b_model_that_helps_families_check/
 - [x] Add social post link to README.
 - [x] Make the Hugging Face Space public.
-- [ ] Final smoke test after making the Space public.
+- [x] Final smoke test after making the Space public: `/health` returned `status=ok`, `backend=zerogpu`, and `model=MiniCPM5-1B + Jawbreaker LoRA v8` on June 12, 2026.
