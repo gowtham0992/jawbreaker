@@ -11,6 +11,15 @@ app_file: app.py
 license: mit
 short_description: Private scam defense for someone you love.
 tags:
+- track:backyard
+- sponsor:openbmb
+- sponsor:openai
+- sponsor:modal
+- achievement:offgrid
+- achievement:welltuned
+- achievement:offbrand
+- achievement:sharing
+- achievement:fieldnotes
 - gradio
 - build-small-hackathon
 - backyard ai
