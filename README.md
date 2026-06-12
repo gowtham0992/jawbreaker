@@ -74,7 +74,7 @@ Jawbreaker is built around direct small-model inference to protect user privacy.
 
 Jawbreaker helps a real person pause before clicking, replying, or sending money. Paste a suspicious text, email, or DM and Jawbreaker breaks it into plain-English warning signs: what the sender is pretending to be, what pressure tactic is being used, what they want, and the safest next step.
 
-The problem is specific: scam messages now arrive as urgent, personal, plausible requests. A package fee, a bank callback, a fake recruiter, or a "new phone number" from a family member can pressure someone into clicking or paying before they ask for help. Jawbreaker turns that moment into a small safety workflow: paste the message, get a clear verdict, see the warning signs, and copy a short plan to someone you trust.
+The problem is specific: scam messages now arrive as urgent, personal, plausible requests. A package fee, a bank callback, a fake recruiter, or a "new phone number" from a family member can pressure someone into clicking or paying before they ask for help. Jawbreaker turns that moment into a small safety workflow: paste the message, get a clear verdict, see the warning signs, see whether the message needs more context, and copy a short note to someone you trust.
 
 The motivating user is a friend's grandmother who had already been affected by scam messages. Private details are intentionally omitted, but that family context shaped the product: this is not a generic spam classifier for security experts; it is a calm safety check for someone who needs to know whether to reply, click, call, or ask for help.
 
@@ -124,7 +124,8 @@ Jawbreaker is deliberately narrow. It does not try to be a general assistant or 
 1. Read one suspicious message.
 2. Identify scam risk and manipulation tactics.
 3. Give one clear safe action.
-4. Help the user ask someone they trust.
+4. Surface uncertainty when a message is too short or missing context.
+5. Help the user ask someone they trust with a copyable warning note.
 
 ## Model Runtime
 

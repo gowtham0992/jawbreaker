@@ -21,6 +21,12 @@ from jawbreaker.analyzers import (
 )
 from jawbreaker.render import render_analysis_html, render_memory_html, render_scanning_html
 from jawbreaker.schema import ScamAnalysis
+from jawbreaker.trust import (
+    build_trusted_note,
+    confidence_metadata,
+    is_low_context_message,
+    low_context_analysis,
+)
 
 try:
     import spaces
@@ -61,7 +67,7 @@ FORCE_LIGHT_HEAD = """
     const source = button.dataset.copy || "";
     if (!source) return;
     await navigator.clipboard.writeText(source);
-    const original = button.textContent || "COPY PLAN";
+    const original = button.textContent || "COPY NOTE";
     button.textContent = "COPIED";
     window.setTimeout(() => {
       button.textContent = original;
@@ -295,6 +301,8 @@ def analysis_payload(message: str, memory: list[dict] | None = None) -> dict[str
     started = perf_counter()
     if not message.strip():
         analysis = ScamAnalysis.from_heuristics(message, memory)
+    elif is_low_context_message(message):
+        analysis = low_context_analysis(message, memory)
     else:
         analysis = run_analysis(message, memory)
 
@@ -304,6 +312,7 @@ def analysis_payload(message: str, memory: list[dict] | None = None) -> dict[str
 
     return {
         "analysis": asdict(analysis),
+        "confidence": confidence_metadata(message, analysis),
         "copy_plan": build_handoff_message(message, analysis),
         "memory": memory[-6:],
         "message": message,
@@ -1259,7 +1268,7 @@ def paper_shield_html() -> str:
               <ul class="standby-list" aria-label="What Jawbreaker checks">
                 <li><strong>1</strong><span>Paste the message exactly as you received it.</span></li>
                 <li><strong>2</strong><span>Review the verdict and the safest next step before replying.</span></li>
-                <li><strong>3</strong><span>Copy the plan if you want a trusted person to check it with you.</span></li>
+                <li><strong>3</strong><span>Copy the note if you want a trusted person to check it with you.</span></li>
               </ul>
             </div>
             <div class="standby-preview" aria-label="What Jawbreaker returns">
@@ -1373,7 +1382,7 @@ def paper_shield_html() -> str:
         </div>
 
         <article class="card action-card">
-          <div class="card-head"><span>Safest next step</span><span>send to someone you trust</span></div>
+          <div class="card-head"><span>Safest next step</span><span>copy a note for someone you trust</span></div>
           <div class="card-body">
             <p class="action-title">Recommended action</p>
             <p class="action-text">${{escapeHtml(analysis.safest_action)}}</p>
@@ -2460,6 +2469,30 @@ def kitchen_table_html() -> str:
       line-height: 1.45;
     }
 
+    .confidence-card {
+      width: 100%;
+      display: grid;
+      gap: 3px;
+      border: 2px solid var(--line);
+      border-radius: 999px;
+      background: var(--paper);
+      padding: 9px 13px;
+      text-align: left;
+    }
+
+    .confidence-card strong {
+      font-family: var(--font-label);
+      font-size: .66rem;
+      font-weight: 950;
+      text-transform: uppercase;
+    }
+
+    .confidence-card span {
+      color: var(--muted);
+      font-size: .82rem;
+      line-height: 1.25;
+    }
+
     .dna-board {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -3177,7 +3210,7 @@ def kitchen_table_html() -> str:
               <ol class="standby-steps">
                 <li><strong>1</strong><span>Paste the message exactly as you received it.</span></li>
                 <li><strong>2</strong><span>Read the stamped verdict and warning signs.</span></li>
-                <li><strong>3</strong><span>Copy the plan if you want a trusted person to check it with you.</span></li>
+                <li><strong>3</strong><span>Copy the note if you want a trusted person to check it with you.</span></li>
               </ol>
             </div>
             <div class="coaster-stack" aria-label="What Jawbreaker returns">
@@ -3249,6 +3282,7 @@ def kitchen_table_html() -> str:
 
     function renderVerdict(payload) {
       const analysis = payload.analysis || {};
+      const confidence = payload.confidence || {};
       const risk = analysis.risk_level || "needs_check";
       const label = labels[risk] || labels.needs_check;
       const dna = analysis.scam_dna || {};
@@ -3282,6 +3316,10 @@ def kitchen_table_html() -> str:
                 <div class="rubber-stamp">${escapeHtml(label.stamp)}</div>
                 <h3>${escapeHtml(label.title)}</h3>
                 <p>${escapeHtml(analysis.summary)}</p>
+                <div class="confidence-card">
+                  <strong>${escapeHtml(confidence.label || "Context check")}</strong>
+                  <span>${escapeHtml(confidence.detail || "Verify before you act.")}</span>
+                </div>
               </section>
               <section>
                 <p class="dna-caption">Why Jawbreaker thinks so</p>
@@ -3293,13 +3331,13 @@ def kitchen_table_html() -> str:
         </article>
 
         <article class="safe-action">
-          <div class="safe-action-header"><span>What to do before you act</span><span>send to someone you trust</span></div>
+          <div class="safe-action-header"><span>What to do before you act</span><span>copy a note for someone you trust</span></div>
           <div class="safe-action-body">
             <h3>Safest next step</h3>
             <p class="action-text">${escapeHtml(analysis.safest_action)}</p>
             <div class="copy-grid">
               <div class="copy-note">${escapeHtml(payload.copy_plan)}</div>
-              <button class="copy-button" id="copyButton" type="button">Copy plan</button>
+              <button class="copy-button" id="copyButton" type="button">Copy note</button>
             </div>
           </div>
         </article>
@@ -3311,7 +3349,7 @@ def kitchen_table_html() -> str:
         button.textContent = "Copied";
         button.style.transform = "rotate(-4deg) scale(1.02)";
         window.setTimeout(() => {
-          button.textContent = "Copy plan";
+          button.textContent = "Copy note";
           button.style.transform = "";
         }, 1200);
       });
@@ -3410,23 +3448,7 @@ def build_server() -> gr.Server:
 
 
 def build_handoff_message(message: str, analysis: ScamAnalysis) -> str:
-    cleaned = " ".join(message.strip().split())
-    if len(cleaned) > 500:
-        cleaned = cleaned[:497].rstrip() + "..."
-
-    risk = analysis.risk_level.replace("_", " ")
-    scam_type = analysis.scam_type.replace("_", " ")
-    risk_line = f"Jawbreaker marked it as {risk}"
-    if scam_type and scam_type != "none":
-        risk_line += f" ({scam_type})"
-
-    return (
-        "Can you check this message with me before I do anything?\n\n"
-        f"Message I received:\n\"{cleaned}\"\n\n"
-        f"{risk_line}.\n"
-        f"Safest next step: {analysis.safest_action}\n\n"
-        "I have not clicked any links, replied, or sent anything."
-    )
+    return build_trusted_note(message, analysis)
 
 
 def should_use_heuristic_guard(
@@ -3451,6 +3473,21 @@ def analyze_message(
             render_memory_html(analysis, memory),
             memory,
             {},
+            gr.update(interactive=True),
+            gr.update(interactive=True),
+        )
+        return
+
+    if is_low_context_message(message):
+        analysis = low_context_analysis(message, memory)
+        entry = memory_entry_from_analysis(message, analysis)
+        if not memory or memory[-1].get("text") != entry.get("text"):
+            memory.append(entry)
+        yield (
+            render_analysis_html(message, analysis),
+            render_memory_html(analysis, memory),
+            memory,
+            {"message": message, "entry": entry},
             gr.update(interactive=True),
             gr.update(interactive=True),
         )

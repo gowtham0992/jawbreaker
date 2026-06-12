@@ -162,7 +162,7 @@ def render_analysis_html(message: str, analysis: ScamAnalysis) -> str:
       </div>
       <div class="copy-plan-inline">
         <div class="copy-plan-source">{copy_preview}</div>
-        <button type="button" class="inline-copy-btn" data-copy="{escape(copy_plan, quote=True)}">COPY PLAN</button>
+        <button type="button" class="inline-copy-btn" data-copy="{escape(copy_plan, quote=True)}">COPY NOTE</button>
       </div>
     """
 

@@ -230,7 +230,7 @@ def test_handoff_message_includes_original_text_and_safe_action() -> None:
     assert "Jawbreaker marked it as dangerous (family impersonation)." in handoff
     assert "Safest next step:" in handoff
     assert analysis.safest_action in handoff
-    assert "I have not clicked any links, replied, or sent anything." in handoff
+    assert "I have not clicked any links, replied, sent money, or shared codes." in handoff
 
 
 def test_run_analysis_falls_back_to_heuristic_when_model_fails(monkeypatch) -> None:
