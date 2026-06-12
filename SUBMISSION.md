@@ -58,7 +58,7 @@
 - [x] Publish Hugging Face article / community story: https://huggingface.co/blog/build-small-hackathon/jawbreaker-private-scam-defense
 - [x] Record demo video.
 - [x] Add demo video link to README.
-- [x] Draft and publish social post: https://www.reddit.com/r/huggingface/comments/1u48yt6/finetuned_a_1b_model_that_helps_families_check/
+- [x] Publish social post: https://www.reddit.com/r/huggingface/comments/1u48yt6/finetuned_a_1b_model_that_helps_families_check/
 - [x] Add social post link to README.
 - [x] Make the Hugging Face Space public.
 - [x] Final smoke test after making the Space public: `/health` returned `status=ok`, `backend=zerogpu`, and `model=MiniCPM5-1B + Jawbreaker LoRA v8` on June 12, 2026.
