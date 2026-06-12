@@ -91,6 +91,12 @@ The motivating user is a friend's grandmother who had already been affected by s
 
 ## Demo
 
+<p align="center">
+  <a href="https://www.youtube.com/watch?v=oh0GRKYXvGM">
+    <img src="https://img.youtube.com/vi/oh0GRKYXvGM/hqdefault.jpg" alt="Watch the Jawbreaker demo video" width="640" />
+  </a>
+</p>
+
 - Watch: https://youtu.be/oh0GRKYXvGM
 - Try: https://huggingface.co/spaces/build-small-hackathon/jawbreaker
 - Read: https://huggingface.co/blog/build-small-hackathon/jawbreaker-private-scam-defense
