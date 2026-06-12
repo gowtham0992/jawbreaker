@@ -5,7 +5,7 @@
 - [x] Gradio Space created under `build-small-hackathon`
 - [x] Space made public before June 15, 2026
 - [x] Demo video linked in Space README: https://youtu.be/oh0GRKYXvGM
-- [ ] Social post linked in Space README
+- [x] Social post linked in Space README: https://www.reddit.com/r/huggingface/comments/1u48yt6/finetuned_a_1b_model_that_helps_families_check/
 - [x] Public GitHub repo linked in Space README
 - [x] Repo includes Codex-attributed feature commits
 - [x] README frontmatter includes track and target badge tags
@@ -37,7 +37,7 @@
 - [x] Well-Tuned
 - [x] Sharing is Caring
 - [x] Field Notes
-- [ ] Best Demo evidence finalized after social post is linked
+- [x] Best Demo evidence finalized
 
 ## Codex Track Evidence
 
@@ -58,7 +58,7 @@
 - [x] Publish Hugging Face article / community story: https://huggingface.co/blog/build-small-hackathon/jawbreaker-private-scam-defense
 - [x] Record demo video.
 - [x] Add demo video link to README.
-- [ ] Draft and publish social post.
-- [ ] Add social post link to README.
+- [x] Draft and publish social post: https://www.reddit.com/r/huggingface/comments/1u48yt6/finetuned_a_1b_model_that_helps_families_check/
+- [x] Add social post link to README.
 - [x] Make the Hugging Face Space public.
 - [ ] Final smoke test after making the Space public.

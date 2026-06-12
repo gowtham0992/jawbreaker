@@ -8,6 +8,7 @@ It is built for the moment before someone clicks a suspicious link, replies to a
 
 - Live Space: https://huggingface.co/spaces/build-small-hackathon/jawbreaker
 - Demo video: https://youtu.be/oh0GRKYXvGM
+- Social post: https://www.reddit.com/r/huggingface/comments/1u48yt6/finetuned_a_1b_model_that_helps_families_check/
 - Final model adapter: https://huggingface.co/build-small-hackathon/jawbreaker-minicpm5-1b-lora-v8
 - Dataset/eval bundle: https://huggingface.co/datasets/build-small-hackathon/jawbreaker-scam-defense-data
 - Collection: https://huggingface.co/collections/build-small-hackathon/jawbreaker-6a263632dcd0b6d41ca914ff
@@ -64,7 +65,7 @@ Headline metrics:
 ## Remaining Public Story Work
 
 - Demo video: published
-- Social post: pending
+- Social post: published
 - Hugging Face Article: published
 
 The current submission is intended to be judged from the live Space plus the public model/dataset/collection/GitHub evidence above.
