@@ -61,6 +61,8 @@ datasets:
 
 Scam defense for someone you love.
 
+**Try it:** [Live Space](https://huggingface.co/spaces/build-small-hackathon/jawbreaker) · [Demo video](https://youtu.be/oh0GRKYXvGM) · [Social post](https://www.reddit.com/r/huggingface/comments/1u48yt6/finetuned_a_1b_model_that_helps_families_check/) · [Article](https://huggingface.co/blog/build-small-hackathon/jawbreaker-private-scam-defense) · [Model](https://huggingface.co/build-small-hackathon/jawbreaker-minicpm5-1b-lora-v8) · [Dataset/evals](https://huggingface.co/datasets/build-small-hackathon/jawbreaker-scam-defense-data) · [GitHub](https://github.com/gowtham0992/jawbreaker)
+
 ## TL;DR for Judges
 
 - **Backyard AI:** a practical scam-defense safety card for non-technical people and their families.
@@ -77,6 +79,13 @@ Jawbreaker helps a real person pause before clicking, replying, or sending money
 The problem is specific: scam messages now arrive as urgent, personal, plausible requests. A package fee, a bank callback, a fake recruiter, or a "new phone number" from a family member can pressure someone into clicking or paying before they ask for help. Jawbreaker turns that moment into a small safety workflow: paste the message, get a clear verdict, see the warning signs, see whether the message needs more context, and copy a short note to someone you trust.
 
 The motivating user is a friend's grandmother who had already been affected by scam messages. Private details are intentionally omitted, but that family context shaped the product: this is not a generic spam classifier for security experts; it is a calm safety check for someone who needs to know whether to reply, click, call, or ask for help.
+
+## Demo
+
+- Watch: https://youtu.be/oh0GRKYXvGM
+- Try: https://huggingface.co/spaces/build-small-hackathon/jawbreaker
+- Read: https://huggingface.co/blog/build-small-hackathon/jawbreaker-private-scam-defense
+- Discuss: https://www.reddit.com/r/huggingface/comments/1u48yt6/finetuned_a_1b_model_that_helps_families_check/
 
 ## Hackathon
 
@@ -126,6 +135,15 @@ Jawbreaker is deliberately narrow. It does not try to be a general assistant or 
 3. Give one clear safe action.
 4. Surface uncertainty when a message is too short or missing context.
 5. Help the user ask someone they trust with a copyable warning note.
+
+## What's Inside
+
+| Component | Model / Library | Where it runs |
+| --- | --- | --- |
+| Scam analysis | `openbmb/MiniCPM5-1B` + Jawbreaker LoRA v8 | Hugging Face ZeroGPU / Transformers |
+| Safety guard | Schema validation + deterministic heuristic guard | App runtime |
+| Interface | Custom `gr.Server` kitchen-table UI | Gradio Space |
+| Training/eval | PEFT/LoRA + guarded eval harness | Modal A100 |
 
 ## Model Runtime
 
@@ -226,7 +244,7 @@ Not claiming:
 - NVIDIA Nemotron Quest: no NeMoTron model is used.
 - Llama Champion / llama.cpp as live runtime: local/eval tooling supports GGUF experiments, but the judge-facing Space uses Transformers on ZeroGPU.
 
-## Safety Boundary
+## Limitations / Safety Boundary
 
 Jawbreaker is not legal, financial, or cybersecurity advice. It is a local-first safety aid that helps non-experts slow down and verify suspicious messages. The safest action should never ask the user to click the suspicious link or call a number from the suspicious message.
 
