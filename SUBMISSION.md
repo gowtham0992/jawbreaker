@@ -55,7 +55,7 @@
 - [x] Publish sanitized dataset/eval artifact page.
 - [x] Create/update Hugging Face collection for the full submission package.
 - [x] Choose one real or realistic sanitized scam message for the primary demo.
-- [x] Draft Hugging Face article / community story.
+- [x] Publish Hugging Face article / community story: https://huggingface.co/blog/build-small-hackathon/jawbreaker-private-scam-defense
 - [x] Record demo video.
 - [x] Add demo video link to README.
 - [ ] Draft and publish social post.

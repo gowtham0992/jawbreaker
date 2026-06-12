@@ -12,7 +12,7 @@ It is built for the moment before someone clicks a suspicious link, replies to a
 - Dataset/eval bundle: https://huggingface.co/datasets/build-small-hackathon/jawbreaker-scam-defense-data
 - Collection: https://huggingface.co/collections/build-small-hackathon/jawbreaker-6a263632dcd0b6d41ca914ff
 - GitHub repo: https://github.com/gowtham0992/jawbreaker
-- Article draft: https://huggingface.co/spaces/build-small-hackathon/jawbreaker/blob/main/docs/huggingface-article-draft.md
+- Article: https://huggingface.co/blog/build-small-hackathon/jawbreaker-private-scam-defense
 
 ## Model + Runtime
 
@@ -65,6 +65,6 @@ Headline metrics:
 
 - Demo video: published
 - Social post: pending
-- Hugging Face Article: drafted, pending publication through the Articles UI
+- Hugging Face Article: published
 
 The current submission is intended to be judged from the live Space plus the public model/dataset/collection/GitHub evidence above.

@@ -1,131 +1,126 @@
 # Jawbreaker: Private Scam Defense for Someone You Love
 
-> Draft for Hugging Face Articles / community post.
->
-> Status: working draft. Demo video is published; add final social links before publishing.
+<p align="center">
+  <img src="https://huggingface.co/spaces/build-small-hackathon/jawbreaker/resolve/main/jawbreaker_logo.png" alt="Jawbreaker logo" width="140" />
+</p>
 
-![Jawbreaker logo](https://huggingface.co/spaces/build-small-hackathon/jawbreaker/resolve/main/jawbreaker_logo.png)
+Most scams do not begin with malware. They begin with a moment of pressure.
 
-## Short Version
+A package is "held." A bank account is "locked." A recruiter offers too much money. A family member says they lost their phone and needs help right now.
 
-Jawbreaker is a small-model scam defense app for people who need a clear answer before they click, reply, share a code, or send money.
+Jawbreaker is built for that moment before someone replies, clicks, shares a code, or sends money.
 
-Paste a suspicious text, email, or DM. Jawbreaker turns it into a simple safety card:
+It is a small-model scam defense app that turns a suspicious text, email, or DM into a plain safety card:
 
-- the risk level
-- the warning signs
+- what the risk is
 - who the sender is pretending to be
-- what they want
+- how the message is pressuring you
+- what the sender wants
 - what could happen
-- the safest next step
-- a copyable note to send to someone you trust
+- what to do next
+- a note you can copy to someone you trust
 
-Live app: https://huggingface.co/spaces/build-small-hackathon/jawbreaker
+Live app:
 
-Demo video: https://youtu.be/oh0GRKYXvGM
+https://huggingface.co/spaces/build-small-hackathon/jawbreaker
 
-Model: https://huggingface.co/build-small-hackathon/jawbreaker-minicpm5-1b-lora-v8
+Watch the demo:
 
-Dataset/eval bundle: https://huggingface.co/datasets/build-small-hackathon/jawbreaker-scam-defense-data
+<p align="center">
+  <a href="https://www.youtube.com/watch?v=oh0GRKYXvGM">
+    <img src="https://img.youtube.com/vi/oh0GRKYXvGM/maxresdefault.jpg" alt="Watch the Jawbreaker demo" width="720" />
+  </a>
+</p>
 
-Collection: https://huggingface.co/collections/build-small-hackathon/jawbreaker-6a263632dcd0b6d41ca914ff
-
-GitHub: https://github.com/gowtham0992/jawbreaker
-
-Community evidence thread: https://huggingface.co/spaces/build-small-hackathon/jawbreaker/discussions/1
+[Open the demo on YouTube](https://www.youtube.com/watch?v=oh0GRKYXvGM)
 
 ## Why We Built It
 
-Most scam-defense tools explain scams after the fact. Jawbreaker is built for the moment before someone acts.
+The motivating user was a friend's grandmother who had already been affected by scam messages. We are not publishing private names, phone numbers, timestamps, or personal details, but that family story shaped the product.
 
-The motivating user is a friend's grandmother who had already been affected by scam messages. We are keeping names, phone numbers, timestamps, and private message details out of the public writeup, but that story shaped the product. Jawbreaker is built for the family moment where someone asks: "Should I click this, reply to this, call this number, or ask someone I trust first?"
+Jawbreaker is not a generic spam classifier for security experts. It is for the person who asks:
 
-That moment is small but high stakes:
+> "Should I click this, reply to this, call this number, or ask someone I trust first?"
 
-- a package fee link
-- a fake bank callback
-- a recruiter promising easy money
-- a "new phone number" from a family member
-- a verification code someone asks you to share
+That is why the app avoids a chatbot shape. Scammers already create urgency and back-and-forth. Jawbreaker tries to reduce decisions instead:
 
-The product goal is not to be a general assistant. It is to help someone pause, understand the message, and choose one safe next step.
+1. Paste the message.
+2. Read the verdict.
+3. Check the warning signs.
+4. Follow one safe next step.
+5. Copy a note to someone trusted if you want a second opinion.
 
-That is why the app does not say "spam" and stop. It explains the warning signs and gives a plain next step that a non-technical person can act on.
+The goal is not fear. The goal is a pause.
 
-Jawbreaker is intentionally narrow:
+## What The App Does
 
-1. Read one suspicious message.
-2. Identify the scam risk and manipulation pattern.
-3. Explain the warning signs in plain English.
-4. Recommend one safe action.
-5. Help the user ask a trusted person to check it.
+Jawbreaker takes one message and renders a safety card.
 
-## The Product Shape
+For example, a message like this:
 
-The app is designed around a safety card, not a chatbot.
+```text
+Hi Grandma, I lost my phone. This is my new number. Can you send $800 for rent today? Please don't tell Mom.
+```
 
-The reason is simple: scams use urgency. A chat interface can accidentally invite more back-and-forth. Jawbreaker should reduce decisions, not add more.
+should not just be labeled "spam." The important part is the structure:
 
-The current UI shows:
+- it pretends to be family
+- it asks for money
+- it uses secrecy
+- it creates urgency
+- it gives the user a reason not to verify
 
-- a message input
-- sample messages
-- a verdict card
-- a "Scam DNA" breakdown
-- the safest next step
-- a note that can be copied to someone trusted
-- session-only history of checked messages
+Jawbreaker names those tactics and gives a safe action, such as not sending money or codes and checking through a known phone number or official channel.
 
-The app also asks users to remove passwords, account numbers, ID numbers, addresses, and personal codes before pasting. Jawbreaker is a safety aid, not legal, financial, or cybersecurity advice.
+It also handles the opposite case. A normal dentist reminder should not be treated like a scam just because it asks for a reply. False alarms matter because people stop trusting tools that panic too often.
 
 ## The Small Model
 
-Jawbreaker uses a fine-tuned MiniCPM model:
+Jawbreaker runs on MiniCPM5-1B with a custom Jawbreaker LoRA adapter.
 
-- Base model: `openbmb/MiniCPM5-1B`
-- Adapter: `build-small-hackathon/jawbreaker-minicpm5-1b-lora-v8`
-- Training: PEFT/LoRA on Modal A100
-- Runtime: Hugging Face ZeroGPU
-- App: Gradio / Gradio Server
+Base model:
 
-The 1B model matters. Scam defense is a focused task, so the product does not need a giant general-purpose model. It needs reliable structured output, low false negatives, and safe actions.
+https://huggingface.co/openbmb/MiniCPM5-1B
 
-The model outputs strict JSON for the app renderer. Jawbreaker validates that JSON before rendering the safety card.
+Final adapter:
 
-## Defense in Depth
+https://huggingface.co/build-small-hackathon/jawbreaker-minicpm5-1b-lora-v8
 
-The model is not the only safety layer.
+The 1B model is deliberate. This is a narrow task, not a general assistant. We wanted a model that could produce reliable structured output for one safety workflow:
 
-Jawbreaker uses a defense-in-depth pipeline:
+- classify risk
+- explain scam DNA
+- recommend one safe action
+- stay inside a strict JSON schema
 
-1. The small model generates structured scam analysis.
-2. The app parses the result as JSON.
-3. The schema validator checks required fields.
-4. A deterministic safety guard catches obvious high-risk patterns.
-5. If model output is invalid or weak, the app falls back to a safer deterministic analysis.
+The public Space runs the model directly through Transformers on Hugging Face ZeroGPU. The scam-analysis path does not call OpenAI, Anthropic, hosted MiniCPM APIs, or any other external LLM API.
 
-The app should never tell someone to click a suspicious link or call a number from the suspicious message. Safe actions point to official channels, known numbers, trusted apps, or a trusted person.
+## Training And Eval
 
-## Training and Calibration
+We trained the adapter with PEFT/LoRA on Modal A100 and used Modal again for guarded eval runs.
 
-The final adapter is v8.
-
-Earlier adapters helped prove that MiniCPM could produce the right JSON shape. Later passes focused on harder decision boundaries:
+The data is synthetic and sanitized. It focuses on scam patterns that show up in everyday messages:
 
 - package phishing
 - bank and payment phishing
 - family impersonation
 - tech support scams
-- fake job/recruiter scams
+- fake job and recruiter scams
 - prize and lottery scams
 - wrong-number investment grooming
-- benign family, school, pharmacy, and logistics messages that should not be overcalled
+- legitimate reminders that should not be overcalled
 
-The v8 pass was failure-driven. We used eval results to find weak spots, then added targeted synthetic/sanitized calibration data and reran guarded evals.
+Public dataset and eval bundle:
 
-The public dataset/eval bundle includes the training splits, eval files, and reports that support the final model decision.
+https://huggingface.co/datasets/build-small-hackathon/jawbreaker-scam-defense-data
 
-## Final Eval
+The final model decision was eval-gated. We did not pick the model only by top-line accuracy. For this product, the critical failure is marking a dangerous message as safe.
+
+<p align="center">
+  <img src="https://huggingface.co/spaces/build-small-hackathon/jawbreaker/resolve/main/docs/model-selection-chart.svg" alt="Jawbreaker model selection chart" width="720" />
+</p>
+
+The chart shows why we chose the 1B v8 adapter for the final app: not the prettiest accuracy number, but the broadest completed safety gate with zero dangerous undercalls, zero unsafe actions, zero invalid JSON, and zero model errors.
 
 Final guarded Modal A100 eval on the 632-case hard v8 suite:
 
@@ -142,59 +137,68 @@ Final guarded Modal A100 eval on the 632-case hard v8 suite:
 | Invalid predictions | 0 |
 | Model errors | 0 |
 
-The headline is not just accuracy. For this product, the most important result is zero dangerous undercalls on the final hard suite.
+That does not mean the model is perfect or exhaustive. It means the final submitted adapter cleared our hardest completed eval with zero dangerous undercalls and zero unsafe actions.
 
-## Why Not Just Use a Bigger Model?
+## Defense In Depth
 
-Jawbreaker is a Build Small project. A bigger model could produce richer prose, but richer prose is not the goal.
+Jawbreaker does not trust raw model text directly.
 
-The goal is:
+The runtime pipeline is:
 
-- narrow task
-- readable answer
-- structured evidence
-- safe next action
-- small open model
-- no external LLM API in the scam-analysis path
+1. MiniCPM5-1B + Jawbreaker LoRA produces structured JSON.
+2. The app parses the response.
+3. The schema validator checks every required field.
+4. A deterministic safety guard catches obvious high-risk patterns.
+5. If the model output is invalid or weak, the app falls back to a safer deterministic analysis.
 
-The small-model path also makes the product easier to reason about. The model is doing one job, and the app has deterministic checks around it.
+The UI also tells users to remove passwords, account numbers, ID numbers, addresses, and personal codes before pasting. Jawbreaker is a safety aid, not legal, financial, or cybersecurity advice.
 
-## What Worked
+## What Made It Work
 
-The biggest product decision was to stop treating this as "spam classification" and treat it as "family safety workflow."
+The key product decision was to stop building a "spam detector" and build a family safety workflow.
 
-Classification alone answers: "Is this spam?"
+Spam detection says:
 
-Jawbreaker answers:
+> "This is spam."
 
-- What is risky?
-- How is the message pressuring me?
-- What does the sender want?
-- What should I do now?
-- How can I ask someone I trust for help?
+Jawbreaker says:
 
-That shift made the UI, evals, training data, and safety guard much clearer.
+> "This looks dangerous because it asks for money, uses secrecy, and pretends to be family. Do not send money or codes. Check through a known number. Here is a note you can send to someone you trust."
 
-## What We Would Improve Next
+That small shift made the model target, eval suite, UI, and demo much clearer.
 
-The next steps are practical:
+## Built With
 
-- record the demo video
-- test with more sanitized real-world examples
-- continue mobile polish
-- add more recent scam patterns as held-out evals before training on them
-- improve copy quality for the trusted-person handoff
-- publish a short model/eval walkthrough for reproducibility
+- Hugging Face Spaces
+- Gradio / Gradio Server
+- OpenBMB MiniCPM5-1B
+- PEFT/LoRA
+- Modal A100 training and eval
+- OpenAI Codex for implementation, eval design, UI iteration, and submission documentation
 
-We would also like to keep collecting sanitized examples from public scam alerts and user-submitted messages where private details are removed.
+Codex evidence:
+
+https://github.com/gowtham0992/jawbreaker/blob/main/CODEX_JUDGE_EVIDENCE.md
+
+Field notes:
+
+https://github.com/gowtham0992/jawbreaker/blob/main/FIELD_NOTES.md
 
 ## Try It
 
-Try Jawbreaker here:
+Space:
 
 https://huggingface.co/spaces/build-small-hackathon/jawbreaker
 
-Good demo inputs:
+Submission collection:
+
+https://huggingface.co/collections/build-small-hackathon/jawbreaker-6a263632dcd0b6d41ca914ff
+
+GitHub:
+
+https://github.com/gowtham0992/jawbreaker
+
+Demo inputs:
 
 ```text
 USPS: Your package is held due to an unpaid fee. Verify now: http://usps-track-secure.example
@@ -208,24 +212,4 @@ Hi Grandma, I lost my phone. This is my new number. Can you send $800 for rent t
 Your dentist appointment is confirmed for Tuesday at 2:00 PM. Reply C to confirm or R to reschedule.
 ```
 
-The first two should produce scam warnings. The dentist appointment should show the false-positive boundary: not every official-looking message is dangerous, and not every short message is a scam.
-
-## Built With
-
-- Hugging Face Spaces
-- Gradio / Gradio Server
-- OpenBMB MiniCPM5-1B
-- PEFT/LoRA
-- Modal A100 training and eval
-- OpenAI Codex for implementation, eval design, UI iteration, and documentation
-
-## Links
-
-- Space: https://huggingface.co/spaces/build-small-hackathon/jawbreaker
-- Model: https://huggingface.co/build-small-hackathon/jawbreaker-minicpm5-1b-lora-v8
-- Dataset/eval bundle: https://huggingface.co/datasets/build-small-hackathon/jawbreaker-scam-defense-data
-- Collection: https://huggingface.co/collections/build-small-hackathon/jawbreaker-6a263632dcd0b6d41ca914ff
-- GitHub: https://github.com/gowtham0992/jawbreaker
-- Community evidence thread: https://huggingface.co/spaces/build-small-hackathon/jawbreaker/discussions/1
-- Build notes: https://github.com/gowtham0992/jawbreaker/blob/main/FIELD_NOTES.md
-- Codex evidence: https://github.com/gowtham0992/jawbreaker/blob/main/CODEX_JUDGE_EVIDENCE.md
+Paste first. Act after.

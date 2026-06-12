@@ -68,7 +68,7 @@ Scam defense for someone you love.
 - **Best Use of Modal:** Modal A100 was used for LoRA training and guarded eval runs; see [`training/modal_train.py`](training/modal_train.py), [`training/modal_eval.py`](training/modal_eval.py), the [`632-case v8 report`](eval/reports/jawbreaker-minicpm5-1b-lora-v8-hard632-safetyguard-v4.json), plus the earlier [`394-case v4 report`](eval/reports/jawbreaker-minicpm5-1b-lora-v4-hard394-guarded.json).
 - **OpenAI / Best Use of Codex:** Codex-attributed commits plus [`CODEX_JUDGE_EVIDENCE.md`](CODEX_JUDGE_EVIDENCE.md), [`AGENT_TRACE.md`](AGENT_TRACE.md), and [`CODEX_BUILD_LOG.md`](CODEX_BUILD_LOG.md), with file-level contribution notes below.
 - **Off Brand / Off the Grid / Sharing is Caring / Field Notes:** custom candy-brutalist Gradio UI, no external LLM API, public [dataset/eval bundle](https://huggingface.co/datasets/build-small-hackathon/jawbreaker-scam-defense-data), and [`FIELD_NOTES.md`](FIELD_NOTES.md).
-- **Submission package:** [Live Space](https://huggingface.co/spaces/build-small-hackathon/jawbreaker), [demo video](https://youtu.be/oh0GRKYXvGM), [model](https://huggingface.co/build-small-hackathon/jawbreaker-minicpm5-1b-lora-v8), [dataset](https://huggingface.co/datasets/build-small-hackathon/jawbreaker-scam-defense-data), and [collection](https://huggingface.co/collections/build-small-hackathon/jawbreaker-6a263632dcd0b6d41ca914ff).
+- **Submission package:** [Live Space](https://huggingface.co/spaces/build-small-hackathon/jawbreaker), [demo video](https://youtu.be/oh0GRKYXvGM), [article](https://huggingface.co/blog/build-small-hackathon/jawbreaker-private-scam-defense), [model](https://huggingface.co/build-small-hackathon/jawbreaker-minicpm5-1b-lora-v8), [dataset](https://huggingface.co/datasets/build-small-hackathon/jawbreaker-scam-defense-data), and [collection](https://huggingface.co/collections/build-small-hackathon/jawbreaker-6a263632dcd0b6d41ca914ff).
 
 Jawbreaker is built around direct small-model inference to protect user privacy. The public hackathon Space runs MiniCPM5-1B + Jawbreaker LoRA on Hugging Face ZeroGPU for judge access, and the repo keeps local Transformers/GGUF tooling for running without hosted LLM APIs.
 
@@ -92,7 +92,7 @@ The motivating user is a friend's grandmother who had already been affected by s
 - Public dataset/eval bundle: https://huggingface.co/datasets/build-small-hackathon/jawbreaker-scam-defense-data
 - Hugging Face collection: https://huggingface.co/collections/build-small-hackathon/jawbreaker-6a263632dcd0b6d41ca914ff
 - Community evidence thread: https://huggingface.co/spaces/build-small-hackathon/jawbreaker/discussions/1
-- Article draft: [`docs/huggingface-article-draft.md`](docs/huggingface-article-draft.md)
+- Hugging Face article: https://huggingface.co/blog/build-small-hackathon/jawbreaker-private-scam-defense
 
 Submission checklist:
 
@@ -204,7 +204,7 @@ Training/eval artifacts:
 | Off Brand | Submitted | Custom Gradio UI beyond the stock component look. |
 | Sharing is Caring | Submitted | Public dataset/eval bundle, model card, build log, Codex trace, and collection are linked from the Space. |
 | Field Notes | Submitted | `FIELD_NOTES.md` documents product decisions, model/runtime pivots, eval results, and submission tradeoffs. |
-| Article / Story | Drafted | `docs/huggingface-article-draft.md` is ready to publish through Hugging Face Articles. |
+| Article / Story | Published | Hugging Face article explains the product story, MiniCPM LoRA path, Modal evals, and demo: https://huggingface.co/blog/build-small-hackathon/jawbreaker-private-scam-defense |
 | Best Demo | In progress | Demo video is published and linked; social post still needs to be published and linked before final submission. |
 | Bonus Quest Champion | Submitted | Jawbreaker stacks Well-Tuned, Off Brand, Off the Grid, Tiny Titan, Sharing is Caring, Field Notes, and a published demo video; the social post will complete the Best Demo package. |
 | Judges' Wildcard | Automatic | Every submission is considered. |
