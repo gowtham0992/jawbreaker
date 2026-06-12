@@ -3436,10 +3436,6 @@ def build_server() -> gr.Server:
     async def homepage() -> HTMLResponse:
         return HTMLResponse(kitchen_table_html())
 
-    @app.get("/classic", response_class=HTMLResponse)
-    async def classic_homepage() -> HTMLResponse:
-        return HTMLResponse(paper_shield_html())
-
     @app.get("/health")
     async def health() -> dict[str, str]:
         return {"status": "ok", "backend": current_backend(), "model": model_status_label()}
@@ -3664,13 +3660,4 @@ def build_app() -> gr.Blocks:
 
 
 if __name__ == "__main__":
-    if _env_bool("JAWBREAKER_LEGACY_BLOCKS", False):
-        build_app().launch(
-            theme=app_theme(),
-            css=app_css(),
-            js=FORCE_LIGHT_JS,
-            head=FORCE_LIGHT_HEAD,
-            favicon_path=str(LOGO_PATH),
-        )
-    else:
-        build_server().launch(favicon_path=str(LOGO_PATH))
+    build_server().launch(favicon_path=str(LOGO_PATH))
