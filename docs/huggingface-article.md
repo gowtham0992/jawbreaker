@@ -28,7 +28,7 @@ Watch the demo:
 
 <p align="center">
   <a href="https://www.youtube.com/watch?v=oh0GRKYXvGM">
-    <img src="https://img.youtube.com/vi/oh0GRKYXvGM/maxresdefault.jpg" alt="Watch the Jawbreaker demo" width="720" />
+    <img src="https://img.youtube.com/vi/oh0GRKYXvGM/hqdefault.jpg" alt="Watch the Jawbreaker demo" width="720" />
   </a>
 </p>
 
@@ -36,7 +36,7 @@ Watch the demo:
 
 ## Why We Built It
 
-The motivating user was a friend's grandmother who had already been affected by scam messages. We are not publishing private names, phone numbers, timestamps, or personal details, but that family story shaped the product.
+**The motivating user was a friend's grandmother who had already been affected by scam messages.** We are not publishing private names, phone numbers, timestamps, or personal details, but that family story shaped the product.
 
 Jawbreaker is not a generic spam classifier for security experts. It is for the person who asks:
 

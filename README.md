@@ -72,6 +72,8 @@ Scam defense for someone you love.
 
 **Try it:** [Live Space](https://huggingface.co/spaces/build-small-hackathon/jawbreaker) · [Demo video](https://youtu.be/oh0GRKYXvGM) · [Social post](https://www.reddit.com/r/huggingface/comments/1u48yt6/finetuned_a_1b_model_that_helps_families_check/) · [Article](https://huggingface.co/blog/build-small-hackathon/jawbreaker-private-scam-defense) · [Model](https://huggingface.co/build-small-hackathon/jawbreaker-minicpm5-1b-lora-v8) · [Dataset/evals](https://huggingface.co/datasets/build-small-hackathon/jawbreaker-scam-defense-data) · [GitHub](https://github.com/gowtham0992/jawbreaker)
 
+**Why this exists:** The motivating user is a friend's grandmother who had already been affected by scam messages. Private details are intentionally omitted, but that family context shaped the product: this is not a generic spam classifier for security experts; it is a calm safety check for someone who needs to know whether to reply, click, call, or ask for help.
+
 ## TL;DR for Judges
 
 - **Backyard AI:** a practical scam-defense safety card for non-technical people and their families.
@@ -86,8 +88,6 @@ Jawbreaker is built around direct small-model inference to protect user privacy.
 Jawbreaker helps a real person pause before clicking, replying, or sending money. Paste a suspicious text, email, or DM and Jawbreaker breaks it into plain-English warning signs: what the sender is pretending to be, what pressure tactic is being used, what they want, and the safest next step.
 
 The problem is specific: scam messages now arrive as urgent, personal, plausible requests. A package fee, a bank callback, a fake recruiter, or a "new phone number" from a family member can pressure someone into clicking or paying before they ask for help. Jawbreaker turns that moment into a small safety workflow: paste the message, get a clear verdict, see the warning signs, see whether the message needs more context, and copy a short note to someone you trust.
-
-The motivating user is a friend's grandmother who had already been affected by scam messages. Private details are intentionally omitted, but that family context shaped the product: this is not a generic spam classifier for security experts; it is a calm safety check for someone who needs to know whether to reply, click, call, or ask for help.
 
 ## Demo
 
