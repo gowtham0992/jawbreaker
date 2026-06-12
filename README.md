@@ -16,6 +16,7 @@ tags:
 - sponsor:openai
 - sponsor:modal
 - achievement:offgrid
+- achievement:tinytitan
 - achievement:welltuned
 - achievement:offbrand
 - achievement:sharing
@@ -78,7 +79,7 @@ Scam defense for someone you love.
 
 - **Backyard AI:** a practical scam-defense safety card for non-technical people and their families.
 - **Best MiniCPM Build / Tiny Titan / Well-Tuned:** `openbmb/MiniCPM5-1B` + [Jawbreaker LoRA v8](https://huggingface.co/build-small-hackathon/jawbreaker-minicpm5-1b-lora-v8), evaluated on a 632-case hard suite with **0 dangerous undercalls** and **0 safe overcalls**.
-- **Best Use of Modal:** Modal A100 was used for LoRA training and guarded eval runs; see [`training/modal_train.py`](training/modal_train.py), [`training/modal_eval.py`](training/modal_eval.py), the [`632-case v8 report`](eval/reports/jawbreaker-minicpm5-1b-lora-v8-hard632-safetyguard-v4.json), plus the earlier [`394-case v4 report`](eval/reports/jawbreaker-minicpm5-1b-lora-v4-hard394-guarded.json).
+- **Best Use of Modal:** Modal (`modal.com`) A100 was used for LoRA training and guarded eval runs; see [`training/modal_train.py`](training/modal_train.py), [`training/modal_eval.py`](training/modal_eval.py), the [`632-case v8 report`](eval/reports/jawbreaker-minicpm5-1b-lora-v8-hard632-safetyguard-v4.json), plus the earlier [`394-case v4 report`](eval/reports/jawbreaker-minicpm5-1b-lora-v4-hard394-guarded.json).
 - **OpenAI / Best Use of Codex:** Codex-attributed commits plus [`CODEX_JUDGE_EVIDENCE.md`](CODEX_JUDGE_EVIDENCE.md), [`AGENT_TRACE.md`](AGENT_TRACE.md), and [`CODEX_BUILD_LOG.md`](CODEX_BUILD_LOG.md), with file-level contribution notes below.
 - **Off Brand / Off the Grid / Sharing is Caring / Field Notes:** custom candy-brutalist Gradio UI, no external LLM API, public [dataset/eval bundle](https://huggingface.co/datasets/build-small-hackathon/jawbreaker-scam-defense-data), and [`FIELD_NOTES.md`](FIELD_NOTES.md).
 - **Submission package:** [Live Space](https://huggingface.co/spaces/build-small-hackathon/jawbreaker), [demo video](https://youtu.be/oh0GRKYXvGM), [social post](https://www.reddit.com/r/huggingface/comments/1u48yt6/finetuned_a_1b_model_that_helps_families_check/), [article](https://huggingface.co/blog/build-small-hackathon/jawbreaker-private-scam-defense), [model](https://huggingface.co/build-small-hackathon/jawbreaker-minicpm5-1b-lora-v8), [dataset](https://huggingface.co/datasets/build-small-hackathon/jawbreaker-scam-defense-data), and [collection](https://huggingface.co/collections/build-small-hackathon/jawbreaker-6a263632dcd0b6d41ca914ff).
