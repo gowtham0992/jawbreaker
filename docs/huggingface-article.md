@@ -204,6 +204,8 @@ https://www.reddit.com/r/huggingface/comments/1u48yt6/finetuned_a_1b_model_that_
 
 https://www.linkedin.com/posts/gsarveswaran_jawbreaker-private-scam-defense-for-someone-share-7471351364137164800-cv__/
 
+https://x.com/GothamSarves/status/2065649294623813925?s=20
+
 Demo inputs:
 
 ```text
