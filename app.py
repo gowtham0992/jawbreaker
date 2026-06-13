@@ -3083,7 +3083,7 @@ def kitchen_table_html() -> str:
         <img src="__LOGO_URI__" alt="" />
         <div>
           <h1>Jawbreaker</h1>
-          <p>Private scam defense for someone you love.</p>
+          <p>When something feels off, check it here.</p>
         </div>
       </div>
       <div class="tech-badges" aria-label="Build details">
