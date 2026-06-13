@@ -198,6 +198,12 @@ GitHub:
 
 https://github.com/gowtham0992/jawbreaker
 
+Social posts:
+
+https://www.reddit.com/r/huggingface/comments/1u48yt6/finetuned_a_1b_model_that_helps_families_check/
+
+https://www.linkedin.com/posts/gsarveswaran_jawbreaker-private-scam-defense-for-someone-share-7471351364137164800-cv__/
+
 Demo inputs:
 
 ```text

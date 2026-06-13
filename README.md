@@ -70,7 +70,7 @@ datasets:
 
 Scam defense for someone you love.
 
-**Try it:** [Live Space](https://huggingface.co/spaces/build-small-hackathon/jawbreaker) · [Demo video](https://youtu.be/oh0GRKYXvGM) · [Social post](https://www.reddit.com/r/huggingface/comments/1u48yt6/finetuned_a_1b_model_that_helps_families_check/) · [Article](https://huggingface.co/blog/build-small-hackathon/jawbreaker-private-scam-defense) · [Model](https://huggingface.co/build-small-hackathon/jawbreaker-minicpm5-1b-lora-v8) · [Dataset/evals](https://huggingface.co/datasets/build-small-hackathon/jawbreaker-scam-defense-data) · [GitHub](https://github.com/gowtham0992/jawbreaker)
+**Try it:** [Live Space](https://huggingface.co/spaces/build-small-hackathon/jawbreaker) · [Demo video](https://youtu.be/oh0GRKYXvGM) · [Reddit post](https://www.reddit.com/r/huggingface/comments/1u48yt6/finetuned_a_1b_model_that_helps_families_check/) · [LinkedIn post](https://www.linkedin.com/posts/gsarveswaran_jawbreaker-private-scam-defense-for-someone-share-7471351364137164800-cv__/) · [Article](https://huggingface.co/blog/build-small-hackathon/jawbreaker-private-scam-defense) · [Model](https://huggingface.co/build-small-hackathon/jawbreaker-minicpm5-1b-lora-v8) · [Dataset/evals](https://huggingface.co/datasets/build-small-hackathon/jawbreaker-scam-defense-data) · [GitHub](https://github.com/gowtham0992/jawbreaker)
 
 **Why this exists:** The motivating user is a friend's grandmother who had already been affected by scam messages. Private details are intentionally omitted, but that family context shaped the product: this is not a generic spam classifier for security experts; it is a calm safety check for someone who needs to know whether to reply, click, call, or ask for help.
 
@@ -81,7 +81,7 @@ Scam defense for someone you love.
 - **Best Use of Modal:** Modal (`modal.com`) A100 was used for LoRA training and guarded eval runs; see [`training/modal_train.py`](training/modal_train.py), [`training/modal_eval.py`](training/modal_eval.py), the [`632-case v8 report`](eval/reports/jawbreaker-minicpm5-1b-lora-v8-hard632-safetyguard-v4.json), plus the earlier [`394-case v4 report`](eval/reports/jawbreaker-minicpm5-1b-lora-v4-hard394-guarded.json).
 - **OpenAI / Best Use of Codex:** Codex-attributed commits plus [`CODEX_JUDGE_EVIDENCE.md`](CODEX_JUDGE_EVIDENCE.md), [`AGENT_TRACE.md`](AGENT_TRACE.md), and [`CODEX_BUILD_LOG.md`](CODEX_BUILD_LOG.md), with file-level contribution notes below.
 - **Off Brand / Off the Grid / Sharing is Caring / Field Notes:** custom candy-brutalist Gradio UI, no external LLM API, public [dataset/eval bundle](https://huggingface.co/datasets/build-small-hackathon/jawbreaker-scam-defense-data), and [`FIELD_NOTES.md`](FIELD_NOTES.md).
-- **Submission package:** [Live Space](https://huggingface.co/spaces/build-small-hackathon/jawbreaker), [demo video](https://youtu.be/oh0GRKYXvGM), [social post](https://www.reddit.com/r/huggingface/comments/1u48yt6/finetuned_a_1b_model_that_helps_families_check/), [article](https://huggingface.co/blog/build-small-hackathon/jawbreaker-private-scam-defense), [model](https://huggingface.co/build-small-hackathon/jawbreaker-minicpm5-1b-lora-v8), [dataset](https://huggingface.co/datasets/build-small-hackathon/jawbreaker-scam-defense-data), and [collection](https://huggingface.co/collections/build-small-hackathon/jawbreaker-6a263632dcd0b6d41ca914ff).
+- **Submission package:** [Live Space](https://huggingface.co/spaces/build-small-hackathon/jawbreaker), [demo video](https://youtu.be/oh0GRKYXvGM), [Reddit post](https://www.reddit.com/r/huggingface/comments/1u48yt6/finetuned_a_1b_model_that_helps_families_check/), [LinkedIn post](https://www.linkedin.com/posts/gsarveswaran_jawbreaker-private-scam-defense-for-someone-share-7471351364137164800-cv__/), [article](https://huggingface.co/blog/build-small-hackathon/jawbreaker-private-scam-defense), [model](https://huggingface.co/build-small-hackathon/jawbreaker-minicpm5-1b-lora-v8), [dataset](https://huggingface.co/datasets/build-small-hackathon/jawbreaker-scam-defense-data), and [collection](https://huggingface.co/collections/build-small-hackathon/jawbreaker-6a263632dcd0b6d41ca914ff).
 
 Jawbreaker is built around direct small-model inference to protect user privacy. The public hackathon Space runs MiniCPM5-1B + Jawbreaker LoRA on Hugging Face ZeroGPU for judge access, and the repo keeps local Transformers/GGUF tooling for running without hosted LLM APIs.
 
@@ -101,15 +101,18 @@ The problem is specific: scam messages now arrive as urgent, personal, plausible
 - Try: https://huggingface.co/spaces/build-small-hackathon/jawbreaker
 - Read: https://huggingface.co/blog/build-small-hackathon/jawbreaker-private-scam-defense
 - Discuss: https://www.reddit.com/r/huggingface/comments/1u48yt6/finetuned_a_1b_model_that_helps_families_check/
+- LinkedIn: https://www.linkedin.com/posts/gsarveswaran_jawbreaker-private-scam-defense-for-someone-share-7471351364137164800-cv__/
 
 ## Hackathon
 
 - Event: Hugging Face Build Small Hackathon
 - Track: Backyard AI
 - App: Gradio Space under `build-small-hackathon`
-- Status: Public Space deployed; demo video, article, and social post published
+- Status: Public Space deployed; demo video, article, and social posts published
 - Demo video: https://youtu.be/oh0GRKYXvGM
-- Social post: https://www.reddit.com/r/huggingface/comments/1u48yt6/finetuned_a_1b_model_that_helps_families_check/
+- Social posts:
+  - Reddit: https://www.reddit.com/r/huggingface/comments/1u48yt6/finetuned_a_1b_model_that_helps_families_check/
+  - LinkedIn: https://www.linkedin.com/posts/gsarveswaran_jawbreaker-private-scam-defense-for-someone-share-7471351364137164800-cv__/
 - Public GitHub repo: https://github.com/gowtham0992/jawbreaker
 - Live Space: https://huggingface.co/spaces/build-small-hackathon/jawbreaker
 - Final model adapter: https://huggingface.co/build-small-hackathon/jawbreaker-minicpm5-1b-lora-v8
@@ -123,7 +126,7 @@ Submission checklist:
 - **REQ-01 / Stay under 32B:** complete. The live model is `openbmb/MiniCPM5-1B`.
 - **REQ-02 / Ship a Gradio app:** complete. Jawbreaker is a public Gradio Space in `build-small-hackathon`.
 - **REQ-03 / Record a demo:** complete. Demo video: https://youtu.be/oh0GRKYXvGM
-- **REQ-04 / Post it:** complete. Social post: https://www.reddit.com/r/huggingface/comments/1u48yt6/finetuned_a_1b_model_that_helps_families_check/
+- **REQ-04 / Post it:** complete. Social posts: [Reddit](https://www.reddit.com/r/huggingface/comments/1u48yt6/finetuned_a_1b_model_that_helps_families_check/) and [LinkedIn](https://www.linkedin.com/posts/gsarveswaran_jawbreaker-private-scam-defense-for-someone-share-7471351364137164800-cv__/).
 - **REQ-05 / Mind the GPU limit:** complete. This is one ZeroGPU Space, below the limit.
 - **REQ-06 / Tag your README:** complete. Frontmatter includes the main track, sponsor tracks, and claimed bonus badges.
 
@@ -238,7 +241,7 @@ Training/eval artifacts:
 | Sharing is Caring | Submitted | Public dataset/eval bundle, model card, build log, Codex trace, and collection are linked from the Space. |
 | Field Notes | Submitted | `FIELD_NOTES.md` documents product decisions, model/runtime pivots, eval results, and submission tradeoffs. |
 | Article / Story | Published | Hugging Face article explains the product story, MiniCPM LoRA path, Modal evals, and demo: https://huggingface.co/blog/build-small-hackathon/jawbreaker-private-scam-defense |
-| Best Demo | Submitted | Demo video, article, and social post are published and linked from the Space README. |
+| Best Demo | Submitted | Demo video, article, and social posts are published and linked from the Space README. |
 | Bonus Quest Champion | Submitted | Jawbreaker stacks Well-Tuned, Off Brand, Off the Grid, Tiny Titan, Sharing is Caring, Field Notes, Best Demo evidence, and a published article. |
 | Judges' Wildcard | Automatic | Every submission is considered. |
 
@@ -250,7 +253,7 @@ Bonus badge evidence:
 - **Tiny Titan:** 1B runtime model with a narrow, safety-critical task.
 - **Sharing is Caring:** public dataset/eval bundle plus `AGENT_TRACE.md` and `CODEX_BUILD_LOG.md`.
 - **Field Notes:** `FIELD_NOTES.md` documents model/runtime pivots, eval decisions, and submission tradeoffs.
-- **Best Demo:** demo video, article, and Reddit social post are published and linked.
+- **Best Demo:** demo video, article, Reddit post, and LinkedIn post are published and linked.
 
 Not claiming:
 
