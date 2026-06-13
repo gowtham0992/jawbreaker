@@ -16,7 +16,6 @@ tags:
 - sponsor:openai
 - sponsor:modal
 - achievement:offgrid
-- achievement:tinytitan
 - achievement:welltuned
 - achievement:offbrand
 - achievement:sharing
