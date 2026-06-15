@@ -108,6 +108,7 @@ The problem is specific: scam messages now arrive as urgent, personal, plausible
 
 - Event: Hugging Face Build Small Hackathon
 - Track: Backyard AI
+- Team usernames: [`@gowtham0992`](https://huggingface.co/gowtham0992)
 - App: Gradio Space under `build-small-hackathon`
 - Status: Public Space deployed; demo video, article, and social posts published
 - Demo video: https://youtu.be/oh0GRKYXvGM
